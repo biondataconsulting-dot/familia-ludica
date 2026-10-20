@@ -4,6 +4,8 @@ import { useSesionAdmin } from '../auth/useSesionAdmin'
 import { Logo } from '../components/Logo'
 import { AdminLayout } from '../layouts/AdminLayout'
 import AdminCatalogo from './admin/AdminCatalogo'
+import AdminEnsayo from './admin/AdminEnsayo'
+import AdminHistorial from './admin/AdminHistorial'
 import AdminImportar from './admin/AdminImportar'
 import AdminInicio from './admin/AdminInicio'
 import AdminItem from './admin/AdminItem'
@@ -24,6 +26,9 @@ export default function Admin() {
           <Route path="catalogo" element={<AdminCatalogo />} />
           <Route path="catalogo/:itemId" element={<AdminItem />} />
           <Route path="importar" element={<AdminImportar />} />
+          <Route path="ensayo/:eventId" element={<AdminEnsayo />} />
+          <Route path="historial" element={<AdminHistorial />} />
+          <Route path="historial/:eventId" element={<AdminHistorial />} />
           <Route path="*" element={<AdminInicio nombre={estado.nombre} />} />
         </Routes>
       </AdminLayout>

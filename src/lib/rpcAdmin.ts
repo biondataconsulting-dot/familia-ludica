@@ -36,6 +36,8 @@ export const admin = {
   setValidation: (answerId: string, campo: 'titulo' | 'artista', valor: 'aceptada' | 'rechazada') =>
     llamar('admin_set_validation', { p_answer_id: answerId, p_field: campo, p_value: valor }),
   unvoidEntry: (entryId: string) => llamar('admin_unvoid_entry', { p_entry_id: entryId }),
+  /** Borra mesas, respuestas y puntos y vuelve a la portada. Pide el código de la noche como confirmación. */
+  resetEvent: (eventId: string, codigo: string) => llamar('admin_reset_event', { p_event_id: eventId, p_code: codigo }),
   // Contenido (paso 10)
   saveItem: (item: Record<string, unknown>) => llamar<string>('admin_save_item', { p: item }),
   deleteItem: (id: string) => llamar('admin_delete_item', { p_id: id }),

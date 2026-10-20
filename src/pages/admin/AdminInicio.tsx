@@ -76,6 +76,9 @@ export default function AdminInicio({ nombre }: { nombre: string }) {
               <Link to={`/admin/noche/${ev.id}`}>
                 <BotonSecundario>Armar</BotonSecundario>
               </Link>
+              <Link to={`/admin/ensayo/${ev.id}`}>
+                <BotonSecundario>Ensayo</BotonSecundario>
+              </Link>
               <BotonSecundario onClick={() => setDuplicando(ev)}>Duplicar</BotonSecundario>
               <EnlaceCopiable etiqueta="Proyector" ruta={`/pantalla/${ev.code}`} />
               <EnlaceCopiable etiqueta="Celular" ruta={`/jugar/${ev.code}`} />

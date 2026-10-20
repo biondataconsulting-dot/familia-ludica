@@ -12,6 +12,7 @@ const SECCIONES = [
   { a: '/admin', texto: 'Noches', exacto: true },
   { a: '/admin/catalogo', texto: 'Catálogo', exacto: false },
   { a: '/admin/importar', texto: 'Importar', exacto: false },
+  { a: '/admin/historial', texto: 'Historial', exacto: false },
 ]
 
 /**

@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useWakeLock } from '../phone/useWakeLock'
+import { ComenzarNoche } from '../projector/ComenzarNoche'
 import { ProjectorLayout } from '../layouts/ProjectorLayout'
 import { useLive } from '../live/useLive'
 import { useTemporizador } from '../live/useTemporizador'
@@ -17,6 +20,10 @@ export default function Pantalla() {
   const { codigo = '' } = useParams()
   const { live, error, desfaseMs, senalRepetir } = useLive(codigo)
   const temporizador = useTemporizador(live, desfaseMs)
+  // "Comenzar la noche": un toque por carga de página (el navegador olvida el permiso de sonido al recargar).
+  const [comenzada, setComenzada] = useState(false)
+  useWakeLock(comenzada)
+  const portada = !comenzada && <ComenzarNoche nombre={live?.event.name} onComenzar={() => setComenzada(true)} />
   const conMedia =
     live != null &&
     ['pista_audio', 'clip_video'].includes(live.item?.type ?? '') &&
@@ -38,6 +45,7 @@ export default function Pantalla() {
             <p className="font-titulo text-[3cqw] font-semibold text-white/80">Preparando la noche…</p>
           )}
         </div>
+        {portada}
       </ProjectorLayout>
     )
   }
@@ -54,6 +62,7 @@ export default function Pantalla() {
           Reconectando…
         </p>
       )}
+      {portada}
     </ProjectorLayout>
   )
 }

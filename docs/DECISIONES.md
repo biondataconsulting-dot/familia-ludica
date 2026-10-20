@@ -130,6 +130,13 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Historial** (spec §8.4) no está en ningún paso del plan: queda para el paso 11 o 12.
 - **Código largo en la portada**: la letra del código se achica según el largo para que hasta 12 caracteres entren en la tarjeta.
 
+## Paso 11
+
+- **"Comenzar la noche"** aparece en cada carga del proyector (el permiso de sonido del navegador se pierde al recargar). El toque arranca la noche en el acto y, sin esperar respuesta, pide pantalla completa y "despierta" el audio con un sonido mudo; si el navegador niega algo, sigue igual (queda el botón "Tocá para activar el sonido" como respaldo). También mantiene la notebook despierta (Wake Lock). La capa es opaca para no mostrar dos logos.
+- **Reinicio** (`admin_reset_event(event_id, code)`): además de la confirmación en pantalla, la base exige el código de la noche. Borra puntos, respuestas y mesas (con sus intentos de PIN), vuelve a portada, deja la noche en "lista" y la quita de `used_in_events` del catálogo. Los bloques e ítems quedan. Los celulares de antes vuelven al registro (su token ya no existe).
+- **Ensayo de videos**: un player de prueba (silenciado y visible en el panel) intenta reproducir cada video desde su `inicio`; ✔ si suena, ✘ si YouTube devuelve error (2, 5, 100, 101, 150), ⚠ si no responde en 15 s o si el fragmento pasa el final del video. De a uno, para no saturar.
+- **Historial** (spec §8.4, no estaba en ningún paso): lista de noches terminadas y detalle con podio, ranking por bloque y, tocando una mesa, de dónde salió cada punto.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

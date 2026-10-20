@@ -135,7 +135,11 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
 
       {terminada && (
         <p className="rounded-carta bg-profundo px-4 py-3 font-semibold text-white">
-          Esta noche terminó. Para volver a usarla hay que reiniciarla (paso 11).
+          Esta noche terminó. Para volver a usarla,{' '}
+          <Link to={`/admin/ensayo/${evento.id}`} className="underline">
+            reiniciala desde el ensayo
+          </Link>
+          .
         </p>
       )}
       {aviso && (
