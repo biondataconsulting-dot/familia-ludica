@@ -90,17 +90,22 @@ function PuntosManuales({ live, eventId, onListo }: Props & { onListo: () => voi
           </option>
         ))}
       </select>
-      <div className="flex gap-2">
-        <input
-          value={puntos}
-          onChange={(e) => setPuntos(e.target.value.replace(/[^0-9-]/g, ''))}
-          inputMode="numeric"
-          placeholder="± puntos"
-          aria-label="Puntos (negativo para restar)"
-          className={`${campo} w-28 shrink-0`}
-        />
-        <input value={motivo} onChange={(e) => setMotivo(e.target.value)} maxLength={200} placeholder="Motivo" aria-label="Motivo" className={campo} />
-      </div>
+      <input
+        value={puntos}
+        onChange={(e) => setPuntos(e.target.value.replace(/[^0-9-]/g, ''))}
+        inputMode="numeric"
+        placeholder="Puntos (ej.: 200 o -100)"
+        aria-label="Puntos (negativo para restar)"
+        className={campo}
+      />
+      <input
+        value={motivo}
+        onChange={(e) => setMotivo(e.target.value)}
+        maxLength={200}
+        placeholder="Motivo (ej.: mejor disfraz)"
+        aria-label="Motivo"
+        className={campo}
+      />
       <button disabled={enviando} className="min-h-toque rounded-xl bg-azul font-semibold text-white disabled:opacity-50">
         {enviando ? 'Guardando…' : 'Aplicar'}
       </button>

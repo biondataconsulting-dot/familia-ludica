@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { cargarYouTube } from '../projector/youtube'
 import { useParams } from 'react-router-dom'
 import { useWakeLock } from '../phone/useWakeLock'
 import { ComenzarNoche } from '../projector/ComenzarNoche'
@@ -23,11 +24,16 @@ export default function Pantalla() {
   // "Comenzar la noche": un toque por carga de página (el navegador olvida el permiso de sonido al recargar).
   const [comenzada, setComenzada] = useState(false)
   useWakeLock(comenzada)
+  // La API de YouTube se baja de entrada (en segundo plano) para no sumarla a la primera canción.
+  useEffect(() => {
+    void cargarYouTube().catch(() => undefined)
+  }, [])
   const portada = !comenzada && <ComenzarNoche nombre={live?.event.name} onComenzar={() => setComenzada(true)} />
+  // El player de Hipster se prepara desde la presentación del bloque (así no demora la primera canción).
   const conMedia =
     live != null &&
-    ['pista_audio', 'clip_video'].includes(live.item?.type ?? '') &&
-    ['item_open', 'item_closed', 'item_revealed'].includes(live.phase)
+    live.block?.dynamic === 'hipster' &&
+    ['block_intro', 'item_open', 'item_closed', 'item_revealed'].includes(live.phase)
 
   if (!live) {
     return (

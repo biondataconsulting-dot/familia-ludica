@@ -137,6 +137,14 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Ensayo de videos**: un player de prueba (silenciado y visible en el panel) intenta reproducir cada video desde su `inicio`; ✔ si suena, ✘ si YouTube devuelve error (2, 5, 100, 101, 150), ⚠ si no responde en 15 s o si el fragmento pasa el final del video. De a uno, para no saturar.
 - **Historial** (spec §8.4, no estaba en ningún paso): lista de noches terminadas y detalle con podio, ranking por bloque y, tocando una mesa, de dónde salió cada punto.
 
+## Ajustes después del paso 11
+
+- **Demora del audio de Hipster**: el player se crea desde la presentación del bloque (invisible ahí, sin video) y la API de YouTube se baja al abrir el proyector. Al abrir una canción solo falta cargar el video. Medido desde que el proyector ve la canción abierta hasta que suena: 3,0 s antes (en frío), 0,97 s la primera canción y 0,7 s las siguientes. "Repetir" con el mismo video salta al inicio del fragmento (sin recargar). El `youtube_id` sigue llegando solo con la canción en juego.
+- **Aviso de sonido bloqueado**: espera 4 s y no aparece si el video todavía está cargando (antes, con una carga lenta, podía aparecer sin motivo).
+- **Puntos manuales**: puntos y motivo en renglones separados (en la columna angosta el motivo quedaba aplastado).
+- **Mesas en el panel**: "PIN:" antes del número.
+- **Desarrollo en Windows**: Vite vigila los archivos por sondeo (`server.watch.usePolling`), porque el vigilante normal se perdía cambios. No afecta el build ni Vercel.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

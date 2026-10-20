@@ -260,7 +260,10 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
                       title={m.connected ? 'Conectada' : 'Desconectada'}
                     />
                     <span className="min-w-0 flex-1 truncate font-semibold">{m.name}</span>
-                    <span className="font-titulo tracking-widest text-profundo/70">{m.pin}</span>
+                    <span className="shrink-0 text-profundo/70">
+                      <span className="text-xs font-bold uppercase">PIN:</span>{' '}
+                      <span className="font-titulo tracking-widest">{m.pin}</span>
+                    </span>
                   </li>
                 ))}
               </ul>

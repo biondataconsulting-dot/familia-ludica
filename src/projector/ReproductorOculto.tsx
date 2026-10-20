@@ -5,10 +5,19 @@ import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
 
 type Props = { codigo: string; live: Live; senalRepetir: number }
 
+/** Solo en desarrollo: línea de tiempo del audio para medir demoras (window.__flAudio). */
+function marcar(evento: string) {
+  if (!import.meta.env.DEV) return
+  const w = window as unknown as { __flAudio?: { evento: string; ms: number }[] }
+  ;(w.__flAudio ??= []).push({ evento, ms: Math.round(performance.now()) })
+}
+
 /**
  * Player de YouTube detrás de la tarjeta del proyector (nunca se ve: la tarjeta lo tapa).
- * Suena solo al abrir el ítem, se corta al cumplir la duración, se pausa al cerrar y vuelve a
- * sonar con "Repetir" del conductor. Si el navegador bloquea el sonido, ofrece un botón para activarlo.
+ * Se monta desde la presentación de un bloque de Hipster, así el player ya está listo cuando se abre
+ * la primera canción (al abrir solo falta cargar el video). Suena solo al abrir el ítem, se corta al
+ * cumplir la duración, se pausa al cerrar y vuelve a sonar con "Repetir". Si el navegador bloquea el
+ * sonido, ofrece un botón para activarlo.
  */
 export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const contenedor = useRef<HTMLDivElement>(null)
@@ -17,26 +26,17 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   /** Player creado (aunque todavía no esté listo), para poder destruirlo al desmontar. */
   const creado = useRef<ReproductorYT | null>(null)
   const listo = useRef<Promise<ReproductorYT> | null>(null)
+  /** Video cargado en el player (para que "Repetir" salte al inicio en vez de recargarlo). */
+  const cargado = useRef<string | null>(null)
   const [media, setMedia] = useState<MediaProyector | null>(null)
   const [bloqueado, setBloqueado] = useState(false)
   const [falla, setFalla] = useState<string | null>(null)
-  const itemId = live.item?.block_item_id
+  const esMedia = ['pista_audio', 'clip_video'].includes(live.item?.type ?? '')
+  const itemId = esMedia ? live.item?.block_item_id : undefined
   const fase = live.phase
 
-  // El youtube_id llega solo por proyector_media (nunca por get_live).
-  useEffect(() => {
-    if (!itemId) return
-    let activo = true
-    proyectorMedia(codigo)
-      .then((m) => activo && m?.block_item_id === itemId && setMedia(m))
-      .catch(() => activo && setFalla('No se pudo leer el video.'))
-    return () => {
-      activo = false
-    }
-  }, [codigo, itemId])
-
-  // Un único player para toda la noche (se crea con el primer video).
-  const obtenerPlayer = useCallback((m: MediaProyector) => {
+  // Un único player para todo el bloque, creado apenas se monta (sin video).
+  const obtenerPlayer = useCallback(() => {
     if (!listo.current) {
       listo.current = cargarYouTube().then(
         (YT) =>
@@ -46,13 +46,16 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
             const p = new YT.Player(nodo, {
               width: 320,
               height: 180,
-              videoId: m.youtube_id,
-              playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, playsinline: 1, rel: 0, start: m.inicio },
+              playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, playsinline: 1, rel: 0 },
               events: {
                 // Los métodos del player existen recién acá: antes, getPlayerState y compañía no están.
                 onReady: () => {
                   player.current = p
+                  marcar('player listo')
                   resolver(p)
+                },
+                onStateChange: (e) => {
+                  if (e.data === ESTADO_YT.REPRODUCIENDO) marcar('suena')
                 },
                 onError: (e) => setFalla(`Este video no se puede reproducir acá (error ${e.data}).`),
               },
@@ -64,17 +67,46 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
     return listo.current
   }, [])
 
+  useEffect(() => {
+    void obtenerPlayer()
+  }, [obtenerPlayer])
+
+  // El youtube_id llega solo por proyector_media (nunca por get_live), y solo con el ítem en juego.
+  useEffect(() => {
+    if (!itemId) return
+    marcar('ítem visto')
+    let activo = true
+    proyectorMedia(codigo)
+      .then((m) => {
+        if (activo && m?.block_item_id === itemId) {
+          marcar('video recibido')
+          setMedia(m)
+        }
+      })
+      .catch(() => activo && setFalla('No se pudo leer el video.'))
+    return () => {
+      activo = false
+    }
+  }, [codigo, itemId])
+
   const reproducir = useCallback(
     async (m: MediaProyector) => {
-      const p = await obtenerPlayer(m)
+      const p = await obtenerPlayer()
       setFalla(null)
-      p.loadVideoById({ videoId: m.youtube_id, startSeconds: m.inicio })
+      if (cargado.current === m.youtube_id) {
+        p.seekTo(m.inicio, true)
+        p.playVideo()
+      } else {
+        cargado.current = m.youtube_id
+        p.loadVideoById({ videoId: m.youtube_id, startSeconds: m.inicio })
+      }
       p.unMute()
       p.setVolume(100)
-      // Si a los 2,5 s no está sonando, el navegador bloqueó el audio (falta un toque en la pantalla).
+      // Si a los 4 s no está sonando ni cargando, el navegador bloqueó el audio (falta un toque en la pantalla).
       window.setTimeout(() => {
-        if (player.current?.getPlayerState() !== ESTADO_YT.REPRODUCIENDO) setBloqueado(true)
-      }, 2500)
+        const estado = player.current?.getPlayerState()
+        if (estado !== ESTADO_YT.REPRODUCIENDO && estado !== ESTADO_YT.CARGANDO) setBloqueado(true)
+      }, 4000)
     },
     [obtenerPlayer],
   )
@@ -93,13 +125,13 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   useEffect(() => {
     if (senalRepetir !== ultimaSenal.current) {
       ultimaSenal.current = senalRepetir
-      if (media) void reproducir(media)
+      if (media && media.block_item_id === itemId) void reproducir(media)
     }
-  }, [senalRepetir, media, reproducir])
+  }, [senalRepetir, media, itemId, reproducir])
 
-  // Cerrar respuestas: se detiene el audio.
+  // Cerrar respuestas o salir del ítem: se detiene el audio.
   useEffect(() => {
-    if (fase === 'item_closed') player.current?.pauseVideo()
+    if (fase === 'item_closed' || fase === 'block_intro') player.current?.pauseVideo()
   }, [fase])
 
   // Corte al cumplir la duración del fragmento.
@@ -125,8 +157,13 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
 
   return (
     <>
-      {/* Detrás de la tarjeta central: la capa de contenido (z-10) lo tapa por completo. */}
-      <div ref={contenedor} aria-hidden className="pointer-events-none absolute left-[12cqw] top-[18cqw] z-0 h-[180px] w-[320px] overflow-hidden" />
+      {/* Detrás de la tarjeta central: la capa de contenido (z-10) lo tapa por completo. En la
+          presentación del bloque no hay tarjeta: ahí queda invisible (todavía no suena nada). */}
+      <div
+        ref={contenedor}
+        aria-hidden
+        className={`pointer-events-none absolute left-[12cqw] top-[18cqw] z-0 h-[180px] w-[320px] overflow-hidden ${itemId ? '' : 'opacity-0'}`}
+      />
       {bloqueado && media && (
         <button
           onClick={() => {
