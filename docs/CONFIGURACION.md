@@ -17,7 +17,7 @@ Todo lo que se configura a mano fuera del repo. Ninguna clave secreta va en el r
 ## Google Cloud (cliente OAuth para el login del conductor)
 
 1. [console.cloud.google.com](https://console.cloud.google.com) → crear proyecto "Familia Lúdica".
-2. **APIs y servicios → Pantalla de consentimiento de OAuth** (Google Auth Platform → Branding): tipo **Externo**, nombre "Familia Lúdica", email de soporte. En **Público**, dejarla **en producción** (o en prueba agregando como usuarios de prueba a jorgeitamar@gmail.com y nataliaparatore@gmail.com).
+2. **Google Auth Platform → Comenzar**: nombre "Familia Lúdica", email de soporte, público **Externo**. La app queda en modo **Prueba** (publicarla exige página principal y política de privacidad). En **Público → Usuarios de prueba** van los admins (jorgeitamar@gmail.com, nataliaparatore@gmail.com, bion.dataconsulting@gmail.com) y una cuenta extra para probar "Sin acceso". Cualquier otra cuenta es bloqueada por Google antes de llegar a la app.
 3. **Clientes → Crear cliente → Aplicación web**:
    - Orígenes autorizados de JavaScript: `https://familia-ludica.vercel.app` y `http://localhost:5173`
    - URI de redireccionamiento autorizados: `https://gmpcnupjzqqfjkbywzet.supabase.co/auth/v1/callback`
@@ -30,5 +30,7 @@ Todo lo que se configura a mano fuera del repo. Ninguna clave secreta va en el r
 
 ## Admins
 
-Los emails habilitados están en la tabla `admins` (seed). Para sumar uno: Supabase → SQL Editor →
-`insert into admins (email) values ('nuevo@gmail.com');` (en minúsculas).
+Habilitados: jorgeitamar@gmail.com, nataliaparatore@gmail.com, bion.dataconsulting@gmail.com (tabla `admins`).
+Para sumar un conductor hacen falta **dos cosas**:
+1. Una migración nueva en `supabase/migrations/` con `insert into public.admins (email) values ('nuevo@gmail.com') on conflict do nothing;` (en minúsculas) → `npm run db:push`.
+2. Agregarlo como usuario de prueba en Google Auth Platform → Público (si no, Google lo bloquea).

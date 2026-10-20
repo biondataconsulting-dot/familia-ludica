@@ -3,7 +3,8 @@
 
 insert into public.admins (email) values
   ('jorgeitamar@gmail.com'),
-  ('nataliaparatore@gmail.com')
+  ('nataliaparatore@gmail.com'),
+  ('bion.dataconsulting@gmail.com')
 on conflict do nothing;
 
 insert into public.tags (id, name, kind) values

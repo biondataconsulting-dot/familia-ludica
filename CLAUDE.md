@@ -62,7 +62,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 ## Seguridad (obligatorio)
 
 - RLS en **todas** las tablas. `anon` sin SELECT directo a tablas sensibles: solo vistas públicas o funciones `security definer`.
-- `is_admin()` = email del JWT en tabla `admins` (jorgeitamar@gmail.com, nataliaparatore@gmail.com). Toda RPC `admin_*` la verifica primero.
+- `is_admin()` = email del JWT en tabla `admins` (jorgeitamar@gmail.com, nataliaparatore@gmail.com, bion.dataconsulting@gmail.com). Toda RPC `admin_*` la verifica primero.
 - `catalog_solutions` sin ningún acceso público; la solución pasa a `live_state.revealed` recién en `admin_reveal`.
 - `youtube_id` solo vía `proyector_media(code)` y solo en fases `item_open`/`item_closed`/`item_revealed` del ítem actual. Los celulares nunca lo reciben.
 - Respuestas de otras mesas nunca visibles (el proyector solo sabe **quién** respondió).
