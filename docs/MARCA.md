@@ -33,6 +33,8 @@ Resumen del *Manual de identidad y estrategia de marca Familia Lúdica* (versió
 
 En el proyector el azul domina por decisión de la spec (pantalla de evento); las tarjetas de contenido van en blanco cálido.
 
+**Texto sobre azul: siempre blanco.** Nada de texto amarillo sobre azul (preferencia del cliente) ni naranja sobre azul (contraste 1,6:1). El naranja se usa como fondo de sellos, etiquetas y acentos, con texto blanco encima. El amarillo queda solo como fondo del primer puesto, con texto azul profundo.
+
 ## Tipografía
 
 - **Fredoka** SemiBold/Bold para títulos (con moderación, para no verse infantil).

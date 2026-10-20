@@ -22,7 +22,7 @@ export function BarraSuperior({ live }: { live: Live }) {
 
 export function SelloPractica() {
   return (
-    <span className="-rotate-2 rounded-[0.6cqw] border-[0.2cqw] border-amarillo px-[1cqw] py-[0.2cqw] text-[1.3cqw] font-extrabold uppercase tracking-wide text-amarillo">
+    <span className="-rotate-2 rounded-[0.6cqw] bg-naranja px-[1cqw] py-[0.25cqw] text-[1.3cqw] font-extrabold uppercase tracking-wide text-white shadow-md">
       Ronda de práctica · no suma puntos
     </span>
   )

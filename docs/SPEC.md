@@ -53,7 +53,7 @@ Tokens en `tailwind.config` y en CSS variables:
 | celeste conexión | `#3FC0F0` | detalles, progreso, "nuevo" |
 | azul profundo | `#173F63` | texto, tarjetas oscuras |
 | blanco cálido | `#FFF8F2` | fondos de celular, tarjetas claras |
-| amarillo | `#F4D35E` | solo primer puesto y títulos destacados (<5%) |
+| amarillo | `#F4D35E` | solo como fondo del primer puesto (<5%). **Nunca texto amarillo sobre azul** (preferencia del cliente) |
 
 - Tipografías (Google Fonts): **Fredoka** 500/600/700 para títulos; **Nunito Sans** 400/600/700/800 para texto.
 - Logo: `public/brand/logo.png` (lo copio yo). **Siempre sobre panel blanco o blanco cálido**, nunca directo sobre azul ni foto. No recrear el logo con tipografía.
@@ -196,11 +196,11 @@ Puntaje base: **hasta 1.000 puntos por ítem**, multiplicado por `event_blocks.m
 
 Primera vez: botón grande "Comenzar la noche" (habilita audio del navegador y pide pantalla completa; ambos opcionales si fallan). Luego, según `phase`:
 
-- `cover`: título de la noche (Fredoka grande, amarillo sobre azul), "3ra Edición" como sello, fecha; tarjeta blanca inclinada con logo, QR a `/jugar/:codigo`, el código en grande y "Escaneá con un celular por mesa"; fila inferior con las mesas registradas apareciendo en vivo ("9 mesas listas").
+- `cover`: título de la noche (Fredoka grande, blanco sobre azul con una línea naranja debajo), "3ra Edición" como sello, fecha; tarjeta blanca inclinada con logo, QR a `/jugar/:codigo`, el código en grande y "Escaneá con un celular por mesa"; fila inferior con las mesas registradas apareciendo en vivo ("9 mesas listas").
 - `block_intro`: nombre de la dinámica, cómo se juega en 1 o 2 líneas, cantidad de ítems, sello de práctica si corresponde.
 - `item_open`: barra superior con dinámica y "canción 3 de 8"; tarjeta central con la consigna (para Hipster, ecualizador animado y "¿De qué año es esta canción?"; el iframe de YouTube suena **detrás** de la tarjeta, oculto); temporizador circular (si llega a 0 muestra "¡Tiempo!" pero **no cierra**); **tablero de participación** con todas las mesas: con tilde verde las que respondieron, punteadas las que faltan, apagadas con borde rojo las desconectadas; contador "11 de 15".
 - `item_closed`: igual que abierto con "Respuestas cerradas" y el tablero congelado; el audio se detiene.
-- `item_revealed`: tarjeta clara con la solución (para Hipster: año enorme en naranja, título, artista; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto en amarillo). En práctica: "Así hubieran sumado".
+- `item_revealed`: tarjeta clara con la solución (para Hipster: año enorme en naranja, título, artista; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto con fondo amarillo y texto azul profundo). En práctica: "Así hubieran sumado".
 - `block_ranking`: ranking completo de la noche al cerrar la dinámica, en dos columnas si hay más de 10 mesas.
 - `final`: podio 1-2-3 grande + resto de la tabla; mensaje de cierre y @familia.ludica.
 

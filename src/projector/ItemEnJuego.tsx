@@ -28,7 +28,7 @@ export function ItemEnJuego({ live, temporizador }: { live: Live; temporizador: 
             <TemporizadorCircular temporizador={temporizador} />
           )}
           <p className="text-center font-titulo text-[2.2cqw] font-semibold">
-            <span className="text-[3.4cqw] text-amarillo">{live.answers_count}</span> de {live.teams_count}
+            <span className="text-[3.4cqw] text-white">{live.answers_count}</span> de {live.teams_count}
           </p>
         </div>
       </div>

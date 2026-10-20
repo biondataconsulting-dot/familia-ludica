@@ -21,7 +21,7 @@ export default function Pantalla() {
         <div className="flex h-full flex-col items-center justify-center gap-[1.5cqw] px-[8cqw] text-center">
           {error ? (
             <>
-              <h1 className="font-titulo text-[4cqw] font-bold text-amarillo">
+              <h1 className="font-titulo text-[4cqw] font-bold text-white">
                 {error.codigo === 'P0002' ? 'No encontramos esta noche' : 'No podemos conectarnos'}
               </h1>
               <p className="text-[2cqw] text-white/90">{error.message}</p>
@@ -70,7 +70,7 @@ function Fase({ live, temporizador }: { live: Live; temporizador: Temporizador }
 function Cartel({ titulo, texto }: { titulo: string; texto: string }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-[2cqw] text-center">
-      <h1 className="font-titulo text-[6cqw] font-bold text-amarillo">{titulo}</h1>
+      <h1 className="font-titulo text-[6cqw] font-bold text-white">{titulo}</h1>
       <p className="text-[2.4cqw] text-white/90">{texto}</p>
     </div>
   )

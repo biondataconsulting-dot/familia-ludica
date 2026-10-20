@@ -34,7 +34,7 @@ export function Revelado({ live }: { live: Live }) {
 
       <div className="flex min-h-[4.5cqw] flex-wrap items-center justify-center gap-[0.8cqw]">
         {sumaron.length > 0 && revelado.practice && (
-          <p className="font-titulo text-[1.8cqw] font-semibold text-amarillo">Así hubieran sumado:</p>
+          <p className="font-titulo text-[1.8cqw] font-semibold text-white">Así hubieran sumado:</p>
         )}
         {sumaron.length === 0 ? (
           <p className="text-[1.8cqw] font-semibold text-white/80">

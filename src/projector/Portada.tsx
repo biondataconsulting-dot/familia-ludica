@@ -18,7 +18,8 @@ export function Portada({ live }: { live: Live }) {
               {event.settings.edicion}
             </span>
           )}
-          <h1 className="mt-[2cqw] font-titulo text-[5.6cqw] font-bold leading-[1.05] text-amarillo">{event.name}</h1>
+          <h1 className="mt-[2cqw] font-titulo text-[5.6cqw] font-bold leading-[1.05] text-white">{event.name}</h1>
+          <span className="mt-[1.2cqw] block h-[0.7cqw] w-[12cqw] rounded-full bg-naranja" aria-hidden />
           {(fecha || event.venue) && (
             <p className="mt-[1.5cqw] text-[2.2cqw] font-semibold text-white/90">
               {[fecha, event.venue].filter(Boolean).join(' · ')}
