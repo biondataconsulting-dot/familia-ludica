@@ -15,7 +15,8 @@ type Props = {
 
 /**
  * Centro del panel: mesa, respuesta, estado y puntos (provisorios hasta revelar).
- * Campos de texto validados (Hipster): estado por campo y Aceptar / Rechazar en las dudosas.
+ * Campos de texto validados (Hipster y Cine): estado por campo, Aceptar / Rechazar en las dudosas y
+ * corrección de lo que el sistema decidió solo.
  * Las mesas sin respuesta van al final.
  */
 export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
@@ -66,7 +67,7 @@ export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
                 <td className="py-2 pr-2">
                   {correcta === true && <span className="font-bold text-green-700">✔ correcta</span>}
                   {correcta === false && <span className="font-bold text-naranja">✘ incorrecta</span>}
-                  <Validaciones respuesta={r} puedeDecidir={puedeDecidir} onCambio={recargar} />
+                  <Validaciones respuesta={r} puedeDecidir={puedeDecidir} onCambio={recargar} esEscena={item.type === 'clip_video'} />
                 </td>
                 <td className="py-2 text-right font-titulo text-base font-semibold tabular-nums">
                   {p ? formatearNumero(p.points) : '—'}
@@ -99,7 +100,12 @@ const ETIQUETA: Record<string, { texto: string; clase: string }> = {
 }
 const NOMBRE_CAMPO: Record<string, string> = { titulo: 'Título', artista: 'Artista' }
 
-function Validaciones({ respuesta, puedeDecidir, onCambio }: { respuesta: RespuestaAdmin; puedeDecidir: boolean; onCambio: () => void }) {
+const ACEPTADO = ['auto_ok', 'aceptada']
+
+type PropsValidaciones = { respuesta: RespuestaAdmin; puedeDecidir: boolean; onCambio: () => void; esEscena: boolean }
+
+/** Dudosas: Aceptar / Rechazar. Ya decididas (por el sistema o el conductor): se pueden dar vuelta. */
+function Validaciones({ respuesta, puedeDecidir, onCambio, esEscena }: PropsValidaciones) {
   const [ocupado, setOcupado] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const campos = Object.entries(respuesta.validation ?? {}).filter(([c]) => c in NOMBRE_CAMPO)
@@ -124,7 +130,7 @@ function Validaciones({ respuesta, puedeDecidir, onCambio }: { respuesta: Respue
         const e = ETIQUETA[estado] ?? { texto: estado, clase: '' }
         return (
           <div key={campo} className="flex flex-wrap items-center gap-1">
-            <span className="text-xs text-profundo/60">{NOMBRE_CAMPO[campo]}:</span>
+            <span className="text-xs text-profundo/60">{campo === 'artista' && esEscena ? 'Director' : NOMBRE_CAMPO[campo]}:</span>
             <span className={`text-xs font-bold ${e.clase}`}>{e.texto}</span>
             {estado === 'dudosa' && puedeDecidir && (
               <>
@@ -143,6 +149,15 @@ function Validaciones({ respuesta, puedeDecidir, onCambio }: { respuesta: Respue
                   Rechazar
                 </button>
               </>
+            )}
+            {estado !== 'dudosa' && puedeDecidir && (
+              <button
+                disabled={ocupado}
+                onClick={() => void decidir(campo as 'titulo', ACEPTADO.includes(estado) ? 'rechazada' : 'aceptada')}
+                className="rounded-lg px-1.5 py-0.5 text-xs font-semibold text-profundo/60 underline disabled:opacity-40"
+              >
+                {ACEPTADO.includes(estado) ? 'Rechazar' : 'Aceptar'}
+              </button>
             )}
           </div>
         )

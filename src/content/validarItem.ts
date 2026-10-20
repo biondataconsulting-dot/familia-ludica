@@ -11,7 +11,7 @@ export const NOMBRE_TIPO: Record<TipoItem, string> = {
   trio_verdad_mentira: 'Dos verdades y una mentira',
   pregunta_numerica: 'Pregunta numérica',
   pista_audio: 'Canción (YouTube)',
-  clip_video: 'Clip de video (YouTube)',
+  clip_video: 'Escena de cine o serie (YouTube)',
 }
 
 /** Qué tipos de ítem acepta cada dinámica (igual que private.tipo_va_en). */
@@ -19,7 +19,8 @@ export const TIPOS_POR_DINAMICA: Record<string, TipoItem[]> = {
   trivia: ['pregunta_opciones'],
   dos_verdades: ['trio_verdad_mentira'],
   aproximaciones: ['pregunta_numerica'],
-  hipster: ['pista_audio', 'clip_video'],
+  hipster: ['pista_audio'],
+  cine: ['clip_video'],
 }
 
 type Obj = Record<string, unknown>
@@ -74,6 +75,7 @@ export function validarItem(tipo: unknown, c: unknown, s: unknown): string | nul
       if (!esEntero(s.anio, 1900, anioActual)) return `El año tiene que estar entre 1900 y ${anioActual}.`
       if (!textoLleno(s.titulo)) return 'Falta el título.'
       if (tipo === 'pista_audio' && !textoLleno(s.artista)) return 'Falta el artista.'
+      if (tipo === 'clip_video' && !textoLleno(s.artista)) return 'Falta el director (va en «artista»).'
       if ('variantes_titulo' in s && !listaDeTextos(s.variantes_titulo)) return '«variantes_titulo» tiene que ser una lista de textos.'
       if ('variantes_artista' in s && !listaDeTextos(s.variantes_artista)) return '«variantes_artista» tiene que ser una lista de textos.'
       return null

@@ -1,4 +1,5 @@
 import { aproximaciones } from './aproximaciones'
+import { cine } from './cine'
 import { dosVerdades } from './dos_verdades'
 import { hipster } from './hipster'
 import type { Dinamica, MetaDinamica } from './tipos'
@@ -10,6 +11,7 @@ const JUGABLES: Record<string, Dinamica> = {
   dos_verdades: dosVerdades,
   aproximaciones,
   hipster,
+  cine,
 }
 
 const METAS: Record<string, MetaDinamica> = Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta]))

@@ -46,7 +46,7 @@ export function PhoneInput({ item, valor, onCambiar }: PropsPhoneInput) {
       </label>
       <label className="block">
         <span className="mb-1 block font-bold">
-          {esMusica ? 'Artista o banda' : 'Artista'} <span className="font-semibold text-profundo/60">(opcional, +200)</span>
+          {esMusica ? 'Artista o banda' : 'Director o directora'} <span className="font-semibold text-profundo/60">(opcional, +200)</span>
         </span>
         <input
           value={artista}

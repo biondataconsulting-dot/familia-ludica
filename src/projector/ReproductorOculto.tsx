@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { proyectorMedia, type MediaProyector } from '../lib/rpc'
 import type { Live } from '../lib/tipos'
 import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
@@ -12,8 +12,22 @@ function marcar(evento: string) {
   ;(w.__flAudio ??= []).push({ evento, ms: Math.round(performance.now()) })
 }
 
+/** Lugar del marco de video ([data-marco-video] de Cine y series) relativo al escenario, en px. */
+type Marco = { left: number; top: number; width: number; height: number }
+
+function medirMarco(escenario: HTMLElement | null): Marco | null {
+  const marco = escenario?.querySelector<HTMLElement>('[data-marco-video]')
+  if (!escenario || !marco) return null
+  const e = escenario.getBoundingClientRect()
+  const m = marco.getBoundingClientRect()
+  if (m.width === 0) return null
+  return { left: m.left - e.left, top: m.top - e.top, width: m.width, height: m.height }
+}
+
 /**
- * Player de YouTube detrás de la tarjeta del proyector (nunca se ve: la tarjeta lo tapa).
+ * Player de YouTube del proyector. En Hipster queda detrás de la tarjeta (nunca se ve: la tarjeta lo tapa).
+ * En Cine y series se ubica encima del marco de video de la tarjeta mientras se responde, agrandado y
+ * recortado para que no se vean el título ni el logo de YouTube.
  * Se monta desde la presentación de un bloque de Hipster, así el player ya está listo cuando se abre
  * la primera canción (al abrir solo falta cargar el video). Suena solo al abrir el ítem, se corta al
  * cumplir la duración, se pausa al cerrar y vuelve a sonar con "Repetir". Si el navegador bloquea el
@@ -34,6 +48,34 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const esMedia = ['pista_audio', 'clip_video'].includes(live.item?.type ?? '')
   const itemId = esMedia ? live.item?.block_item_id : undefined
   const fase = live.phase
+  const esCine = live.block?.dynamic === 'cine'
+  const exterior = useRef<HTMLDivElement>(null)
+  const [marco, setMarco] = useState<Marco | null>(null)
+  const videoVisible = esCine && !!itemId && (fase === 'item_open' || fase === 'item_closed')
+
+  // El marco lo dibuja la tarjeta (otra capa): se mide al cambiar de fase y se sigue midiendo por si
+  // cambia el tamaño de la ventana o la tarjeta termina de acomodarse.
+  useEffect(() => {
+    if (!videoVisible) {
+      setMarco(null)
+      return
+    }
+    const escenario = exterior.current?.offsetParent as HTMLElement | null
+    const actualizar = () =>
+      setMarco((previo) => {
+        const nuevo = medirMarco(escenario)
+        const igual =
+          previo && nuevo && ['left', 'top', 'width', 'height'].every((k) => Math.abs(previo[k as keyof Marco] - nuevo[k as keyof Marco]) < 0.5)
+        return igual ? previo : nuevo
+      })
+    actualizar()
+    const id = window.setInterval(actualizar, 300)
+    window.addEventListener('resize', actualizar)
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener('resize', actualizar)
+    }
+  }, [videoVisible, itemId])
 
   // Un único player para todo el bloque, creado apenas se monta (sin video).
   const obtenerPlayer = useCallback(() => {
@@ -129,10 +171,10 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
     }
   }, [senalRepetir, media, itemId, reproducir])
 
-  // Cerrar respuestas o salir del ítem: se detiene el audio.
+  // Cerrar respuestas o salir del ítem: se detiene el audio (en Cine, también al revelar: el video deja de verse).
   useEffect(() => {
-    if (fase === 'item_closed' || fase === 'block_intro') player.current?.pauseVideo()
-  }, [fase])
+    if (fase === 'item_closed' || fase === 'block_intro' || (esCine && fase === 'item_revealed')) player.current?.pauseVideo()
+  }, [fase, esCine])
 
   // Corte al cumplir la duración del fragmento.
   useEffect(() => {
@@ -155,15 +197,24 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
     [],
   )
 
+  const estiloCine: CSSProperties | undefined = videoVisible && marco ? { ...marco } : undefined
   return (
     <>
-      {/* Detrás de la tarjeta central: la capa de contenido (z-10) lo tapa por completo. En la
-          presentación del bloque no hay tarjeta: ahí queda invisible (todavía no suena nada). */}
+      {/* Hipster: detrás de la tarjeta central (la capa de contenido, z-10, lo tapa por completo).
+          Cine: encima del marco de la tarjeta (z-20), sin poder tocarlo, agrandado 35% dentro de un
+          recorte para esconder la barra de título y el logo de YouTube. Fuera del ítem, invisible. */}
       <div
-        ref={contenedor}
+        ref={exterior}
         aria-hidden
-        className={`pointer-events-none absolute left-[12cqw] top-[18cqw] z-0 h-[180px] w-[320px] overflow-hidden ${itemId ? '' : 'opacity-0'}`}
-      />
+        style={estiloCine}
+        className={
+          estiloCine
+            ? 'pointer-events-none absolute z-20 overflow-hidden rounded-[1cqw] bg-black'
+            : `pointer-events-none absolute left-[12cqw] top-[18cqw] z-0 h-[180px] w-[320px] overflow-hidden ${itemId && !esCine ? '' : 'opacity-0'}`
+        }
+      >
+        <div ref={contenedor} className={`absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full ${estiloCine ? 'scale-[1.35]' : ''}`} />
+      </div>
       {bloqueado && media && (
         <button
           onClick={() => {

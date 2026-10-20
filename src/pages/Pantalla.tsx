@@ -29,10 +29,10 @@ export default function Pantalla() {
     void cargarYouTube().catch(() => undefined)
   }, [])
   const portada = !comenzada && <ComenzarNoche nombre={live?.event.name} onComenzar={() => setComenzada(true)} />
-  // El player de Hipster se prepara desde la presentación del bloque (así no demora la primera canción).
+  // El player de Hipster y Cine se prepara desde la presentación del bloque (así no demora la primera canción).
   const conMedia =
     live != null &&
-    live.block?.dynamic === 'hipster' &&
+    ['hipster', 'cine'].includes(live.block?.dynamic ?? '') &&
     ['block_intro', 'item_open', 'item_closed', 'item_revealed'].includes(live.phase)
 
   if (!live) {

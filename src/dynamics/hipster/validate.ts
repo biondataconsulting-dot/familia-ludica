@@ -18,13 +18,13 @@ export function describir(_contenido: Record<string, unknown>, r: Respuesta): st
 
 const ESTADO: Record<string, string> = { auto_ok: '✔', aceptada: '✔', dudosa: '?', auto_no: '✘', rechazada: '✘' }
 
-/** Lo que ve la mesa al revelar: año (con su diferencia) y si le aceptaron título y artista. */
-export function resultado(detail: Record<string, unknown>, puntos: number): { titulo: string; lineas: string[] } {
+/** Lo que ve la mesa al revelar: año (con su diferencia) y si le aceptaron título y artista (o director). */
+export function resultado(detail: Record<string, unknown>, puntos: number, nombreArtista = 'Artista'): { titulo: string; lineas: string[] } {
   const dif = Number(detail.diferencia)
   const lineas = [dif === 0 ? 'Año exacto: +600' : `Año: ${dif} de diferencia → +${Math.max(0, 600 - 75 * dif)}`]
   for (const [campo, nombre] of [
     ['titulo', 'Título'],
-    ['artista', 'Artista'],
+    ['artista', nombreArtista],
   ] as const) {
     const e = detail[campo]
     if (typeof e === 'string') lineas.push(`${nombre} ${ESTADO[e] ?? ''} ${e === 'auto_ok' || e === 'aceptada' ? '+200' : '+0'}`)

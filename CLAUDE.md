@@ -91,7 +91,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Ejecución: `teams` (token uuid secreto, pin 4 dígitos, last_seen), `live_state` (phase ∈ cover, block_intro, item_open, item_closed, item_revealed, block_ranking, final), `answers` (unique block_item+team, validation jsonb), `score_entries` (origin auto/manual, voided).
 - Vistas: `public_teams`, `ranking`, `ranking_by_block`, `public_item`, `answered_teams`.
 - Tipos de ítem: `pregunta_opciones`, `pregunta_numerica`, `pista_audio`, `clip_video`, `trio_verdad_mentira`.
-- Dinámicas: `trivia`, `dos_verdades`, `aproximaciones`, `hipster`. Hasta 1.000 pts/ítem × multiplicador.
+- Dinámicas: `trivia`, `dos_verdades`, `aproximaciones`, `hipster` (pista_audio), `cine` (clip_video, video visible; artista = director). Hasta 1.000 pts/ítem × multiplicador.
 
 ## Convenciones de código
 

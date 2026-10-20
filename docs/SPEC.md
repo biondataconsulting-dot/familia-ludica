@@ -128,7 +128,7 @@ solution: { "mentira": 2, "explicacion": "..." }
 content:  { "texto": "...", "unidad": "km", "imagen": null, "formato": "numero" }   // formato: numero | anio
 solution: { "valor": 1234.5, "explicacion": "..." }
 
-// pista_audio / clip_video (Hipster)
+// pista_audio (Hipster) / clip_video (Cine y series; artista = director, obligatorio)
 content:  { "youtube_id": "XXXXXXXXXXX", "inicio": 42, "duracion": 20, "categoria": "musica" } // musica | pelicula | serie | dibujo
 solution: { "anio": 1986, "titulo": "...", "artista": "...",
             "variantes_titulo": ["..."], "variantes_artista": ["..."] }
@@ -181,7 +181,8 @@ Puntaje base: **hasta 1.000 puntos por ítem**, multiplicado por `event_blocks.m
 | `trivia` | Trivia | pregunta_opciones | Botones grandes con las opciones (A, B, C, D con colores distintos) | 1.000 si correcta, 0 si no |
 | `dos_verdades` | Dos verdades y una mentira | trio_verdad_mentira | 3 botones con las afirmaciones resumidas ("1", "2", "3") | 1.000 si elige la mentira |
 | `aproximaciones` | Aproximaciones | pregunta_numerica | Teclado numérico grande; si `formato = anio`, selector de año | d = abs(resp − valor). dmin = 1.000. Resto: `round(800 × (1 − (d − dmin)/(dmax − dmin)))`. La más lejana 0. Si dmax = dmin, todas 1.000 |
-| `hipster` | Hipster musical (o "Hipster de películas", etc., según `title`) | pista_audio, clip_video | Año con − / + y teclado, título y artista opcionales | Año: `max(0, 600 − 75 × abs(diferencia))`. Título aceptado: +200. Artista aceptado: +200 |
+| `hipster` | Hipster musical | pista_audio | Año con − / + y teclado, título y artista opcionales | Año: `max(0, 600 − 75 × abs(diferencia))`. Título aceptado: +200. Artista aceptado: +200 |
+| `cine` | Cine y series | clip_video | Año con − / + y teclado, título y director opcionales | Igual que Hipster (el director va en `artista`, obligatorio en el ítem). La escena **se ve** en el proyector mientras se responde |
 
 **Validación de texto (Hipster)**, en SQL con `pg_trgm` + `unaccent`, y una copia de la función de normalización en TS con tests:
 
@@ -200,9 +201,9 @@ Primera vez: botón grande "Comenzar la noche" (habilita audio del navegador y p
 
 - `cover`: título de la noche (Fredoka grande, blanco sobre azul con una línea naranja debajo), "3ra Edición" como sello, fecha; tarjeta blanca inclinada con logo, QR a `/jugar/:codigo`, el código en grande y "Escaneá con un celular por mesa"; fila inferior con las mesas registradas apareciendo en vivo ("9 mesas listas").
 - `block_intro`: nombre de la dinámica, cómo se juega en 1 o 2 líneas, cantidad de ítems, sello de práctica si corresponde.
-- `item_open`: barra superior con dinámica y "canción 3 de 8"; tarjeta central con la consigna (para Hipster, ecualizador animado y "¿De qué año es esta canción?"; el iframe de YouTube suena **detrás** de la tarjeta, oculto); temporizador circular (si llega a 0 muestra "¡Tiempo!" pero **no cierra**); **tablero de participación** con todas las mesas: con tilde verde las que respondieron, punteadas las que faltan, apagadas con borde rojo las desconectadas; contador "11 de 15".
+- `item_open`: barra superior con dinámica y "canción 3 de 8"; tarjeta central con la consigna (para Hipster, ecualizador animado y "¿De qué año es esta canción?"; el iframe de YouTube suena **detrás** de la tarjeta, oculto; en Cine y series el video se ve dentro de la tarjeta, agrandado y recortado para que no aparezcan el título ni el logo de YouTube, y se pausa al cerrar); temporizador circular (si llega a 0 muestra "¡Tiempo!" pero **no cierra**); **tablero de participación** con todas las mesas: con tilde verde las que respondieron, punteadas las que faltan, apagadas con borde rojo las desconectadas; contador "11 de 15".
 - `item_closed`: igual que abierto con "Respuestas cerradas" y el tablero congelado; el audio se detiene.
-- `item_revealed`: tarjeta clara con la solución (para Hipster: año enorme en naranja, título, artista; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto con fondo amarillo y texto azul profundo). En práctica: "Así hubieran sumado".
+- `item_revealed`: tarjeta clara con la solución (para Hipster: año enorme en naranja, título, artista; Cine: año, título y "Dirección: …"; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto con fondo amarillo y texto azul profundo). En práctica: "Así hubieran sumado".
 - `block_ranking`: ranking completo de la noche al cerrar la dinámica, en dos columnas si hay más de 10 mesas.
 - `final`: podio 1-2-3 grande + resto de la tabla; mensaje de cierre y @familia.ludica.
 

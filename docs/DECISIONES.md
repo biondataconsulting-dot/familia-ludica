@@ -146,6 +146,13 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Mesas en el panel**: "PIN:" antes del número.
 - **Desarrollo en Windows**: Vite vigila los archivos por sondeo (`server.watch.usePolling`), porque el vigilante normal se perdía cambios. No afecta el build ni Vercel.
 
+## Cine y series (pedido del cliente)
+
+- Dinámica nueva `cine` ("Cine y series") para `clip_video`; `hipster` queda solo para `pista_audio`. Mismo formulario y mismo puntaje que Hipster (`score_cine` envuelve a `score_hipster`): año + título (+200) + director (+200, va en `artista`, obligatorio en las escenas).
+- La escena **se ve y se escucha** desde que se abre: el player se ubica encima de un marco 16:9 de la tarjeta, agrandado 35% dentro de un recorte (sin clics) para esconder la barra de título y el logo de YouTube. Se pausa al cerrar respuestas y desaparece al revelar.
+- Igual que las canciones, las escenas arrancan en 0:00 y duran `duracion`: conviene usar videos que ya sean solo la escena (sin intro con el nombre de la película).
+- **Corrección del conductor**: además de Aceptar / Rechazar en las dudosas, en la tabla de respuestas (con respuestas cerradas) se puede dar vuelta lo que el sistema decidió solo (p. ej. "Volver al futuro 2" se acepta sola contra "Volver al futuro" por similitud). Vale para Hipster y Cine.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

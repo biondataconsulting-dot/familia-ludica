@@ -8,7 +8,7 @@ const DINAMICA_DE_TIPO: Record<string, string> = {
   trio_verdad_mentira: 'dos_verdades',
   pregunta_numerica: 'aproximaciones',
   pista_audio: 'hipster',
-  clip_video: 'hipster',
+  clip_video: 'cine',
 }
 
 /** Cómo se va a ver el ítem en el proyector (abierto o revelado), en chico. */

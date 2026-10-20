@@ -6,5 +6,5 @@ export const meta: MetaDinamica = {
   comoSeJuega: 'Escuchen el fragmento y adivinen el año. Si aciertan título y artista, suman más.',
   instruccionCelular: '¿De qué año es?',
   sustantivo: 'canción',
-  tipos: ['pista_audio', 'clip_video'],
+  tipos: ['pista_audio'],
 }

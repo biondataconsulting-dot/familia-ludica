@@ -40,8 +40,15 @@ export const CASOS_ITEMS: { nombre: string; tipo: string; contenido: unknown; so
   { nombre: 'año antes de 1900', tipo: 'pista_audio', contenido: { youtube_id: 'dQw4w9WgXcQ' }, solucion: { anio: 1850, titulo: 't', artista: 'a' }, error: 'entre 1900' },
   { nombre: 'año en el futuro', tipo: 'pista_audio', contenido: { youtube_id: 'dQw4w9WgXcQ' }, solucion: { anio: 2999, titulo: 't', artista: 'a' }, error: 'entre 1900' },
   { nombre: 'canción sin artista', tipo: 'pista_audio', contenido: { youtube_id: 'dQw4w9WgXcQ' }, solucion: { anio: 1987, titulo: 't' }, error: 'Falta el artista' },
-  { nombre: 'clip sin artista (vale)', tipo: 'clip_video', contenido: { youtube_id: 'dQw4w9WgXcQ', categoria: 'pelicula' }, solucion: { anio: 1987, titulo: 't' }, error: null },
+  { nombre: 'escena sin director', tipo: 'clip_video', contenido: { youtube_id: 'dQw4w9WgXcQ', categoria: 'pelicula' }, solucion: { anio: 1987, titulo: 't' }, error: 'Falta el director' },
+  {
+    nombre: 'escena válida (artista = director)',
+    tipo: 'clip_video',
+    contenido: { youtube_id: 'dQw4w9WgXcQ', duracion: 30, categoria: 'pelicula' },
+    solucion: { anio: 1985, titulo: 'Volver al futuro', artista: 'Robert Zemeckis', variantes_titulo: ['Back to the Future'] },
+    error: null,
+  },
   { nombre: 'duración larguísima', tipo: 'pista_audio', contenido: { youtube_id: 'dQw4w9WgXcQ', duracion: 600 }, solucion: { anio: 1987, titulo: 't', artista: 'a' }, error: '5 a 120' },
-  { nombre: 'categoría inventada', tipo: 'clip_video', contenido: { youtube_id: 'dQw4w9WgXcQ', categoria: 'novela' }, solucion: { anio: 1987, titulo: 't' }, error: 'categoria' },
+  { nombre: 'categoría inventada', tipo: 'clip_video', contenido: { youtube_id: 'dQw4w9WgXcQ', categoria: 'novela' }, solucion: { anio: 1987, titulo: 't', artista: 'd' }, error: 'categoria' },
   { nombre: 'variantes que no son lista', tipo: 'pista_audio', contenido: { youtube_id: 'dQw4w9WgXcQ' }, solucion: { anio: 1987, titulo: 't', artista: 'a', variantes_artista: 'x' }, error: 'variantes_artista' },
 ]

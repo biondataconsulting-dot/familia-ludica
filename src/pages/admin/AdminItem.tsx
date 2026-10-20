@@ -48,7 +48,7 @@ type Campos = {
 const str = (v: unknown) => (typeof v === 'string' ? v : typeof v === 'number' ? String(v) : '')
 const lista = (v: unknown) => (Array.isArray(v) ? v.map(String) : [])
 
-function camposDe(item: ItemCatalogo | null): Campos {
+function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
   const c = item?.content ?? {}
   const s = item?.solution ?? {}
   return {
@@ -64,7 +64,7 @@ function camposDe(item: ItemCatalogo | null): Campos {
     imagen: str(c.imagen),
     youtube: str(c.youtube_id),
     duracion: str(c.duracion ?? 20),
-    categoria: str(c.categoria ?? 'musica'),
+    categoria: str(c.categoria ?? (tipo === 'clip_video' ? 'pelicula' : 'musica')),
     anio: str(s.anio),
     titulo: str(s.titulo),
     artista: str(s.artista),
@@ -114,7 +114,7 @@ function armar(tipo: TipoItem, f: Campos): { contenido: Record<string, unknown>;
 function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInicial: TipoItem }) {
   const navegar = useNavigate()
   const [tipo, setTipo] = useState<TipoItem>(tipoInicial)
-  const [f, setF] = useState<Campos>(() => camposDe(item))
+  const [f, setF] = useState<Campos>(() => camposDe(item, tipoInicial))
   const [enviando, setEnviando] = useState(false)
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null)
   const poner = <K extends keyof Campos>(k: K, v: Campos[K]) => setF((x) => ({ ...x, [k]: v }))
@@ -232,8 +232,10 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                   <input value={f.youtube} onChange={(e) => poner('youtube', e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={CAMPO} />
                 </Etiqueta>
                 <div className="grid gap-3 md:grid-cols-2">
-                  <Etiqueta texto="Suenan (s)" ayuda="(desde el principio de la canción)">
-
+                  <Etiqueta
+                    texto={tipo === 'clip_video' ? 'Dura (s)' : 'Suenan (s)'}
+                    ayuda={tipo === 'clip_video' ? '(desde el principio del video)' : '(desde el principio de la canción)'}
+                  >
                     <input value={f.duracion} onChange={(e) => poner('duracion', e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
                   </Etiqueta>
                   <Etiqueta texto="Categoría">
@@ -253,7 +255,7 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                   <Etiqueta texto="Título">
                     <input value={f.titulo} onChange={(e) => poner('titulo', e.target.value)} maxLength={150} className={CAMPO} />
                   </Etiqueta>
-                  <Etiqueta texto="Artista" ayuda={tipo === 'clip_video' ? '(opcional)' : undefined}>
+                  <Etiqueta texto={tipo === 'clip_video' ? 'Director o directora' : 'Artista'}>
                     <input value={f.artista} onChange={(e) => poner('artista', e.target.value)} maxLength={150} className={CAMPO} />
                   </Etiqueta>
                 </div>
@@ -261,7 +263,7 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                   <Etiqueta texto="Otras formas del título" ayuda="(una por línea; también se aceptan)">
                     <textarea value={f.variantesTitulo} onChange={(e) => poner('variantesTitulo', e.target.value)} rows={2} className={`${CAMPO} py-2`} />
                   </Etiqueta>
-                  <Etiqueta texto="Otras formas del artista" ayuda="(una por línea)">
+                  <Etiqueta texto={tipo === 'clip_video' ? 'Otras formas del director' : 'Otras formas del artista'} ayuda="(una por línea)">
                     <textarea value={f.variantesArtista} onChange={(e) => poner('variantesArtista', e.target.value)} rows={2} className={`${CAMPO} py-2`} />
                   </Etiqueta>
                 </div>

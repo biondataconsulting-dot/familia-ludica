@@ -10,7 +10,7 @@ import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
 
-const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster'] as const
+const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine'] as const
 const mensajeDe = (e: unknown) => (e instanceof ErrorRpc ? e.message : 'Algo salió mal. Probá de nuevo.')
 
 /** /admin/noche/:id — datos de la noche, bloques e ítems de cada bloque. "nueva" crea una. */
