@@ -72,7 +72,7 @@ export function Responder({ live, mesa, dinamica, enviada, onEnviada }: Props) {
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <h1 className="text-center text-2xl font-bold">{dinamica.meta.instruccionCelular}</h1>
+      <h1 className="text-center text-2xl font-bold">{dinamica.instruccion?.(item) ?? dinamica.meta.instruccionCelular}</h1>
       <dinamica.PhoneInput item={item} valor={borrador} onCambiar={setBorrador} />
       {error && <Aviso>{error}</Aviso>}
       <div className="sticky bottom-0 -mx-4 mt-auto bg-crema/95 px-4 pb-4 pt-2">

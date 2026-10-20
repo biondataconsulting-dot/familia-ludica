@@ -21,7 +21,7 @@ export function Revelado({ live }: { live: Live }) {
       <div className="flex min-h-0 flex-1 gap-[2cqw]">
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-[1.5cqw] rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
           {conVistaPropia ? (
-            <ContenidoItem dinamica={live.block?.dynamic} item={item} solucion={sol} />
+            <ContenidoItem dinamica={live.block?.dynamic} item={item} solucion={sol} puntos={revelado.points} />
           ) : (
             <>
               <p className="text-[2cqw] font-bold uppercase tracking-wide text-profundo/60">La respuesta</p>

@@ -27,7 +27,12 @@ insert into public.catalog_items (id, type, content, difficulty) values
   ('00000000-0000-4000-b000-000000000006', 'trio_verdad_mentira',
    '{"afirmaciones": ["El ajedrez nació en la India.", "Un pulpo tiene tres corazones.", "La Gran Muralla China se ve a simple vista desde la Luna."]}', 'facil'),
   ('00000000-0000-4000-b000-000000000007', 'trio_verdad_mentira',
-   '{"afirmaciones": ["El Monopoly se inventó en Estados Unidos.", "El truco se juega con baraja francesa.", "El UNO salió a la venta en 1971."]}', 'media')
+   '{"afirmaciones": ["El Monopoly se inventó en Estados Unidos.", "El truco se juega con baraja francesa.", "El UNO salió a la venta en 1971."]}', 'media'),
+  -- Aproximaciones (pregunta_numerica)
+  ('00000000-0000-4000-b000-000000000008', 'pregunta_numerica',
+   '{"texto": "¿A cuántos metros sobre el nivel del mar está la cumbre del Aconcagua?", "unidad": "metros", "imagen": null, "formato": "numero"}', 'media'),
+  ('00000000-0000-4000-b000-000000000009', 'pregunta_numerica',
+   '{"texto": "¿En qué año se inauguró el Obelisco de Buenos Aires?", "unidad": "", "imagen": null, "formato": "anio"}', 'media')
 on conflict do nothing;
 
 insert into public.catalog_solutions (item_id, solution) values
@@ -37,7 +42,9 @@ insert into public.catalog_solutions (item_id, solution) values
   ('00000000-0000-4000-b000-000000000004', '{"correcta": 2, "explicacion": "El Amazonas, con unos 7.000 km."}'),
   ('00000000-0000-4000-b000-000000000005', '{"correcta": 1, "explicacion": "8 × 8 = 64 casillas."}'),
   ('00000000-0000-4000-b000-000000000006', '{"mentira": 2, "explicacion": "Desde la Luna no se distingue a simple vista."}'),
-  ('00000000-0000-4000-b000-000000000007', '{"mentira": 1, "explicacion": "El truco se juega con baraja española."}')
+  ('00000000-0000-4000-b000-000000000007', '{"mentira": 1, "explicacion": "El truco se juega con baraja española."}'),
+  ('00000000-0000-4000-b000-000000000008', '{"valor": 6961, "explicacion": "Es la montaña más alta de América."}'),
+  ('00000000-0000-4000-b000-000000000009', '{"valor": 1936, "explicacion": "Se inauguró el 23 de mayo de 1936, por los 400 años de la primera fundación."}')
 on conflict do nothing;
 
 insert into public.item_tags (item_id, tag_id)
@@ -57,7 +64,9 @@ insert into public.event_blocks (id, event_id, position, dynamic, title, multipl
   ('00000000-0000-4000-d000-000000000002', '00000000-0000-4000-c000-000000000001', 2, 'trivia',
    'Trivia', 1, false, '{"timer_seconds": 30}'),
   ('00000000-0000-4000-d000-000000000003', '00000000-0000-4000-c000-000000000001', 3, 'dos_verdades',
-   'Dos verdades y una mentira', 1, false, '{"timer_seconds": 40}')
+   'Dos verdades y una mentira', 1, false, '{"timer_seconds": 40}'),
+  ('00000000-0000-4000-d000-000000000004', '00000000-0000-4000-c000-000000000001', 4, 'aproximaciones',
+   'Aproximaciones', 1, false, '{"timer_seconds": 45}')
 on conflict do nothing;
 
 insert into public.block_items (id, block_id, position, catalog_item_id) values
@@ -67,5 +76,7 @@ insert into public.block_items (id, block_id, position, catalog_item_id) values
   ('00000000-0000-4000-e000-000000000004', '00000000-0000-4000-d000-000000000002', 2, '00000000-0000-4000-b000-000000000004'),
   ('00000000-0000-4000-e000-000000000005', '00000000-0000-4000-d000-000000000002', 3, '00000000-0000-4000-b000-000000000005'),
   ('00000000-0000-4000-e000-000000000006', '00000000-0000-4000-d000-000000000003', 1, '00000000-0000-4000-b000-000000000006'),
-  ('00000000-0000-4000-e000-000000000007', '00000000-0000-4000-d000-000000000003', 2, '00000000-0000-4000-b000-000000000007')
+  ('00000000-0000-4000-e000-000000000007', '00000000-0000-4000-d000-000000000003', 2, '00000000-0000-4000-b000-000000000007'),
+  ('00000000-0000-4000-e000-000000000008', '00000000-0000-4000-d000-000000000004', 1, '00000000-0000-4000-b000-000000000008'),
+  ('00000000-0000-4000-e000-000000000009', '00000000-0000-4000-d000-000000000004', 2, '00000000-0000-4000-b000-000000000009')
 on conflict do nothing;

@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import type { ItemActual } from '../lib/tipos'
+import type { ItemActual, Revelado } from '../lib/tipos'
 
 export type MetaDinamica = {
   clave: string
@@ -27,6 +27,8 @@ export type PropsProyector = {
   item: ItemActual
   /** Solo en el revelado. */
   solucion?: Record<string, unknown>
+  /** Solo en el revelado: puntos y detalle por mesa (ej.: quién quedó más cerca). */
+  puntos?: Revelado['points']
 }
 
 /** Contrato de una dinámica en el frontend (spec §7). El motor no conoce los detalles. */
@@ -37,6 +39,8 @@ export type Dinamica = {
   ProjectorReveal: ComponentType<PropsProyector>
   /** null si la respuesta está completa; si no, qué falta (en español). */
   validar: (item: ItemActual, r: Respuesta | null) => string | null
+  /** Título del formulario si depende del ítem (ej.: "¿En qué año?"); si no, meta.instruccionCelular. */
+  instruccion?: (item: ItemActual) => string
   /** Texto corto de una respuesta, para "Enviaron: …" y el panel del conductor. */
   describir: (contenido: Record<string, unknown>, r: Respuesta) => string
 }

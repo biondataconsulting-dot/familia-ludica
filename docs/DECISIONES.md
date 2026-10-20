@@ -80,6 +80,16 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Revelado**: columna derecha "Sumaron" debajo del logo de la esquina (el logo no puede bajar de 140 px y pisaba la tarjeta a 1280 px). En el paso 8 esa columna suma el top 5.
 - **Seed**: se agregó un bloque de ejemplo "Dos verdades y una mentira" (2 ítems) a NAUDIR3 para probar y para la noche simulada del paso 8. Se aplica con `npm run db:seed` (idempotente). El evento real se arma en el paso 10.
 
+## Paso 7
+
+- **Fórmula en un solo lugar que cuenta**: `private.score_aproximaciones` (SQL). La copia en `src/dynamics/aproximaciones/puntaje.ts` existe solo para documentar y testear; los casos (`casos.ts`) los usan tanto Vitest como la prueba de SQL, así no pueden divergir.
+- **Redondeo**: `round()` de Postgres (mitad hacia arriba para positivos) = `Math.round` de JS para estos valores (siempre ≥ 0).
+- **Respuesta**: `{"valor": número}`. Se aceptan decimales y negativos (por si hay preguntas de temperatura); tope ±10¹². En preguntas `formato: anio`, entero entre −9999 y 9999.
+- **Teclado propio** en el celular (no el del sistema): coma decimal, botón ± y punto de miles al mostrar. En años: selector con −10/−1/+1/+10 (arranca en 1990) y teclado; con 4 dígitos, el siguiente número empieza un año nuevo. El selector de año queda en `src/dynamics/comun/` para Hipster.
+- **Resultado en el celular**: "¡La más cerca!" para la distancia mínima y "¡Bien cerca!" para el resto que suma; "¡Correcta!" queda para las dinámicas con respuesta correcta.
+- **Revelado**: el valor en grande y "La más cerca: …" con lo que respondió (sale del `detail.mas_cerca` del puntaje). Las dinámicas reciben ahora los puntos por mesa (`puntos`) en `ProjectorReveal`.
+- **Seed**: bloque de ejemplo "Aproximaciones" con 2 ítems (Aconcagua en metros; Obelisco, año).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

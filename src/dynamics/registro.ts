@@ -1,19 +1,20 @@
-import { meta as aproximaciones } from './aproximaciones/meta'
+import { aproximaciones } from './aproximaciones'
 import { dosVerdades } from './dos_verdades'
 import { meta as hipster } from './hipster/meta'
 import type { Dinamica, MetaDinamica } from './tipos'
 import { trivia } from './trivia'
 
-/** Dinámicas jugables (con formulario, proyector y validación). Aproximaciones e Hipster: pasos 7 y 9. */
+/** Dinámicas jugables (con formulario, proyector y validación). Hipster: paso 9. */
 const JUGABLES: Record<string, Dinamica> = {
   trivia,
   dos_verdades: dosVerdades,
+  aproximaciones,
 }
 
 const METAS: Record<string, MetaDinamica> = {
   trivia: trivia.meta,
   dos_verdades: dosVerdades.meta,
-  aproximaciones,
+  aproximaciones: aproximaciones.meta,
   hipster,
 }
 
