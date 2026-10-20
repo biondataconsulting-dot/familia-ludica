@@ -153,6 +153,10 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - Igual que las canciones, las escenas arrancan en 0:00 y duran `duracion`: conviene usar videos que ya sean solo la escena (sin intro con el nombre de la película).
 - **Corrección del conductor**: además de Aceptar / Rechazar en las dudosas, en la tabla de respuestas (con respuestas cerradas) se puede dar vuelta lo que el sistema decidió solo (p. ej. "Volver al futuro 2" se acepta sola contra "Volver al futuro" por similitud). Vale para Hipster y Cine.
 
+## Borrar noches (pedido del cliente)
+
+- Al pie de `/admin/noche/:id`: "Borrar esta noche…" pide escribir el código (como el reinicio) y borra la noche con bloques, mesas, respuestas y puntos (`admin_delete_event`). El catálogo no se toca. Se puede borrar en cualquier estado; si está en vivo o ya se jugó, la pantalla lo advierte.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

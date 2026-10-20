@@ -36,7 +36,70 @@ function Noche({ eventId }: { eventId: string }) {
       </div>
       <FormNoche evento={evento} onGuardado={recargar} />
       <Bloques evento={evento} bloques={bloques} onCambio={recargar} />
+      <BorrarNoche evento={evento} />
     </div>
+  )
+}
+
+/** Borrar una noche mal cargada o de prueba (pide escribir el código para confirmar). */
+function BorrarNoche({ evento }: { evento: EventoPublico }) {
+  const navegar = useNavigate()
+  const [abierto, setAbierto] = useState(false)
+  const [texto, setTexto] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const jugada = evento.status === 'en_vivo' || evento.status === 'terminado'
+
+  async function borrar(e: FormEvent) {
+    e.preventDefault()
+    setEnviando(true)
+    setError(null)
+    try {
+      await admin.deleteEvent(evento.id, texto)
+      navegar('/admin', { replace: true })
+    } catch (err) {
+      setError(mensajeDe(err))
+      setEnviando(false)
+    }
+  }
+
+  if (!abierto) {
+    return (
+      <button onClick={() => setAbierto(true)} className="self-start text-sm font-semibold text-red-700 underline">
+        Borrar esta noche…
+      </button>
+    )
+  }
+  return (
+    <Tarjeta titulo="Borrar noche">
+      <form onSubmit={borrar} className="flex flex-col gap-3">
+        <p className="text-sm text-profundo/70">
+          Borra la noche <strong>para siempre</strong>: sus bloques, mesas, respuestas y puntos. Los ítems del catálogo no se tocan.
+          {jugada && (
+            <strong className="block text-red-700">
+              {evento.status === 'en_vivo'
+                ? 'Ojo: esta noche está en vivo. Si hay un proyector o celulares conectados, van a ver "No encontramos esta noche".'
+                : 'Ojo: esta noche ya se jugó. Se pierde su historial (podio y puntos).'}
+            </strong>
+          )}
+        </p>
+        <Etiqueta texto={`Para confirmar, escribí el código de la noche: ${evento.code}`}>
+          <input value={texto} onChange={(e) => setTexto(e.target.value.toUpperCase())} className={`${CAMPO} max-w-xs font-titulo tracking-widest`} />
+        </Etiqueta>
+        {error && <Mensaje>{error}</Mensaje>}
+        <div className="flex flex-wrap gap-2">
+          <button
+            disabled={enviando || texto.trim() !== evento.code}
+            className="min-h-toque rounded-xl bg-red-700 px-4 font-titulo font-semibold text-white disabled:opacity-40"
+          >
+            {enviando ? 'Borrando…' : 'Borrar noche'}
+          </button>
+          <BotonSecundario type="button" onClick={() => setAbierto(false)}>
+            Cancelar
+          </BotonSecundario>
+        </div>
+      </form>
+    </Tarjeta>
   )
 }
 
