@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/useEstructura'
+import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
 import { metaDe } from '../../dynamics/registro'
 import { consigna, describirSolucion } from '../../dynamics/solucion'
@@ -207,27 +208,10 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           </Tarjeta>
         </section>
 
-        {/* Centro: respuestas (el detalle con validación llega en el paso 6) */}
+        {/* Centro: respuestas con estado y puntos provisorios */}
         <section>
           <Tarjeta titulo={live.item ? `Respuestas · ${live.answers_count} de ${live.teams_count}` : 'Respuestas'}>
-            {!live.item ? (
-              <p className="text-profundo/70">Cuando abras un ítem, acá vas a ver quién respondió.</p>
-            ) : (
-              <ul className="flex flex-col gap-1">
-                {[...live.teams]
-                  .sort((a, b) => Number(live.answered.includes(b.id)) - Number(live.answered.includes(a.id)))
-                  .map((m) => (
-                    <li key={m.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 odd:bg-crema">
-                      <span className="font-semibold">{m.name}</span>
-                      {live.answered.includes(m.id) ? (
-                        <span className="font-bold text-green-700">✔ respondió</span>
-                      ) : (
-                        <span className="text-profundo/50">sin respuesta</span>
-                      )}
-                    </li>
-                  ))}
-              </ul>
-            )}
+            <TablaRespuestas live={live} eventId={evento.id} />
           </Tarjeta>
         </section>
 

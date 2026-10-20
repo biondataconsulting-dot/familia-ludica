@@ -1,19 +1,29 @@
 import { meta as aproximaciones } from './aproximaciones/meta'
-import { meta as dosVerdades } from './dos_verdades/meta'
+import { dosVerdades } from './dos_verdades'
 import { meta as hipster } from './hipster/meta'
-import type { MetaDinamica } from './tipos'
-import { meta as trivia } from './trivia/meta'
+import type { Dinamica, MetaDinamica } from './tipos'
+import { trivia } from './trivia'
 
-const DINAMICAS: Record<string, MetaDinamica> = {
+/** Dinámicas jugables (con formulario, proyector y validación). Aproximaciones e Hipster: pasos 7 y 9. */
+const JUGABLES: Record<string, Dinamica> = {
   trivia,
   dos_verdades: dosVerdades,
+}
+
+const METAS: Record<string, MetaDinamica> = {
+  trivia: trivia.meta,
+  dos_verdades: dosVerdades.meta,
   aproximaciones,
   hipster,
 }
 
+export function dinamicaDe(clave: string | undefined): Dinamica | null {
+  return (clave && JUGABLES[clave]) || null
+}
+
 export function metaDe(clave: string | undefined): MetaDinamica {
   return (
-    (clave && DINAMICAS[clave]) || {
+    (clave && METAS[clave]) || {
       clave: clave ?? '',
       nombre: 'Juego',
       comoSeJuega: 'Miren la consigna y respondan desde el celular.',

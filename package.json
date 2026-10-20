@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
     "verificar:rls": "node --env-file=.env.local scripts/verificar-rls.ts",
-    "db:push": "supabase db push --include-seed"
+    "db:push": "supabase db push --include-seed",
+    "db:seed": "supabase db query --linked -f supabase/seed.sql"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

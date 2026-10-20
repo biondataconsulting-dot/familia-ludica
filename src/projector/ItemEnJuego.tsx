@@ -16,7 +16,7 @@ export function ItemEnJuego({ live, temporizador }: { live: Live; temporizador: 
 
       <div className="flex min-h-0 flex-1 items-stretch gap-[2.5cqw]">
         <div className="flex flex-1 flex-col justify-center rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
-          <ContenidoItem item={live.item} />
+          <ContenidoItem dinamica={live.block?.dynamic} item={live.item} />
         </div>
 
         <div className="flex w-[16cqw] shrink-0 flex-col items-center justify-center gap-[1.5cqw]">

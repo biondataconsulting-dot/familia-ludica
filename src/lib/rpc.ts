@@ -42,3 +42,11 @@ export const rejoinTeam = (codigo: string, teamId: string, pin: string) =>
 export const whoami = (token: string) => llamar<Whoami>('whoami', { p_token: token })
 
 export const heartbeat = (token: string) => llamar<null>('heartbeat', { p_token: token })
+
+/** Envía (o cambia) la respuesta de la mesa al ítem abierto. Devuelve la respuesta normalizada por la base. */
+export const submitAnswer = (token: string, blockItemId: string, respuesta: Record<string, unknown>) =>
+  llamar<{ answer: Record<string, unknown> }>('submit_answer', {
+    p_token: token,
+    p_block_item_id: blockItemId,
+    p_answer: respuesta,
+  })

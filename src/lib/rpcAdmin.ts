@@ -30,4 +30,7 @@ export const admin = {
   showBlockRanking: (eventId: string) => llamar('admin_show_block_ranking', { p_event_id: eventId }),
   finish: (eventId: string) => llamar('admin_finish', { p_event_id: eventId }),
   listTeams: (eventId: string) => llamar<MesaAdmin[]>('admin_list_teams', { p_event_id: eventId }),
+  /** Puntos provisorios del ítem actual (× multiplicador), sin registrar nada. */
+  preview: (eventId: string) =>
+    llamar<{ team_id: string; points: number; detail: Record<string, unknown> | null }[]>('admin_preview', { p_event_id: eventId }),
 }

@@ -1,12 +1,18 @@
 import type { ReactNode } from 'react'
-import { metaDe } from '../dynamics/registro'
+import { dinamicaDe, metaDe } from '../dynamics/registro'
 import { formatearNumero } from '../dynamics/solucion'
 import type { Live, MiMesa, Revelado } from '../lib/tipos'
+import { Responder } from './Responder'
+import { useMiRespuesta } from './useMiRespuesta'
 
-/** Lo que ve la mesa ya registrada, según la fase. El formulario de cada dinámica llega en el paso 6. */
+/** Lo que ve la mesa ya registrada, según la fase. */
 export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
   const meta = metaDe(live.block?.dynamic)
+  const dinamica = dinamicaDe(live.block?.dynamic)
   const practica = live.block?.is_practice ?? false
+  const { respuesta, registrar } = useMiRespuesta(mesa.token, live.item?.block_item_id)
+  // Respaldo: si la base dice que respondimos pero todavía no leímos qué, igual mostramos "enviada".
+  const yaRespondio = live.answered.includes(mesa.team_id)
 
   switch (live.phase) {
     case 'cover':
@@ -23,34 +29,58 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
         </Centro>
       )
 
-    case 'item_open': {
-      const yaRespondio = live.answered.includes(mesa.team_id)
+    case 'item_open':
+      if (!dinamica || !live.item) {
+        return (
+          <Centro titulo="Miren el proyector" sello={practica}>
+            Esta dinámica todavía no se responde desde el celular.
+          </Centro>
+        )
+      }
       return (
-        <Centro titulo={yaRespondio ? '¡Respuesta enviada!' : meta.instruccionCelular} sello={practica}>
-          Miren la consigna en el proyector.
-          <br />
-          <span className="font-bold">
-            Respondieron {live.answers_count} de {live.teams_count}
-          </span>
-        </Centro>
+        <>
+          {practica && <Sello />}
+          <Responder
+            key={live.item.block_item_id}
+            live={live}
+            mesa={mesa}
+            dinamica={dinamica}
+            enviada={respuesta ?? (yaRespondio ? {} : null)}
+            onEnviada={(r) => registrar(live.item!.block_item_id, r)}
+          />
+        </>
       )
-    }
 
     case 'item_closed':
       return (
         <Centro emoji="✋" titulo="Respuestas cerradas" sello={practica}>
-          En un ratito se revela la respuesta.
+          {respuesta && dinamica && live.item ? (
+            <>
+              Mandaron: <span className="font-bold">{dinamica.describir(live.item.content, respuesta)}</span>
+            </>
+          ) : yaRespondio ? (
+            'Su respuesta quedó registrada.'
+          ) : (
+            'Esta vez no llegaron a responder.'
+          )}
         </Centro>
       )
 
     case 'item_revealed': {
       const revelado = live.revealed as Revelado | null
-      const puntos = revelado?.points.find((p) => p.team_id === mesa.team_id)?.points ?? 0
+      const mio = revelado?.points.find((p) => p.team_id === mesa.team_id)
       const verbo = revelado?.practice ? 'Hubieran sumado' : 'Sumaron'
-      return puntos > 0 ? (
-        <Centro emoji="🎉" titulo="¡Bien ahí!" sello={practica}>
+      if (!mio) {
+        return (
+          <Centro emoji="⏱️" titulo="No respondieron" sello={practica}>
+            Miren la respuesta en el proyector. ¡En la próxima!
+          </Centro>
+        )
+      }
+      return mio.points > 0 ? (
+        <Centro emoji="🎉" titulo="¡Correcta!" sello={practica}>
           <span className="font-titulo text-4xl font-bold text-naranja">
-            {verbo} +{formatearNumero(puntos)}
+            {verbo} +{formatearNumero(mio.points)}
           </span>
         </Centro>
       ) : (
@@ -76,14 +106,18 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
   }
 }
 
+function Sello() {
+  return (
+    <p className="mb-3 self-center rounded-lg bg-naranja px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white">
+      Ronda de práctica · no suma puntos
+    </p>
+  )
+}
+
 function Centro({ emoji, titulo, sello = false, children }: { emoji?: string; titulo: string; sello?: boolean; children: ReactNode }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
-      {sello && (
-        <p className="rounded-lg border-2 border-naranja px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-naranja">
-          Ronda de práctica · no suma puntos
-        </p>
-      )}
+      {sello && <Sello />}
       {emoji && (
         <p className="text-6xl" aria-hidden>
           {emoji}

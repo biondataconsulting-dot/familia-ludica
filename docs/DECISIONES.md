@@ -68,6 +68,18 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Revelado y ranking**: el revelado genérico (resaltado de la opción correcta / valor) ya funciona; el top 5 "Así va la noche", el ranking de bloque y el podio llegan en el paso 8.
 - **Panel del conductor**: en la navegación de bloques, "Presentar" lleva a la intro de cualquier bloque y "Abrir" abre cualquier ítem con el tiempo del bloque. Volver a la portada y Terminar la noche están en una fila secundaria.
 
+## Paso 6
+
+- **Sin texto amarillo sobre azul** (pedido del cliente): títulos en blanco; el acento cálido va como fondo naranja (sello de práctica, multiplicador, línea bajo el título de la portada). No se usó texto naranja sobre azul porque el contraste es 1,6:1. El amarillo queda solo como fondo del primer puesto (paso 8).
+- **Forma de la respuesta validada en la base**: `submit_answer` llama a `private.check_<dinámica>(content, answer)`, que la normaliza o lanza un error en español. Trivia y Dos verdades: `{"opcion": i}` con `i` entero dentro del rango. El frontend valida lo mismo antes de enviar (`validate.ts`), solo para avisar antes.
+- **Cierre sin carreras**: `submit_answer` toma `live_state` con `for share` y el cierre con `for update`: el cierre espera a los envíos en curso y después de cerrar ya nadie entra.
+- **Mesas sin respuesta**: no generan fila en `score_entries` (cuentan 0 en el ranking).
+- **Puntos provisorios**: `admin_preview(event_id)` corre el mismo `score_item` × multiplicador sin registrar nada; el panel los muestra mientras el ítem está abierto o cerrado.
+- **"Enviar respuesta" explícito**: tocar una opción la selecciona; se envía con el botón (como pide la spec). "Cambiar mi respuesta" vuelve al formulario con la opción anterior marcada; "Dejar la que mandé" cancela.
+- **Respuesta propia tras recargar**: el celular la pide con `whoami` al cambiar de ítem; si todavía no la leyó pero `answered` dice que respondió, muestra igual "¡Respuesta enviada!".
+- **Revelado**: columna derecha "Sumaron" debajo del logo de la esquina (el logo no puede bajar de 140 px y pisaba la tarjeta a 1280 px). En el paso 8 esa columna suma el top 5.
+- **Seed**: se agregó un bloque de ejemplo "Dos verdades y una mentira" (2 ítems) a NAUDIR3 para probar y para la noche simulada del paso 8. Se aplica con `npm run db:seed` (idempotente). El evento real se arma en el paso 10.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.
