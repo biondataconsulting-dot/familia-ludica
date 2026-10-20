@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
 // Cada pantalla en su propio chunk: el celular no descarga el proyector ni el panel.
 const Pantalla = lazy(() => import('./pages/Pantalla'))
@@ -11,6 +11,7 @@ export default function App() {
   return (
     <Suspense fallback={null}>
       <Routes>
+        <Route path="/" element={<Navigate to="/admin" replace />} />
         <Route path="/pantalla/:codigo" element={<Pantalla />} />
         <Route path="/jugar/:codigo" element={<Jugar />} />
         <Route path="/admin/*" element={<Admin />} />

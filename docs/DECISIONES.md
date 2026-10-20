@@ -14,6 +14,8 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Barra del panel del conductor**: lleva "Familia Lúdica" en texto, no el logo, porque el manual no permite el logo completo por debajo de 140 px.
 - **Resolución del logo**: ver más abajo.
 
+- **Raíz `/`**: redirige a `/admin` (pedido del usuario), para que la dirección pelada no muestre "Esta página no existe".
+
 ## Paso 2
 
 - **Clave anon**: el proyecto usa el formato nuevo de Supabase (`sb_publishable_…`), equivalente a la clave anon. Va en `VITE_SUPABASE_ANON_KEY`.
