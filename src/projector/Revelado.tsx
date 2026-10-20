@@ -54,7 +54,7 @@ export function Revelado({ live }: { live: Live }) {
         </div>
 
         {/* Columna derecha, debajo del logo de la esquina. */}
-        <aside className="flex w-[22cqw] shrink-0 flex-col gap-[0.6cqw] pt-[7.5cqw]">
+        <aside className="debajo-del-logo flex w-[22cqw] shrink-0 flex-col gap-[0.6cqw] pt-[1cqw]">
           {revelado.practice ? <HubieranSumado puntos={sumaron} /> : <AsiVaLaNoche live={live} antes={revelado.ranking_antes ?? {}} />}
         </aside>
       </div>

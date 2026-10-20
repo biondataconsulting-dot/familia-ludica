@@ -8,7 +8,7 @@ export function Podio({ live }: { live: Live }) {
 
   return (
     <div className="flex h-full flex-col px-[4cqw] pb-[2cqw] pt-[3cqw]">
-      <div className="pr-[12cqw]">
+      <div className="libre-logo-derecha">
         <h1 className="font-titulo text-[4.2cqw] font-bold leading-none">¡Gracias por jugar!</h1>
         <p className="mt-[0.6cqw] text-[1.8cqw] font-semibold text-white/85">
           {live.event.name} · seguinos en <span className="font-extrabold text-white">@familia.ludica</span>

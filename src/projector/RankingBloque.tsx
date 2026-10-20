@@ -12,7 +12,7 @@ export function RankingBloque({ live }: { live: Live }) {
 
   return (
     <div className="flex h-full flex-col gap-[1.5cqw] px-[4cqw] pb-[2.5cqw] pt-[3cqw]">
-      <div className="pr-[12cqw]">
+      <div className="libre-logo-derecha">
         <h1 className="font-titulo text-[4.5cqw] font-bold leading-none">Así va la noche</h1>
         {live.block && <p className="mt-[0.6cqw] text-[1.8cqw] font-semibold text-white/80">Después de {live.block.title}</p>}
       </div>

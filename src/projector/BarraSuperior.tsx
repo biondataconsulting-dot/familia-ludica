@@ -8,7 +8,7 @@ export function BarraSuperior({ live }: { live: Live }) {
   const meta = metaDe(block.dynamic)
 
   return (
-    <div className="flex items-center gap-[1.5cqw] pr-[12cqw]">
+    <div className="libre-logo-derecha flex items-center gap-[1.5cqw]">
       <p className="font-titulo text-[2.4cqw] font-semibold">{block.title}</p>
       {block.is_practice && <SelloPractica />}
       {item && (

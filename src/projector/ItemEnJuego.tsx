@@ -19,13 +19,16 @@ export function ItemEnJuego({ live, temporizador }: { live: Live; temporizador: 
           <ContenidoItem dinamica={live.block?.dynamic} item={live.item} />
         </div>
 
-        <div className="flex w-[16cqw] shrink-0 flex-col items-center justify-center gap-[1.5cqw]">
+        {/* Columna derecha: arranca debajo del logo de la esquina. */}
+        <div className="debajo-del-logo flex w-[16cqw] shrink-0 flex-col items-center justify-center gap-[1.2cqw]">
           {cerrado ? (
             <p className="rotate-[-4deg] rounded-[1cqw] bg-naranja px-[1.2cqw] py-[1cqw] text-center font-titulo text-[2.2cqw] font-bold leading-tight shadow-lg">
               Respuestas cerradas
             </p>
           ) : (
-            <TemporizadorCircular temporizador={temporizador} />
+            <div className="w-[13cqw]">
+              <TemporizadorCircular temporizador={temporizador} />
+            </div>
           )}
           <p className="text-center font-titulo text-[2.2cqw] font-semibold">
             <span className="text-[3.4cqw] text-white">{live.answers_count}</span> de {live.teams_count}

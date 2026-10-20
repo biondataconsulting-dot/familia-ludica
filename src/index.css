@@ -42,6 +42,19 @@
     background-size: 2.4cqw 2.4cqw;
   }
 
+  /*
+   * Espacio del logo de la esquina del proyector (ancho max(140px, 7.5cqw), arriba a 1.5cqw).
+   * Con zoom del navegador el escenario queda angosto y los 140 px pesan más: por eso se calcula
+   * con el mismo max() en vez de un cqw fijo.
+   */
+  .libre-logo-derecha {
+    padding-right: calc(max(140px, 7.5cqw) + 3cqw);
+  }
+  /* Para columnas que arrancan debajo de la barra superior (≈ 8cqw desde arriba): bajan lo que falte. */
+  .debajo-del-logo {
+    margin-top: max(0px, calc(max(140px, 7.5cqw) * 1.03 + 2.5cqw - 8cqw));
+  }
+
   .boton-principal {
     @apply min-h-toque rounded-carta bg-naranja px-6 py-3 font-titulo text-lg font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
