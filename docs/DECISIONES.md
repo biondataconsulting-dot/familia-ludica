@@ -141,6 +141,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - **Demora del audio de Hipster**: el player se crea desde la presentación del bloque (invisible ahí, sin video) y la API de YouTube se baja al abrir el proyector. Al abrir una canción solo falta cargar el video. Medido desde que el proyector ve la canción abierta hasta que suena: 3,0 s antes (en frío), 0,97 s la primera canción y 0,7 s las siguientes. "Repetir" con el mismo video salta al inicio del fragmento (sin recargar). El `youtube_id` sigue llegando solo con la canción en juego.
 - **Aviso de sonido bloqueado**: espera 4 s y no aparece si el video todavía está cargando (antes, con una carga lenta, podía aparecer sin motivo).
+- **Canciones desde 0:00** (pedido del cliente): proyector, ensayo, panel y prueba del catálogo reproducen desde el principio durante `duracion`. El formulario ya no pide "empieza en" (guarda 0); el importador sigue aceptando `inicio` pero se ignora al reproducir.
 - **Puntos manuales**: puntos y motivo en renglones separados (en la columna angosta el motivo quedaba aplastado).
 - **Mesas en el panel**: "PIN:" antes del número.
 - **Desarrollo en Windows**: Vite vigila los archivos por sondeo (`server.watch.usePolling`), porque el vigilante normal se perdía cambios. No afecta el build ni Vercel.

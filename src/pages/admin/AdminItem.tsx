@@ -33,7 +33,6 @@ type Campos = {
   explicacion: string
   imagen: string
   youtube: string
-  inicio: string
   duracion: string
   categoria: string
   anio: string
@@ -64,7 +63,6 @@ function camposDe(item: ItemCatalogo | null): Campos {
     explicacion: str(s.explicacion),
     imagen: str(c.imagen),
     youtube: str(c.youtube_id),
-    inicio: str(c.inicio ?? 0),
     duracion: str(c.duracion ?? 20),
     categoria: str(c.categoria ?? 'musica'),
     anio: str(s.anio),
@@ -100,7 +98,8 @@ function armar(tipo: TipoItem, f: Campos): { contenido: Record<string, unknown>;
       }
     default:
       return {
-        contenido: { youtube_id: idDeYouTube(f.youtube), inicio: entero(f.inicio) ?? 0, duracion: entero(f.duracion) ?? 20, categoria: f.categoria },
+        // Siempre suena desde 0:00 (inicio queda en 0).
+        contenido: { youtube_id: idDeYouTube(f.youtube), inicio: 0, duracion: entero(f.duracion) ?? 20, categoria: f.categoria },
         solucion: {
           anio: entero(f.anio),
           titulo: f.titulo.trim(),
@@ -232,11 +231,9 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                 <Etiqueta texto="Video de YouTube" ayuda="(link o id de 11 caracteres)">
                   <input value={f.youtube} onChange={(e) => poner('youtube', e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={CAMPO} />
                 </Etiqueta>
-                <div className="grid gap-3 md:grid-cols-3">
-                  <Etiqueta texto="Empieza en (s)">
-                    <input value={f.inicio} onChange={(e) => poner('inicio', e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
-                  </Etiqueta>
-                  <Etiqueta texto="Dura (s)">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Etiqueta texto="Suenan (s)" ayuda="(desde el principio de la canción)">
+
                     <input value={f.duracion} onChange={(e) => poner('duracion', e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
                   </Etiqueta>
                   <Etiqueta texto="Categoría">
@@ -248,7 +245,7 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                     </select>
                   </Etiqueta>
                 </div>
-                <PruebaFragmento youtubeId={idDeYouTube(f.youtube)} inicio={entero(f.inicio) ?? 0} duracion={entero(f.duracion) ?? 20} />
+                <PruebaFragmento youtubeId={idDeYouTube(f.youtube)} inicio={0} duracion={entero(f.duracion) ?? 20} />
                 <div className="grid gap-3 md:grid-cols-[0.5fr_1fr_1fr]">
                   <Etiqueta texto="Año">
                     <input value={f.anio} onChange={(e) => poner('anio', e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" className={CAMPO} />

@@ -136,6 +136,8 @@ solution: { "anio": 1986, "titulo": "...", "artista": "...",
 
 Nota: `youtube_id` vive en `content` pero las vistas públicas lo quitan; solo `proyector_media(code)` lo devuelve (ver §4).
 
+Cambio pedido por el cliente: **las canciones suenan siempre desde 0:00** (para que no suenen cortadas) durante `duracion` segundos. `inicio` se sigue aceptando al importar por compatibilidad, pero no se usa para reproducir (`proyector_media` devuelve `inicio = 0`).
+
 ## 6. Funciones (RPC)
 
 **Públicas (mesa / proyector)**, todas `security definer`, validan código de evento:

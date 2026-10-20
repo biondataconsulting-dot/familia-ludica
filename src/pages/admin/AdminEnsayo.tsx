@@ -20,7 +20,7 @@ export default function AdminEnsayo() {
         bloque: b.title,
         numero: n + 1,
         youtubeId: String(i.content.youtube_id ?? ''),
-        inicio: Number(i.content.inicio ?? 0),
+        inicio: 0, // las canciones arrancan siempre desde 0:00
         duracion: Number(i.content.duracion ?? 20),
         nombre: [i.solution?.anio, i.solution?.titulo, i.solution?.artista].filter(Boolean).join(' · '),
       })),
@@ -116,7 +116,7 @@ function Videos({ videos }: { videos: Video[] }) {
             {/* Player de prueba (silenciado). Se ve a propósito: es el panel, no el proyector. */}
             <div ref={contenedor} className="aspect-video w-full overflow-hidden rounded-xl bg-profundo/10" />
             <p className="text-xs text-profundo/60">
-              Se prueba cada video silenciado, desde el segundo en que empieza el fragmento.
+              Se prueba cada video silenciado, desde el principio.
               {malos > 0 && <span className="block font-bold text-red-700">Hay {malos} que no van a sonar: reemplazalos en el catálogo.</span>}
             </p>
           </div>
