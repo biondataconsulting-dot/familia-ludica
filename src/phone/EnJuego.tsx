@@ -93,19 +93,53 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
     }
 
     case 'block_ranking':
-      return (
-        <Centro emoji="🏆" titulo="Así va la noche">
-          Miren el ranking en el proyector.
-        </Centro>
-      )
+      return <TablaRanking live={live} mesa={mesa} />
 
-    case 'final':
+    case 'final': {
+      const mia = live.ranking.find((r) => r.team_id === mesa.team_id)
       return (
-        <Centro emoji="💛" titulo="¡Gracias por jugar!">
-          Nos vemos en la próxima. Seguinos en @familia.ludica
+        <Centro emoji={mia?.position === 1 ? '🏆' : '💛'} titulo="¡Gracias por jugar!">
+          {mia && (
+            <span className="mb-2 block">
+              Terminaron en el <span className="font-titulo text-4xl font-bold text-naranja">{mia.position}°</span> puesto de{' '}
+              {live.ranking.length}, con <span className="font-bold">{formatearNumero(mia.total)}</span> puntos.
+            </span>
+          )}
+          Nos vemos en la próxima. Seguinos en <span className="font-bold">@familia.ludica</span>
         </Centro>
       )
+    }
   }
+}
+
+/** Ranking completo con la mesa propia resaltada. */
+function TablaRanking({ live, mesa }: { live: Live; mesa: MiMesa }) {
+  return (
+    <div className="flex flex-1 flex-col gap-3">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">Así va la noche</h1>
+        {live.block && <p className="text-profundo/70">Después de {live.block.title}</p>}
+      </div>
+      <ol className="flex flex-col gap-1.5">
+        {live.ranking.map((r) => {
+          const propia = r.team_id === mesa.team_id
+          return (
+            <li
+              key={r.team_id}
+              aria-current={propia ? 'true' : undefined}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2 ${
+                propia ? 'bg-naranja font-bold text-white shadow-md' : r.position === 1 ? 'bg-amarillo font-bold' : 'bg-white'
+              }`}
+            >
+              <span className="w-6 text-center font-titulo text-lg">{r.position}</span>
+              <span className="min-w-0 flex-1 truncate">{r.name}</span>
+              <span className="font-titulo tabular-nums">{formatearNumero(r.total)}</span>
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
 }
 
 function Sello() {

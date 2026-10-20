@@ -51,6 +51,17 @@ export type Live = {
   answered: string[]
   teams_count: number
   teams: MesaPublica[]
+  /** Ranking de la noche, ya ordenado (sin práctica ni anulados). */
+  ranking: FilaRanking[]
+}
+
+export type FilaRanking = {
+  team_id: string
+  name: string
+  total: number
+  position: number
+  /** Puntos de la mesa en el bloque actual. */
+  block_total: number
 }
 
 /** Credenciales de la mesa en este celular. El token es secreto: identifica a la mesa ante la base. */
@@ -64,4 +75,6 @@ export type Revelado = {
   solution: Record<string, unknown>
   points: { team_id: string; name: string; points: number; detail: unknown }[]
   practice: boolean
+  /** Puesto de cada mesa antes de sumar este ítem (para las flechas). */
+  ranking_antes?: Record<string, number>
 }

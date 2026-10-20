@@ -30,6 +30,10 @@ export const admin = {
   showBlockRanking: (eventId: string) => llamar('admin_show_block_ranking', { p_event_id: eventId }),
   finish: (eventId: string) => llamar('admin_finish', { p_event_id: eventId }),
   listTeams: (eventId: string) => llamar<MesaAdmin[]>('admin_list_teams', { p_event_id: eventId }),
+  manualPoints: (eventId: string, teamId: string, puntos: number, motivo: string) =>
+    llamar('admin_manual_points', { p_event_id: eventId, p_team_id: teamId, p_points: puntos, p_reason: motivo }),
+  voidEntry: (entryId: string) => llamar('admin_void_entry', { p_entry_id: entryId }),
+  unvoidEntry: (entryId: string) => llamar('admin_unvoid_entry', { p_entry_id: entryId }),
   /** Puntos provisorios del ítem actual (× multiplicador), sin registrar nada. */
   preview: (eventId: string) =>
     llamar<{ team_id: string; points: number; detail: Record<string, unknown> | null }[]>('admin_preview', { p_event_id: eventId }),

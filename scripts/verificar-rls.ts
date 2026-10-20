@@ -51,6 +51,15 @@ await noLee('rejoin_attempts')
   resultado(Boolean(error), 'anon NO borra catalog_solutions', error?.message ?? 'no dio error')
 }
 
+{
+  const { error } = await supabase.rpc('admin_manual_points', {
+    p_event_id: crypto.randomUUID(),
+    p_team_id: crypto.randomUUID(),
+    p_points: 1000,
+    p_reason: 'trampa',
+  })
+  resultado(Boolean(error?.message.includes('permission denied')), 'anon NO puede sumar puntos manuales', error?.message ?? 'se pudo llamar')
+}
 for (const fn of ['admin_next', 'admin_reveal', 'admin_list_teams']) {
   const { error } = await supabase.rpc(fn, { p_event_id: crypto.randomUUID() })
   resultado(Boolean(error?.message.includes('permission denied')), `anon NO puede llamar ${fn}`, error?.message ?? 'se pudo llamar')

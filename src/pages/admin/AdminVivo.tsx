@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/useEstructura'
+import { PanelPuntos } from '../../admin/PanelPuntos'
 import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
 import { metaDe } from '../../dynamics/registro'
@@ -215,8 +216,11 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           </Tarjeta>
         </section>
 
-        {/* Derecha: mesas con PIN y conexión (puntos manuales, historial y ranking: paso 8) */}
-        <section>
+        {/* Derecha: puntos (ranking, manuales, historial) y mesas con PIN y conexión */}
+        <section className="flex flex-col gap-4">
+          <Tarjeta titulo="Puntos">
+            <PanelPuntos live={live} eventId={evento.id} />
+          </Tarjeta>
           <Tarjeta titulo={`Mesas · ${mesas.length}`}>
             {mesas.length === 0 ? (
               <p className="text-profundo/70">Todavía no se registró ninguna mesa.</p>

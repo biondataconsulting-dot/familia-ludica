@@ -4,6 +4,22 @@ import { supabase } from '../lib/supabase'
 import type { Live } from '../lib/tipos'
 import { calcularDesfase } from './reloj'
 
+/**
+ * Completa con valores vacíos lo que falte: si el frontend nuevo llega antes que la migración
+ * (o al revés), la pantalla sigue andando en vez de romperse.
+ */
+function normalizar(l: Live): Live {
+  return {
+    ...l,
+    teams: l.teams ?? [],
+    answered: l.answered ?? [],
+    ranking: l.ranking ?? [],
+    answers_count: l.answers_count ?? 0,
+    teams_count: l.teams_count ?? 0,
+    extra_seconds: l.extra_seconds ?? 0,
+  }
+}
+
 const RELECTURA_MS = 5000
 /** Varios avisos seguidos (ej.: 15 puntajes al revelar) se juntan en una sola relectura. */
 const AGRUPAR_AVISOS_MS = 150
@@ -24,7 +40,7 @@ export function useLive(codigo: string) {
     const pedido = ++ultimoPedido.current
     const enviado = Date.now()
     try {
-      const datos = await getLive(codigo)
+      const datos = normalizar(await getLive(codigo))
       if (pedido !== ultimoPedido.current) return
       setDesfaseMs(calcularDesfase(datos.server_now, enviado, Date.now()))
       setLive(datos)

@@ -90,6 +90,18 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Revelado**: el valor en grande y "La más cerca: …" con lo que respondió (sale del `detail.mas_cerca` del puntaje). Las dinámicas reciben ahora los puntos por mesa (`puntos`) en `ProjectorReveal`.
 - **Seed**: bloque de ejemplo "Aproximaciones" con 2 ítems (Aconcagua en metros; Obelisco, año).
 
+## Paso 8
+
+- **Flechas del top 5**: `admin_reveal` guarda en `revealed.ranking_antes` el puesto de cada mesa antes de sumar; el proyector lo compara con el ranking actual (▲ subió, ▼ bajó, – igual). Una mesa sin puesto previo no muestra flecha.
+- **`get_live` incluye `ranking`** (todas las mesas, ya ordenado) y `block_total` (lo que sumó cada una en el bloque actual, para "+X en el bloque").
+- **Primer puesto**: fondo amarillo con texto azul profundo, en proyector, celular y panel (nunca texto amarillo).
+- **Ranking de bloque**: una columna hasta 10 mesas; dos columnas de 11 a 30 (letra más chica desde 21).
+- **Podio**: 2° / 1° / 3° con alturas distintas y entrada escalonada (sin animación si el dispositivo pide menos movimiento); el resto en 3 columnas debajo.
+- **Puntos manuales**: entero ≠ 0 entre −10.000 y 10.000, motivo de 2 a 200 caracteres, mesa de la misma noche. Se pueden cargar y anular en cualquier momento, también con la noche terminada (para corregir antes de cerrar el historial). No tienen bloque: cuentan en el ranking total, no en el de un bloque.
+- **Anular / Restaurar** sirve para cualquier movimiento (automático o manual); el anulado queda tachado en el historial y sale del ranking.
+- **Protector de errores** (`Recuperable`): si una pantalla falla al dibujarse, muestra "Reconectando…" y se vuelve a montar sola a los 3 s en vez de quedar en blanco. Además `useLive` completa con listas vacías los campos que falten (por si el frontend nuevo llega antes que la migración, o al revés). Motivo: en la prueba el proyector quedó en blanco al recibir código nuevo antes que la base.
+- **Volver a revelar un ítem** recalcula los puntos de todas las mesas que respondieron, también las de una pasada anterior (es lo correcto: el ítem se juega con todas sus respuestas).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

@@ -5,7 +5,9 @@ import { useTemporizador } from '../live/useTemporizador'
 import type { Live } from '../lib/tipos'
 import { IntroBloque } from '../projector/IntroBloque'
 import { ItemEnJuego } from '../projector/ItemEnJuego'
+import { Podio } from '../projector/Podio'
 import { Portada } from '../projector/Portada'
+import { RankingBloque } from '../projector/RankingBloque'
 import { Revelado } from '../projector/Revelado'
 import type { Temporizador } from '../live/useTemporizador'
 
@@ -59,19 +61,8 @@ function Fase({ live, temporizador }: { live: Live; temporizador: Temporizador }
     case 'item_revealed':
       return <Revelado live={live} />
     case 'block_ranking':
-      // Ranking completo: paso 8.
-      return <Cartel titulo="Así va la noche" texto={live.block?.title ?? ''} />
+      return <RankingBloque live={live} />
     case 'final':
-      // Podio: paso 8.
-      return <Cartel titulo="¡Gracias por jugar!" texto="Nos vemos en la próxima · @familia.ludica" />
+      return <Podio live={live} />
   }
-}
-
-function Cartel({ titulo, texto }: { titulo: string; texto: string }) {
-  return (
-    <div className="flex h-full flex-col items-center justify-center gap-[2cqw] text-center">
-      <h1 className="font-titulo text-[6cqw] font-bold text-white">{titulo}</h1>
-      <p className="text-[2.4cqw] text-white/90">{texto}</p>
-    </div>
-  )
 }
