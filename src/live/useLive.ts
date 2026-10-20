@@ -2,29 +2,33 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ErrorRpc, getLive } from '../lib/rpc'
 import { supabase } from '../lib/supabase'
 import type { Live } from '../lib/tipos'
+import { calcularDesfase } from './reloj'
 
 const RELECTURA_MS = 5000
 /** Varios avisos seguidos (ej.: 15 puntajes al revelar) se juntan en una sola relectura. */
 const AGRUPAR_AVISOS_MS = 150
 
 /**
- * Estado en vivo de una noche, para proyector y celulares.
+ * Estado en vivo de una noche, para proyector, celulares y panel del conductor.
  * Lee completo al montar, relee al recibir un aviso por Realtime (canal público evento:<CODIGO>,
  * sin datos), cada 5 s, al volver a primer plano y al recuperar la red.
+ * También estima el desfase del reloj del dispositivo contra el del servidor.
  */
 export function useLive(codigo: string) {
   const [live, setLive] = useState<Live | null>(null)
   const [error, setError] = useState<ErrorRpc | null>(null)
+  const [desfaseMs, setDesfaseMs] = useState(0)
   const ultimoPedido = useRef(0)
 
   const cargar = useCallback(async () => {
     const pedido = ++ultimoPedido.current
+    const enviado = Date.now()
     try {
       const datos = await getLive(codigo)
-      if (pedido === ultimoPedido.current) {
-        setLive(datos)
-        setError(null)
-      }
+      if (pedido !== ultimoPedido.current) return
+      setDesfaseMs(calcularDesfase(datos.server_now, enviado, Date.now()))
+      setLive(datos)
+      setError(null)
     } catch (e) {
       if (pedido === ultimoPedido.current) {
         setError(e instanceof ErrorRpc ? e : new ErrorRpc('Algo salió mal. Probá recargar la página.'))
@@ -63,5 +67,5 @@ export function useLive(codigo: string) {
     }
   }, [codigo, cargar])
 
-  return { live, error, recargar: cargar }
+  return { live, error, desfaseMs, recargar: cargar }
 }

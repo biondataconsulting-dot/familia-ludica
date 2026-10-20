@@ -55,6 +55,19 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Wake Lock y "Reconectando…"** ya están en el celular (spec §8.2).
 - **"Comenzar la noche"** del proyector queda para el paso 11, como dice la spec.
 
+## Paso 5
+
+- **Despacho de dinámicas en SQL**: `private.score_item()` llama a `private.score_<dinámica>(block_item_id)` si existe (y `private.validar_item()` a `private.validate_<dinámica>`). El motor no conoce ninguna dinámica; los pasos 6, 7 y 9 solo agregan esas funciones (en el esquema `private`, no expuesto).
+- **Permisos de ejecución**: Postgres da EXECUTE a PUBLIC en toda función y ese default es global (el revoke por esquema del paso 2 no alcanzaba: anon podía *llamar* `admin_next`, aunque `is_admin()` lo frenaba). La migración del motor lo cierra para siempre y da permisos explícitos: anon solo las RPC públicas; `admin_*` solo `authenticated` (+ `is_admin()` adentro).
+- **Serialización**: cada RPC de fase bloquea la fila del evento y de `live_state` (`for update`): dos clics simultáneos (o dos conductores) se ejecutan en orden y el segundo ve la fase nueva.
+- **"Siguiente" (`admin_next`) cubre todo el recorrido**: portada → primer bloque → primer ítem → … → ranking del bloque → bloque siguiente → final. Así la acción principal (barra espaciadora) casi siempre es "Siguiente", salvo Cerrar y Revelar.
+- **Llegar al final no termina la noche**: `final` por "Siguiente" deja el evento en vivo; solo "Terminar la noche" (`admin_finish`, con confirmación) lo pasa a `terminado`, que ya no se puede operar sin reiniciar.
+- **Revelar de nuevo un ítem reabierto** (abrirlo otra vez desde la navegación) actualiza los puntos en lugar de duplicarlos (`on conflict ... do update`). Revelar dos veces seguidas no hace nada.
+- **Temporizador**: el desfase del reloj se estima con el punto medio del pedido a `get_live` (`server_now`). Con el ítem cerrado el reloj queda congelado en el momento del cierre (`updated_at`).
+- **`get_live` suma `answered`** (ids de las mesas que respondieron el ítem actual) para el tablero de participación.
+- **Revelado y ranking**: el revelado genérico (resaltado de la opción correcta / valor) ya funciona; el top 5 "Así va la noche", el ranking de bloque y el podio llegan en el paso 8.
+- **Panel del conductor**: en la navegación de bloques, "Presentar" lleva a la intro de cualquier bloque y "Abrir" abre cualquier ítem con el tiempo del bloque. Volver a la portada y Terminar la noche están en una fila secundaria.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

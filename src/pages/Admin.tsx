@@ -4,6 +4,7 @@ import { useSesionAdmin } from '../auth/useSesionAdmin'
 import { Logo } from '../components/Logo'
 import { AdminLayout } from '../layouts/AdminLayout'
 import AdminInicio from './admin/AdminInicio'
+import AdminVivo from './admin/AdminVivo'
 
 /** Guard de /admin/*: solo pasan los emails de la tabla admins. */
 export default function Admin() {
@@ -14,6 +15,7 @@ export default function Admin() {
       <AdminLayout usuario={estado} onSalir={salir}>
         <Routes>
           <Route index element={<AdminInicio nombre={estado.nombre} />} />
+          <Route path="vivo/:eventId" element={<AdminVivo />} />
           <Route path="*" element={<AdminInicio nombre={estado.nombre} />} />
         </Routes>
       </AdminLayout>

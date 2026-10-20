@@ -51,6 +51,15 @@ await noLee('rejoin_attempts')
   resultado(Boolean(error), 'anon NO borra catalog_solutions', error?.message ?? 'no dio error')
 }
 
+for (const fn of ['admin_next', 'admin_reveal', 'admin_list_teams']) {
+  const { error } = await supabase.rpc(fn, { p_event_id: crypto.randomUUID() })
+  resultado(Boolean(error?.message.includes('permission denied')), `anon NO puede llamar ${fn}`, error?.message ?? 'se pudo llamar')
+}
+{
+  const { error } = await supabase.rpc('is_admin')
+  resultado(Boolean(error), 'anon NO puede llamar is_admin', error?.message ?? 'se pudo llamar')
+}
+
 // Lo que SÍ se puede
 {
   const { data, error } = await supabase.rpc('get_live', { p_code: CODIGO })

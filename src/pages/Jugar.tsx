@@ -40,7 +40,7 @@ export default function Jugar() {
   return (
     <PhoneLayout mesa={mesa?.name} pin={mesa?.pin} dinamica={mesa ? live.block?.title : undefined} reconectando={Boolean(error)}>
       {mesa ? (
-        <EnJuego live={live} />
+        <EnJuego live={live} mesa={mesa} />
       ) : reingresando ? (
         <Reingreso codigo={live.event.code} mesas={live.teams} onEntrar={entrar} onVolver={() => setReingresando(false)} />
       ) : (

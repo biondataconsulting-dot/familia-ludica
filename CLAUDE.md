@@ -40,6 +40,8 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Errores con `raise exception` en español (qué pasó y qué hacer); la app los muestra tal cual. `P0002` = no encontrado (noche o mesa inexistente).
 - Tabla nueva que cambie lo que ven las pantallas → trigger `private.avisar_cambio()` (broadcast sin datos al canal `evento:<CODIGO>`).
 - Limpieza puntual en la base remota: `supabase db query --linked "<sql>"`.
+- Función nueva → `grant execute` explícito (PUBLIC no tiene EXECUTE por defecto desde el paso 5). Públicas: `to anon, authenticated`; `admin_*`: `to authenticated` y empezar con `private.live_para_operar()` o `private.require_admin()`.
+- Dinámica nueva → `private.score_<clave>(block_item_id uuid) returns table (team_id uuid, points int, detail jsonb)` con puntos base (≤ 1.000, sin multiplicador) y, si valida texto, `private.validate_<clave>(uuid)`.
 
 ## Tiempo real
 

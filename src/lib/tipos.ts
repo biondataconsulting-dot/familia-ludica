@@ -47,6 +47,8 @@ export type Live = {
   block: BloqueActual | null
   item: ItemActual | null
   answers_count: number
+  /** Ids de las mesas que ya respondieron el ítem actual (nunca qué respondieron). */
+  answered: string[]
   teams_count: number
   teams: MesaPublica[]
 }
@@ -55,3 +57,11 @@ export type Live = {
 export type MiMesa = { team_id: string; token: string; pin: string; name: string }
 
 export type Whoami = MiMesa & { event_code: string; block_item_id: string | null; answer: unknown }
+
+/** Lo que guarda admin_reveal en live_state.revealed. */
+export type Revelado = {
+  block_item_id: string
+  solution: Record<string, unknown>
+  points: { team_id: string; name: string; points: number; detail: unknown }[]
+  practice: boolean
+}
