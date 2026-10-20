@@ -1,27 +1,32 @@
 import { useState } from 'react'
 
 type Props = {
-  /** Clases del panel (tamaño, padding, rotación). */
+  /** Clases del panel: el ancho (≥ 140 px en pantalla, ver docs/MARCA.md) y posición. */
   className?: string
 }
 
-/** Logo siempre sobre panel blanco: nunca directo sobre azul ni foto (manual de marca). */
+/**
+ * Logo oficial sobre panel blanco (manual de marca §4.1–4.3):
+ * nunca sobre azul ni foto, sin rotar, sin efectos, nunca recreado con tipografía.
+ * El margen del 14% del ancho del panel deja el área de seguridad (≥ altura de la estrella).
+ * Va como margin del hijo porque los % se miden contra el ancho del padre.
+ */
 export function Logo({ className = '' }: Props) {
   const [falta, setFalta] = useState(false)
+  const area = { width: '72%', margin: '14%' }
 
   return (
-    <div className={`flex items-center justify-center rounded-carta bg-white shadow-md ${className}`}>
+    <div className={`flow-root rounded-carta bg-white ${className}`}>
       {falta ? (
-        import.meta.env.DEV ? (
-          <span className="text-center text-[0.6rem] leading-tight text-profundo/50">
-            Falta public/brand/logo.png
-          </span>
-        ) : null
+        <div className="aspect-[151/155]" style={area} role="img" aria-label="Familia Lúdica" />
       ) : (
         <img
           src="/brand/logo.png"
           alt="Familia Lúdica"
-          className="h-full w-full object-contain"
+          width={151}
+          height={155}
+          className="block h-auto"
+          style={area}
           onError={() => setFalta(true)}
         />
       )}

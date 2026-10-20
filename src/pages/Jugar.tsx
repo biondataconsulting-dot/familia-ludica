@@ -9,7 +9,7 @@ export default function Jugar() {
   return (
     <PhoneLayout>
       <div className="flex flex-1 flex-col items-center gap-6 text-center">
-        <Logo className="h-28 w-48 p-3" />
+        <Logo className="w-40 shadow-md" />
         <div>
           <h1 className="text-2xl font-bold">Noche de Juegos</h1>
           <p className="mt-1 text-profundo/70">Código {codigo.toUpperCase()}</p>

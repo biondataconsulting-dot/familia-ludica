@@ -41,7 +41,9 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 | `amarillo` | `--fl-amarillo` | `#F4D35E` | solo 1er puesto y títulos destacados (<5%) |
 
 - Fuentes: **Fredoka** 500/600/700 (`font-titulo`), **Nunito Sans** 400/600/700/800 (`font-texto`, default).
-- Logo `public/brand/logo.png` (lo provee el usuario): **siempre sobre panel blanco/crema**, nunca sobre azul o foto. No recrearlo con tipografía. Componente `<Logo />`.
+- Reglas completas de marca para la app: [docs/MARCA.md](docs/MARCA.md) (extraídas del manual de identidad).
+- Logo `public/brand/logo.png` (oficial, 151×155, transparente): **siempre sobre panel blanco/crema**, nunca sobre azul o foto. Usar `<Logo className="w-…" />`: **≥ 140 px de ancho**, sin rotar (si la tarjeta va inclinada, compensar el giro), sin sombras ni efectos, no recrearlo con tipografía. Más chico que eso → el nombre "Familia Lúdica" en texto.
+- Idea rectora: "Conectamos personas a través del juego." · Instagram @familia.ludica.
 - Proyector: escenario 16:9 pensado a 1920×1080, escala con `cqw` (el escenario es un container). Consigna ≥ 4cqw. Patrón de puntos sutil (`.fondo-puntos`).
 - Celular: botones ≥ 48 px, un foco por pantalla, mesa + PIN siempre visibles arriba.
 - Respetar `prefers-reduced-motion`.
