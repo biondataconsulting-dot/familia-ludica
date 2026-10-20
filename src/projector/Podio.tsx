@@ -16,9 +16,9 @@ export function Podio({ live }: { live: Live }) {
       </div>
 
       <div className="mt-[1.5cqw] flex flex-1 items-end justify-center gap-[1.5cqw]">
-        <Escalon fila={segundo} puesto={2} alto="62%" fondo="bg-white" />
-        <Escalon fila={primero} puesto={1} alto="85%" fondo="bg-amarillo" />
-        <Escalon fila={tercero} puesto={3} alto="45%" fondo="bg-celeste" />
+        <Escalon fila={segundo} puesto={2} alto="62%" />
+        <Escalon fila={primero} puesto={1} alto="85%" />
+        <Escalon fila={tercero} puesto={3} alto="45%" />
       </div>
 
       {resto.length > 0 && (
@@ -36,17 +36,30 @@ export function Podio({ live }: { live: Live }) {
   )
 }
 
-function Escalon({ fila, puesto, alto, fondo }: { fila: FilaRanking | undefined; puesto: number; alto: string; fondo: string }) {
+/** Escalones blancos (sin fondo amarillo). El ganador: estrella y nombre más grande. */
+function Escalon({ fila, puesto, alto }: { fila: FilaRanking | undefined; puesto: number; alto: string }) {
+  const ganador = puesto === 1
   return (
-    <div className="flex h-full w-[22cqw] flex-col justify-end">
+    <div className={`flex h-full flex-col justify-end ${ganador ? 'w-[28cqw]' : 'w-[21cqw]'}`}>
       {fila && (
         <div
-          className={`motion-safe:animate-aparecer flex flex-col items-center justify-start gap-[0.6cqw] rounded-t-[1.8cqw] px-[1.2cqw] pt-[1.4cqw] text-center text-profundo shadow-2xl ${fondo}`}
+          className="motion-safe:animate-aparecer flex flex-col items-center justify-start gap-[0.6cqw] rounded-t-[1.8cqw] bg-white px-[1.2cqw] pt-[1.4cqw] text-center text-profundo shadow-2xl"
           style={{ height: alto, animationDelay: `${(4 - puesto) * 250}ms` }}
         >
-          <span className="font-titulo text-[5cqw] font-bold leading-none">{puesto}°</span>
-          <span className="line-clamp-2 font-titulo text-[2.2cqw] font-semibold leading-tight">{fila.name}</span>
-          <span className="font-titulo text-[2cqw] font-bold tabular-nums">{formatearNumero(fila.total)}</span>
+          {ganador && (
+            <span className="text-[4.5cqw] leading-none text-naranja" aria-hidden>
+              ★
+            </span>
+          )}
+          <span className={`font-titulo font-bold leading-none ${ganador ? 'text-[3.4cqw] text-naranja' : 'text-[4cqw]'}`}>{puesto}°</span>
+          <span
+            className={`line-clamp-2 font-titulo font-bold leading-tight ${ganador ? 'text-[3.6cqw]' : 'text-[2.2cqw] font-semibold'}`}
+          >
+            {fila.name}
+          </span>
+          <span className={`font-titulo font-bold tabular-nums ${ganador ? 'text-[2.6cqw]' : 'text-[2cqw]'}`}>
+            {formatearNumero(fila.total)}
+          </span>
         </div>
       )}
     </div>
