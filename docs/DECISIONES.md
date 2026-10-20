@@ -16,6 +16,10 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - **Raíz `/`**: redirige a `/admin` (pedido del usuario), para que la dirección pelada no muestre "Esta página no existe".
 
+## Infraestructura
+
+- **Región de Supabase: East US (Ohio), se mantiene.** São Paulo bajaría ~120 ms por consulta, pero la región no se puede cambiar (habría que recrear el proyecto) y lo medido alcanza: aviso de mesa nueva en ~200 ms, muy por debajo de los 2 s pedidos.
+
 ## Paso 2
 
 - **Clave anon**: el proyecto usa el formato nuevo de Supabase (`sb_publishable_…`), equivalente a la clave anon. Va en `VITE_SUPABASE_ANON_KEY`.
