@@ -1,32 +1,51 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Logo } from '../components/Logo'
 import { PhoneLayout } from '../layouts/PhoneLayout'
+import { useLive } from '../live/useLive'
+import { EnJuego } from '../phone/EnJuego'
+import { Registro } from '../phone/Registro'
+import { Reingreso } from '../phone/Reingreso'
+import { useMiMesa } from '../phone/useMiMesa'
+import { useWakeLock } from '../phone/useWakeLock'
 
-/** Celular de mesa. Por ahora, maqueta del registro (paso 1); funciona en el paso 4. */
+/** Celular de mesa: registro o reingreso, y después los controles de cada fase. */
 export default function Jugar() {
   const { codigo = '' } = useParams()
+  const { live, error } = useLive(codigo)
+  const { mesa, entrar } = useMiMesa(codigo)
+  const [reingresando, setReingresando] = useState(false)
+  useWakeLock(Boolean(mesa))
+
+  if (!live) {
+    return (
+      <PhoneLayout mesa={mesa?.name} pin={mesa?.pin}>
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+          <Logo className="w-40 shadow-md" />
+          {error ? (
+            <>
+              <h1 className="text-2xl font-bold">
+                {error.codigo === 'P0002' ? 'No encontramos esta noche' : 'No podemos conectarnos'}
+              </h1>
+              <p className="text-profundo/80">{error.message}</p>
+            </>
+          ) : (
+            <p className="text-profundo/70">Cargando la noche…</p>
+          )}
+        </div>
+      </PhoneLayout>
+    )
+  }
 
   return (
-    <PhoneLayout>
-      <div className="flex flex-1 flex-col items-center gap-6 text-center">
-        <Logo className="w-40 shadow-md" />
-        <div>
-          <h1 className="text-2xl font-bold">Noche de Juegos</h1>
-          <p className="mt-1 text-profundo/70">Código {codigo.toUpperCase()}</p>
-        </div>
-        <label className="w-full text-left">
-          <span className="mb-2 block font-bold">¿Cómo se llama tu mesa?</span>
-          <input
-            disabled
-            placeholder="Ej.: Los Dados Locos"
-            className="min-h-toque w-full rounded-carta border-2 border-profundo/15 bg-white px-4 text-lg"
-          />
-        </label>
-        <button disabled className="boton-principal w-full">
-          Entrar a jugar
-        </button>
-        <p className="text-sm text-profundo/60">El registro de mesas todavía no está habilitado.</p>
-      </div>
+    <PhoneLayout mesa={mesa?.name} pin={mesa?.pin} dinamica={mesa ? live.block?.title : undefined} reconectando={Boolean(error)}>
+      {mesa ? (
+        <EnJuego live={live} />
+      ) : reingresando ? (
+        <Reingreso codigo={live.event.code} mesas={live.teams} onEntrar={entrar} onVolver={() => setReingresando(false)} />
+      ) : (
+        <Registro evento={live.event} onEntrar={entrar} onReingreso={() => setReingresando(true)} />
+      )}
     </PhoneLayout>
   )
 }

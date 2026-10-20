@@ -48,6 +48,10 @@ export function useSesionAdmin() {
     // bloquear el callback de auth (recomendación de supabase-js).
     const { data } = supabase.auth.onAuthStateChange((evento, session) => {
       if (evento === 'TOKEN_REFRESHED') return
+      // Al volver de Google queda un "#" suelto en la URL.
+      if (window.location.href.endsWith('#')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
       setTimeout(() => void evaluar(session), 0)
     })
     return () => {

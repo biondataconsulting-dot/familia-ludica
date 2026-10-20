@@ -38,6 +38,19 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Vuelta del login**: Google vuelve a la misma ruta de `/admin/...` desde la que se entró.
 - **Error de Google en la URL** (cancelar, cuenta rechazada): se muestra en la tarjeta de ingreso y se limpia la URL.
 
+## Paso 4
+
+- **Tiempo real sin exponer tablas**: anon no puede leer tablas, así que no puede escuchar `postgres_changes`. En su lugar, triggers en `teams`, `live_state`, `answers` y `score_entries` mandan un broadcast público **sin datos** (`realtime.send`, evento `cambio`, canal `evento:<CODIGO>`). Al recibirlo, cada pantalla relee `get_live` (agrupando avisos de 150 ms). Respaldo: relectura cada 5 s, al volver a primer plano y al recuperar la red. Medido: ~200 ms desde el registro hasta el aviso.
+- **El heartbeat no avisa**: el trigger de `teams` se dispara solo por altas, bajas y cambios de `name`/`active`, no por `last_seen`. El estado "conectado" se actualiza con la relectura de 5 s.
+- **`useLive` adelantado del paso 5**: hacía falta para que las mesas aparezcan en vivo. El paso 5 le suma el temporizador y el desfase de reloj.
+- **`get_live` incluye `teams`** (id, nombre, conectado; nunca token ni PIN): una sola llamada alimenta la portada y la lista de reingreso.
+- **Reingreso con límite**: tabla `rejoin_attempts`. PIN incorrecto y "demasiados intentos" se devuelven como `{error}` en vez de excepción, porque una excepción desharía el registro del intento fallido.
+- **Nombre de mesa**: se normalizan los espacios; máximo 30 mesas activas por noche; no se puede registrar en una noche `terminado`.
+- **PIN** generado con `random()` (4 dígitos); el límite de 5 intentos por minuto hace inviable adivinarlo.
+- **Mesa en el celular**: se guarda en `localStorage` (`fl:mesa:<CODIGO>`) con token, PIN y nombre, así entra directo aunque no haya red; `whoami` la valida en segundo plano y si la base ya no la reconoce (noche reiniciada) la olvida.
+- **Wake Lock y "Reconectando…"** ya están en el celular (spec §8.2).
+- **"Comenzar la noche"** del proyector queda para el paso 11, como dice la spec.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

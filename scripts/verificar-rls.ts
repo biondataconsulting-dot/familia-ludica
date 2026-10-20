@@ -36,6 +36,7 @@ await noLee('answers')
 await noLee('score_entries')
 await noLee('admins')
 await noLee('live_state')
+await noLee('rejoin_attempts')
 
 {
   const { data, error } = await supabase.from('live_state').update({ phase: 'final' }).neq('phase', '').select()

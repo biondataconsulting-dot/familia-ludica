@@ -37,7 +37,14 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Por defecto nada queda abierto: la migración inicial revoca los privilegios por defecto de tablas y funciones. Cada vista pública o RPC necesita su `grant select` / `grant execute ... to anon, authenticated` explícito.
 - Tabla nueva → `enable row level security` + política `admin_lee_<tabla>` (select para `is_admin()`).
 - Funciones internas en el esquema `private` (no expuesto). RPC con `security definer set search_path = ''` y nombres calificados (`public.x`).
-- Errores con `raise exception` en español (qué pasó y qué hacer); la app los muestra tal cual.
+- Errores con `raise exception` en español (qué pasó y qué hacer); la app los muestra tal cual. `P0002` = no encontrado (noche o mesa inexistente).
+- Tabla nueva que cambie lo que ven las pantallas → trigger `private.avisar_cambio()` (broadcast sin datos al canal `evento:<CODIGO>`).
+- Limpieza puntual en la base remota: `supabase db query --linked "<sql>"`.
+
+## Tiempo real
+
+- `useLive(codigo)` (`src/live/`) es la única fuente de estado en proyector y celulares: `get_live` + aviso por broadcast + relectura cada 5 s / al volver / al recuperar red.
+- Celular: `useMiMesa` guarda la mesa en `localStorage` (`fl:mesa:<CODIGO>`), valida con `whoami`, late con `heartbeat` cada 10 s.
 
 ## Marca
 
