@@ -3,7 +3,11 @@ import { Route, Routes } from 'react-router-dom'
 import { useSesionAdmin } from '../auth/useSesionAdmin'
 import { Logo } from '../components/Logo'
 import { AdminLayout } from '../layouts/AdminLayout'
+import AdminCatalogo from './admin/AdminCatalogo'
+import AdminImportar from './admin/AdminImportar'
 import AdminInicio from './admin/AdminInicio'
+import AdminItem from './admin/AdminItem'
+import AdminNoche from './admin/AdminNoche'
 import AdminVivo from './admin/AdminVivo'
 
 /** Guard de /admin/*: solo pasan los emails de la tabla admins. */
@@ -16,6 +20,10 @@ export default function Admin() {
         <Routes>
           <Route index element={<AdminInicio nombre={estado.nombre} />} />
           <Route path="vivo/:eventId" element={<AdminVivo />} />
+          <Route path="noche/:eventId" element={<AdminNoche />} />
+          <Route path="catalogo" element={<AdminCatalogo />} />
+          <Route path="catalogo/:itemId" element={<AdminItem />} />
+          <Route path="importar" element={<AdminImportar />} />
           <Route path="*" element={<AdminInicio nombre={estado.nombre} />} />
         </Routes>
       </AdminLayout>

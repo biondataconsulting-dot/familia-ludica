@@ -1,12 +1,18 @@
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 type Props = {
-  /** Con sesión de admin: nombre visible y botón Salir en la barra. */
+  /** Con sesión de admin: nombre visible, navegación y botón Salir en la barra. */
   usuario?: { nombre: string; email: string }
   onSalir?: () => void
   children: ReactNode
 }
+
+const SECCIONES = [
+  { a: '/admin', texto: 'Noches', exacto: true },
+  { a: '/admin/catalogo', texto: 'Catálogo', exacto: false },
+  { a: '/admin/importar', texto: 'Importar', exacto: false },
+]
 
 /**
  * Panel del conductor: barra superior y contenido a ancho completo (notebook primero).
@@ -16,11 +22,27 @@ export function AdminLayout({ usuario, onSalir, children }: Props) {
   return (
     <div className="min-h-screen bg-crema">
       <header className="border-b border-profundo/10 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
           <Link to="/admin" className="font-bold text-azul">
             Familia Lúdica
           </Link>
           <p className="font-titulo text-xl font-semibold">Panel del conductor</p>
+          {usuario && (
+            <nav className="flex gap-1" aria-label="Secciones">
+              {SECCIONES.map((s) => (
+                <NavLink
+                  key={s.a}
+                  to={s.a}
+                  end={s.exacto}
+                  className={({ isActive }) =>
+                    `rounded-lg px-3 py-1.5 text-sm font-semibold ${isActive ? 'bg-azul text-white' : 'text-profundo/70 hover:bg-crema'}`
+                  }
+                >
+                  {s.texto}
+                </NavLink>
+              ))}
+            </nav>
+          )}
           {usuario && (
             <div className="ml-auto flex items-center gap-3">
               <span className="hidden text-sm text-profundo/70 sm:inline" title={usuario.email}>

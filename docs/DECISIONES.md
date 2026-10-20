@@ -114,6 +114,22 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Respuesta**: `{anio, titulo?, artista?}`; año entero 1800–2100; título y artista hasta 100 caracteres (vacíos no se guardan).
 - **Seed**: bloque "Hipster musical" con 3 canciones conocidas (Rick Astley, Queen, PSY) para probar; las de la noche real se cargan con el importador (paso 10).
 
+## Paso 10
+
+- **Escrituras del conductor solo por RPC** (spec §4): `admin_save_item`, `admin_delete_item`, `admin_import_items`, `admin_save_event`, `admin_duplicate_event`, `admin_save_block`, `admin_delete_block`, `admin_move_block`, `admin_set_block_items`. Las lecturas siguen por RLS.
+- **Una sola validación de ítems, en dos copias con los mismos mensajes**: `private.error_item` (manda) y `src/content/validarItem.ts` (para la vista previa del importador y el formulario). Los casos (`casos-items.ts`) se prueban contra las dos.
+- **Reglas de ítems** (además de las de la spec): 2 a 6 opciones; exactamente 3 afirmaciones; `duracion` de 5 a 120 s; categoría musica/pelicula/serie/dibujo; artista obligatorio en `pista_audio` y opcional en `clip_video`; el año entre 1900 y el actual solo aplica a canciones/clips (en Aproximaciones una respuesta-año puede ser cualquier año entero).
+- **Importación todo o nada**: si alguna fila tiene errores no se importa ninguna y se dice cuáles (fila desde 1). Máximo 500 por vez. Los importados quedan con `source = 'importado'`. Si se elige un bloque, se agregan al final y se valida que el tipo vaya en esa dinámica.
+- **CSV**: se detecta si el separador es coma o punto y coma (Excel en español); comillas dobles con `""` adentro y saltos de línea dentro de campos.
+- **Links de YouTube**: el formulario acepta el link entero (watch, youtu.be, shorts, embed) y guarda solo el id.
+- **Duplicar una noche** copia bloques e ítems (mismos ítems del catálogo), el lugar y el sello; no copia mesas, respuestas ni puntos. Queda en borrador.
+- **Código sugerido** a partir del nombre (`sugerirCodigo`): saca palabras de relleno, tildes y espacios, y suma el número de edición ("… Naudir — 3ra Edición" → NAUDIR3). Editable. Una noche en vivo no puede cambiar su código (rompería el QR).
+- **Protecciones del armado**: no se edita un bloque con un ítem en juego; no se borra un bloque ya jugado ni se saca de un bloque un ítem ya jugado o en pantalla; no se cambia el tipo de un ítem que está en un bloque; no se borra del catálogo un ítem que está en un bloque.
+- **Etiquetas** en minúsculas y sin repetir; se crean al usarlas.
+- **Sin borrar noches desde el panel** (no lo pide la spec y evita accidentes); el reinicio llega en el paso 11.
+- **Historial** (spec §8.4) no está en ningún paso del plan: queda para el paso 11 o 12.
+- **Código largo en la portada**: la letra del código se achica según el largo para que hasta 12 caracteres entren en la tarjeta.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

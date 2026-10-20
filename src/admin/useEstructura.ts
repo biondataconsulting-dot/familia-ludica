@@ -4,6 +4,8 @@ import type { EventoPublico } from '../lib/tipos'
 
 export type ItemAdmin = {
   id: string
+  /** Ítem del catálogo (para reordenar o sacar del bloque). */
+  catalog_item_id: string
   position: number
   tipo: string
   content: Record<string, unknown>
@@ -26,6 +28,7 @@ type FilaBloque = Omit<BloqueAdmin, 'items'> & {
   block_items: {
     id: string
     position: number
+    catalog_item_id: string
     catalog_items: {
       type: string
       content: Record<string, unknown>
@@ -51,7 +54,7 @@ export function useEstructura(eventId: string) {
       supabase
         .from('event_blocks')
         .select(
-          'id, position, dynamic, title, multiplier, is_practice, config, block_items(id, position, catalog_items(type, content, catalog_solutions(solution)))',
+          'id, position, dynamic, title, multiplier, is_practice, config, block_items(id, position, catalog_item_id, catalog_items(type, content, catalog_solutions(solution)))',
         )
         .eq('event_id', eventId)
         .order('position')
@@ -72,6 +75,7 @@ export function useEstructura(eventId: string) {
         ...b,
         items: block_items.map((i) => ({
           id: i.id,
+          catalog_item_id: i.catalog_item_id,
           position: i.position,
           tipo: i.catalog_items?.type ?? '',
           content: i.catalog_items?.content ?? {},

@@ -36,6 +36,22 @@ export const admin = {
   setValidation: (answerId: string, campo: 'titulo' | 'artista', valor: 'aceptada' | 'rechazada') =>
     llamar('admin_set_validation', { p_answer_id: answerId, p_field: campo, p_value: valor }),
   unvoidEntry: (entryId: string) => llamar('admin_unvoid_entry', { p_entry_id: entryId }),
+  // Contenido (paso 10)
+  saveItem: (item: Record<string, unknown>) => llamar<string>('admin_save_item', { p: item }),
+  deleteItem: (id: string) => llamar('admin_delete_item', { p_id: id }),
+  importItems: (items: unknown[], estado: 'aprobado' | 'sugerido', blockId: string | null) =>
+    llamar<{ importados?: number; ids?: string[]; errores?: { fila: number; error: string }[] }>('admin_import_items', {
+      p_items: items,
+      p_status: estado,
+      p_block_id: blockId,
+    }),
+  saveEvent: (evento: Record<string, unknown>) => llamar<string>('admin_save_event', { p: evento }),
+  duplicateEvent: (eventId: string, nombre: string, codigo: string, fecha: string | null) =>
+    llamar<string>('admin_duplicate_event', { p_event_id: eventId, p_name: nombre, p_code: codigo, p_date: fecha }),
+  saveBlock: (bloque: Record<string, unknown>) => llamar<string>('admin_save_block', { p: bloque }),
+  deleteBlock: (blockId: string) => llamar('admin_delete_block', { p_block_id: blockId }),
+  moveBlock: (blockId: string, delta: -1 | 1) => llamar('admin_move_block', { p_block_id: blockId, p_delta: delta }),
+  setBlockItems: (blockId: string, itemIds: string[]) => llamar('admin_set_block_items', { p_block_id: blockId, p_item_ids: itemIds }),
   /** Puntos provisorios del ítem actual (× multiplicador), sin registrar nada. */
   preview: (eventId: string) =>
     llamar<{ team_id: string; points: number; detail: Record<string, unknown> | null }[]>('admin_preview', { p_event_id: eventId }),

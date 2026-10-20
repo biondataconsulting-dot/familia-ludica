@@ -43,6 +43,12 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Función nueva → `grant execute` explícito (PUBLIC no tiene EXECUTE por defecto desde el paso 5). Públicas: `to anon, authenticated`; `admin_*`: `to authenticated` y empezar con `private.live_para_operar()` o `private.require_admin()`.
 - Dinámica nueva → `private.score_<clave>(block_item_id uuid) returns table (team_id uuid, points int, detail jsonb)` con puntos base (≤ 1.000, sin multiplicador) y, si valida texto, `private.validate_<clave>(uuid)`.
 
+## Panel del conductor (rutas)
+
+- `/admin` noches (crear, armar, duplicar, conducir) · `/admin/noche/:id` datos, bloques e ítems · `/admin/vivo/:id` conducir
+- `/admin/catalogo` lista con filtros · `/admin/catalogo/:id` (o `nuevo?tipo=…`) formulario con vista previa · `/admin/importar` JSON/CSV
+- Validación de ítems: `src/content/validarItem.ts` = `private.error_item` (mismos mensajes; casos en `casos-items.ts`).
+
 ## Tiempo real
 
 - `useLive(codigo)` (`src/live/`) es la única fuente de estado en proyector y celulares: `get_live` + aviso por broadcast + relectura cada 5 s / al volver / al recuperar red.

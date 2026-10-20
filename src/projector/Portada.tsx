@@ -31,7 +31,13 @@ export function Portada({ live }: { live: Live }) {
           {/* La tarjeta va inclinada pero el logo no se rota: se compensa el giro (manual de marca). */}
           <Logo className="w-[9cqw] -rotate-3" />
           <CodigoQr texto={urlJugar} className="w-[19cqw]" />
-          <p className="font-titulo text-[3.6cqw] font-bold leading-none tracking-[0.12em]">{event.code}</p>
+          {/* Hasta 12 caracteres: la letra se achica con el largo para entrar en la tarjeta. */}
+          <p
+            className="font-titulo font-bold leading-none tracking-[0.12em]"
+            style={{ fontSize: `${Math.min(3.6, 21 / (0.9 * Math.max(event.code.length, 1)))}cqw` }}
+          >
+            {event.code}
+          </p>
           <p className="text-center text-[1.4cqw] font-bold leading-tight">Escaneá con un celular por mesa</p>
         </div>
       </div>
