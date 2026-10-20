@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Manual de marca (canales RGB para usar con opacidad en Tailwind) */
+  --fl-naranja: 236 104 27; /* #EC681B */
+  --fl-azul: 17 102 171; /* #1166AB */
+  --fl-celeste: 63 192 240; /* #3FC0F0 */
+  --fl-profundo: 23 63 99; /* #173F63 */
+  --fl-crema: 255 248 242; /* #FFF8F2 */
+  --fl-amarillo: 244 211 94; /* #F4D35E */
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-crema font-texto text-profundo antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-titulo;
+  }
+}
+
+@layer components {
+  /* Escenario 16:9 del proyector: todo lo de adentro se mide en cqw (1cqw = 1% del ancho). */
+  .escenario {
+    container-type: inline-size;
+    width: min(100vw, calc(100vh * 16 / 9));
+    width: min(100vw, calc(100dvh * 16 / 9));
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Patrón sutil de puntos para el fondo del proyector */
+  .fondo-puntos {
+    background-color: rgb(var(--fl-azul));
+    background-image: radial-gradient(rgb(255 255 255 / 0.09) 0.18cqw, transparent 0.2cqw);
+    background-size: 2.4cqw 2.4cqw;
+  }
+
+  .boton-principal {
+    @apply min-h-toque rounded-carta bg-naranja px-6 py-3 font-titulo text-lg font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
