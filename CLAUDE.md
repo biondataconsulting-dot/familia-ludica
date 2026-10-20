@@ -28,6 +28,16 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 ## Comandos
 
 - `npm run dev` · `npm run build` (tsc + vite, sin warnings de TS) · `npm run lint` · `npm test`
+- `npm run db:push` → aplica migraciones + seed al proyecto Supabase vinculado (`gmpcnupjzqqfjkbywzet`). Requiere `supabase login` y `supabase link` hechos por el usuario (pide contraseña de la base).
+- `npm run verificar:rls` → script con la clave anon que confirma lo que se puede y no se puede hacer.
+- No hay Docker: las migraciones nuevas se prueban antes en PGlite (Postgres embebido) con roles `anon`/`authenticated` y `auth.jwt()` simulados.
+
+## Reglas para migraciones nuevas
+
+- Por defecto nada queda abierto: la migración inicial revoca los privilegios por defecto de tablas y funciones. Cada vista pública o RPC necesita su `grant select` / `grant execute ... to anon, authenticated` explícito.
+- Tabla nueva → `enable row level security` + política `admin_lee_<tabla>` (select para `is_admin()`).
+- Funciones internas en el esquema `private` (no expuesto). RPC con `security definer set search_path = ''` y nombres calificados (`public.x`).
+- Errores con `raise exception` en español (qué pasó y qué hacer); la app los muestra tal cual.
 
 ## Marca
 
