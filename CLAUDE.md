@@ -1,6 +1,6 @@
 # Familia Lúdica — plataforma de noches de juegos (MVP)
 
-Especificación completa: [docs/SPEC.md](docs/SPEC.md). Decisiones no cubiertas por la spec: [docs/DECISIONES.md](docs/DECISIONES.md).
+Especificación completa: [docs/SPEC.md](docs/SPEC.md). Servicios externos (Supabase, Google, Vercel): [docs/CONFIGURACION.md](docs/CONFIGURACION.md). Decisiones no cubiertas por la spec: [docs/DECISIONES.md](docs/DECISIONES.md).
 Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 
 ## Contexto

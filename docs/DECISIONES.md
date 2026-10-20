@@ -31,6 +31,13 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **`revealed`** solo se expone en `get_live` cuando la fase es `item_revealed`.
 - **Seed en remoto**: se carga con `supabase db push --include-seed`; es idempotente (ids fijos y `on conflict do nothing`).
 
+## Paso 3
+
+- **Quién es admin lo decide la base**: el frontend llama `is_admin()` (la misma función que usa RLS); no hay lista de emails en el código.
+- **Elegir cuenta siempre**: el login pide `prompt=select_account`, para que sea fácil cambiar de cuenta (y probar la pantalla "Sin acceso").
+- **Vuelta del login**: Google vuelve a la misma ruta de `/admin/...` desde la que se entró.
+- **Error de Google en la URL** (cancelar, cuenta rechazada): se muestra en la tarjeta de ingreso y se limpia la URL.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.
