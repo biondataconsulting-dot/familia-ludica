@@ -3,6 +3,7 @@ import { admin } from '../lib/rpcAdmin'
 import { supabase } from '../lib/supabase'
 
 export type RespuestaAdmin = {
+  id: string
   team_id: string
   answer: Record<string, unknown>
   submitted_at: string
@@ -27,7 +28,7 @@ export function useRespuestasAdmin(eventId: string, blockItemId: string | undefi
     let activo = true
     const cargar = async () => {
       const [r, p] = await Promise.all([
-        supabase.from('answers').select('team_id, answer, submitted_at, validation').eq('block_item_id', blockItemId),
+        supabase.from('answers').select('id, team_id, answer, submitted_at, validation').eq('block_item_id', blockItemId),
         admin.preview(eventId).catch(() => null),
       ])
       if (!activo) return
@@ -42,5 +43,16 @@ export function useRespuestasAdmin(eventId: string, blockItemId: string | undefi
     }
   }, [eventId, blockItemId, senal])
 
-  return { respuestas, provisorios }
+  const [recarga, setRecarga] = useState(0)
+  useEffect(() => {
+    if (recarga === 0 || !blockItemId) return
+    void supabase
+      .from('answers')
+      .select('id, team_id, answer, submitted_at, validation')
+      .eq('block_item_id', blockItemId)
+      .then(({ data, error }) => !error && setRespuestas(data as RespuestaAdmin[]))
+    void admin.preview(eventId).then(setProvisorios).catch(() => null)
+  }, [recarga, eventId, blockItemId])
+
+  return { respuestas, provisorios, recargar: () => setRecarga((n) => n + 1) }
 }

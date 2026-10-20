@@ -43,6 +43,11 @@ export const whoami = (token: string) => llamar<Whoami>('whoami', { p_token: tok
 
 export const heartbeat = (token: string) => llamar<null>('heartbeat', { p_token: token })
 
+export type MediaProyector = { block_item_id: string; youtube_id: string; inicio: number; duracion: number }
+
+/** Video del ítem actual, solo para el proyector (null si no hay audio/video en juego). */
+export const proyectorMedia = (codigo: string) => llamar<MediaProyector | null>('proyector_media', { p_code: codigo })
+
 /** Envía (o cambia) la respuesta de la mesa al ítem abierto. Devuelve la respuesta normalizada por la base. */
 export const submitAnswer = (token: string, blockItemId: string, respuesta: Record<string, unknown>) =>
   llamar<{ answer: Record<string, unknown> }>('submit_answer', {

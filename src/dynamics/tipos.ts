@@ -43,4 +43,6 @@ export type Dinamica = {
   instruccion?: (item: ItemActual) => string
   /** Texto corto de una respuesta, para "Enviaron: …" y el panel del conductor. */
   describir: (contenido: Record<string, unknown>, r: Respuesta) => string
+  /** Celular, al revelar: título y líneas de detalle propias de la dinámica (ej.: año, título, artista). */
+  resultado?: (detail: Record<string, unknown>, puntos: number) => { titulo: string; lineas: string[] }
 }

@@ -32,7 +32,14 @@ insert into public.catalog_items (id, type, content, difficulty) values
   ('00000000-0000-4000-b000-000000000008', 'pregunta_numerica',
    '{"texto": "¿A cuántos metros sobre el nivel del mar está la cumbre del Aconcagua?", "unidad": "metros", "imagen": null, "formato": "numero"}', 'media'),
   ('00000000-0000-4000-b000-000000000009', 'pregunta_numerica',
-   '{"texto": "¿En qué año se inauguró el Obelisco de Buenos Aires?", "unidad": "", "imagen": null, "formato": "anio"}', 'media')
+   '{"texto": "¿En qué año se inauguró el Obelisco de Buenos Aires?", "unidad": "", "imagen": null, "formato": "anio"}', 'media'),
+  -- Hipster (pista_audio). El youtube_id nunca llega a los celulares.
+  ('00000000-0000-4000-b000-000000000010', 'pista_audio',
+   '{"youtube_id": "dQw4w9WgXcQ", "inicio": 43, "duracion": 20, "categoria": "musica"}', 'facil'),
+  ('00000000-0000-4000-b000-000000000011', 'pista_audio',
+   '{"youtube_id": "fJ9rUzIMcZQ", "inicio": 50, "duracion": 20, "categoria": "musica"}', 'facil'),
+  ('00000000-0000-4000-b000-000000000012', 'pista_audio',
+   '{"youtube_id": "9bZkp7q19f0", "inicio": 70, "duracion": 20, "categoria": "musica"}', 'facil')
 on conflict do nothing;
 
 insert into public.catalog_solutions (item_id, solution) values
@@ -44,7 +51,10 @@ insert into public.catalog_solutions (item_id, solution) values
   ('00000000-0000-4000-b000-000000000006', '{"mentira": 2, "explicacion": "Desde la Luna no se distingue a simple vista."}'),
   ('00000000-0000-4000-b000-000000000007', '{"mentira": 1, "explicacion": "El truco se juega con baraja española."}'),
   ('00000000-0000-4000-b000-000000000008', '{"valor": 6961, "explicacion": "Es la montaña más alta de América."}'),
-  ('00000000-0000-4000-b000-000000000009', '{"valor": 1936, "explicacion": "Se inauguró el 23 de mayo de 1936, por los 400 años de la primera fundación."}')
+  ('00000000-0000-4000-b000-000000000009', '{"valor": 1936, "explicacion": "Se inauguró el 23 de mayo de 1936, por los 400 años de la primera fundación."}'),
+  ('00000000-0000-4000-b000-000000000010', '{"anio": 1987, "titulo": "Never Gonna Give You Up", "artista": "Rick Astley", "variantes_titulo": [], "variantes_artista": []}'),
+  ('00000000-0000-4000-b000-000000000011', '{"anio": 1975, "titulo": "Bohemian Rhapsody", "artista": "Queen", "variantes_titulo": [], "variantes_artista": []}'),
+  ('00000000-0000-4000-b000-000000000012', '{"anio": 2012, "titulo": "Gangnam Style", "artista": "PSY", "variantes_titulo": ["Oppa Gangnam Style"], "variantes_artista": []}')
 on conflict do nothing;
 
 insert into public.item_tags (item_id, tag_id)
@@ -66,7 +76,9 @@ insert into public.event_blocks (id, event_id, position, dynamic, title, multipl
   ('00000000-0000-4000-d000-000000000003', '00000000-0000-4000-c000-000000000001', 3, 'dos_verdades',
    'Dos verdades y una mentira', 1, false, '{"timer_seconds": 40}'),
   ('00000000-0000-4000-d000-000000000004', '00000000-0000-4000-c000-000000000001', 4, 'aproximaciones',
-   'Aproximaciones', 1, false, '{"timer_seconds": 45}')
+   'Aproximaciones', 1, false, '{"timer_seconds": 45}'),
+  ('00000000-0000-4000-d000-000000000005', '00000000-0000-4000-c000-000000000001', 5, 'hipster',
+   'Hipster musical', 1, false, '{"timer_seconds": 45}')
 on conflict do nothing;
 
 insert into public.block_items (id, block_id, position, catalog_item_id) values
@@ -78,5 +90,8 @@ insert into public.block_items (id, block_id, position, catalog_item_id) values
   ('00000000-0000-4000-e000-000000000006', '00000000-0000-4000-d000-000000000003', 1, '00000000-0000-4000-b000-000000000006'),
   ('00000000-0000-4000-e000-000000000007', '00000000-0000-4000-d000-000000000003', 2, '00000000-0000-4000-b000-000000000007'),
   ('00000000-0000-4000-e000-000000000008', '00000000-0000-4000-d000-000000000004', 1, '00000000-0000-4000-b000-000000000008'),
-  ('00000000-0000-4000-e000-000000000009', '00000000-0000-4000-d000-000000000004', 2, '00000000-0000-4000-b000-000000000009')
+  ('00000000-0000-4000-e000-000000000009', '00000000-0000-4000-d000-000000000004', 2, '00000000-0000-4000-b000-000000000009'),
+  ('00000000-0000-4000-e000-000000000010', '00000000-0000-4000-d000-000000000005', 1, '00000000-0000-4000-b000-000000000010'),
+  ('00000000-0000-4000-e000-000000000011', '00000000-0000-4000-d000-000000000005', 2, '00000000-0000-4000-b000-000000000011'),
+  ('00000000-0000-4000-e000-000000000012', '00000000-0000-4000-d000-000000000005', 3, '00000000-0000-4000-b000-000000000012')
 on conflict do nothing;

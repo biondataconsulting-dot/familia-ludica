@@ -102,6 +102,18 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Protector de errores** (`Recuperable`): si una pantalla falla al dibujarse, muestra "Reconectando…" y se vuelve a montar sola a los 3 s en vez de quedar en blanco. Además `useLive` completa con listas vacías los campos que falten (por si el frontend nuevo llega antes que la migración, o al revés). Motivo: en la prueba el proyector quedó en blanco al recibir código nuevo antes que la base.
 - **Volver a revelar un ítem** recalcula los puntos de todas las mesas que respondieron, también las de una pasada anterior (es lo correcto: el ítem se juega con todas sus respuestas).
 
+## Paso 9
+
+- **Podio sin fondo amarillo** (pedido del cliente): los tres escalones en blanco; el ganador, más ancho, con ★ naranja y el nombre más grande. El amarillo sigue solo como fondo del 1er puesto en las tablas.
+- **`proyector_media(code)`** es la única fuente del `youtube_id` (solo con el ítem actual de audio/video abierto, cerrado o revelado). Como toda RPC pública, técnicamente la podría llamar cualquiera con la clave anon; los celulares no la usan y `get_live` nunca trae el id.
+- **Player oculto**: un único player de YouTube (320×180, el mínimo que permite YouTube) detrás de la tarjeta central; la capa de contenido va en `z-10` encima. Suena solo al abrir el ítem, se corta al cumplir `duracion` (control cada 250 ms), se pausa al cerrar y vuelve a sonar con "Repetir". En el revelado no suena solo (el conductor puede repetir).
+- **"Repetir"** viaja como broadcast directo `repetir` por el mismo canal `evento:<CODIGO>` (panel → proyector), sin pasar por la base. Tecla R en el panel.
+- **Audio bloqueado por el navegador**: si a los 2,5 s no suena, el proyector muestra "Tocá acá para activar el sonido". El botón "Comenzar la noche" del paso 11 lo va a evitar desde el arranque.
+- **Validación de texto**: se corre al cerrar respuestas (`validate_hipster`) y no pisa lo que el conductor ya aceptó o rechazó. Un cambio de respuesta (mientras está abierto) borra la validación de esa mesa. Las dudosas se deciden solo con el ítem cerrado; al revelar, una dudosa sin decidir cuenta como rechazada y el panel lo advierte con confirmación.
+- **Normalización**: `unaccent` + minúsculas + solo `[a-z0-9]` + espacios simples + artículo inicial (el, la, los, las, the, a, an). Si normalizado coincide exacto, similitud 1. La copia en TS replica `pg_trgm` (trigramas por palabra con dos espacios adelante y uno atrás) y se comprueba contra SQL con los mismos casos.
+- **Respuesta**: `{anio, titulo?, artista?}`; año entero 1800–2100; título y artista hasta 100 caracteres (vacíos no se guardan).
+- **Seed**: bloque "Hipster musical" con 3 canciones conocidas (Rick Astley, Queen, PSY) para probar; las de la noche real se cargan con el importador (paso 10).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

@@ -78,12 +78,18 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
         )
       }
       const detalle = (mio.detail ?? {}) as { correcta?: boolean; mas_cerca?: boolean }
-      const titulo = detalle.mas_cerca ? '¡La más cerca!' : detalle.correcta ? '¡Correcta!' : '¡Bien cerca!'
+      const propio = dinamica?.resultado?.(detalle as Record<string, unknown>, mio.points)
+      const titulo = propio?.titulo ?? (detalle.mas_cerca ? '¡La más cerca!' : detalle.correcta ? '¡Correcta!' : '¡Bien cerca!')
       return mio.points > 0 ? (
         <Centro emoji="🎉" titulo={titulo} sello={practica}>
           <span className="font-titulo text-4xl font-bold text-naranja">
             {verbo} +{formatearNumero(mio.points)}
           </span>
+          {propio?.lineas.map((l) => (
+            <span key={l} className="mt-1 block text-base">
+              {l}
+            </span>
+          ))}
         </Centro>
       ) : (
         <Centro emoji="🙃" titulo="Esta vez no" sello={practica}>

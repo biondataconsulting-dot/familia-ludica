@@ -33,9 +33,10 @@ export default function AdminVivo() {
 }
 
 function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin[] }) {
-  const { live, error, desfaseMs, recargar } = useLive(evento.code)
+  const { live, error, desfaseMs, recargar, pedirRepetir } = useLive(evento.code)
   const temporizador = useTemporizador(live, desfaseMs)
   const mesas = useMesasAdmin(evento.id, `${live?.updated_at}|${live?.teams_count}`)
+  const [dudosas, setDudosas] = useState(0)
   const [ocupado, setOcupado] = useState(false)
   const [aviso, setAviso] = useState<string | null>(null)
   const enCurso = useRef(false)
@@ -59,16 +60,37 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
     [recargar],
   )
 
-  const principal = live ? accionPrincipal(live, evento.id) : null
+  // Revelar con dudosas sin decidir: avisa que cuentan como rechazadas.
+  const revelar = useCallback(async () => {
+    if (
+      dudosas > 0 &&
+      !window.confirm(`Quedan ${dudosas} ${dudosas === 1 ? 'dudosa' : 'dudosas'} sin decidir: si revelás ahora cuentan como rechazadas. ¿Revelar igual?`)
+    ) {
+      return
+    }
+    await admin.reveal(evento.id)
+  }, [dudosas, evento.id])
+
+  const conMedia = ['pista_audio', 'clip_video'].includes(live?.item?.type ?? '') &&
+    ['item_open', 'item_closed', 'item_revealed'].includes(live?.phase ?? '')
+  const base = live ? accionPrincipal(live, evento.id) : null
+  const principal = base && live?.phase === 'item_closed' ? { ...base, accion: revelar } : base
   const refPrincipal = useRef(principal)
   refPrincipal.current = principal
+  const refRepetir = useRef<(() => void) | null>(null)
+  refRepetir.current = conMedia ? pedirRepetir : null
 
-  // Atajo: espacio = acción principal de la fase (si no se está escribiendo ni hay un botón con foco).
+  // Atajos: espacio = acción principal de la fase; R = repetir el audio (si no se está escribiendo).
   useEffect(() => {
     const alTeclear = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || e.repeat) return
+      if (e.repeat) return
       const el = e.target as HTMLElement
-      if (el.closest('input, textarea, select, button, a, [contenteditable]')) return
+      if (el.closest('input, textarea, select, [contenteditable]')) return
+      if (e.key === 'r' || e.key === 'R') {
+        refRepetir.current?.()
+        return
+      }
+      if (e.code !== 'Space' || el.closest('button, a')) return
       e.preventDefault()
       const p = refPrincipal.current
       if (p) void ejecutar(p.accion)
@@ -127,6 +149,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
         <section className="flex flex-col gap-4">
           <Tarjeta titulo="Ahora">
             {item ? <ItemConSolucion item={item} /> : <p className="text-profundo/70">{textoSinItem(live)}</p>}
+            {item && conMedia && <Fragmento item={item} onRepetir={pedirRepetir} />}
             {live.item && <Reloj temporizador={temporizador} fase={live.phase} />}
           </Tarjeta>
 
@@ -153,7 +176,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
               <Boton activo={live.phase === 'item_closed'} ocupado={ocupado} onClick={() => ejecutar(() => admin.reopenItem(e))}>
                 Reabrir
               </Boton>
-              <Boton activo={live.phase === 'item_closed'} ocupado={ocupado} onClick={() => ejecutar(() => admin.reveal(e))}>
+              <Boton activo={live.phase === 'item_closed'} ocupado={ocupado} onClick={() => ejecutar(revelar)}>
                 Revelar
               </Boton>
               <Boton
@@ -212,7 +235,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
         {/* Centro: respuestas con estado y puntos provisorios */}
         <section>
           <Tarjeta titulo={live.item ? `Respuestas · ${live.answers_count} de ${live.teams_count}` : 'Respuestas'}>
-            <TablaRespuestas live={live} eventId={evento.id} />
+            <TablaRespuestas live={live} eventId={evento.id} onDudosas={setDudosas} />
           </Tarjeta>
         </section>
 
@@ -286,6 +309,24 @@ function ItemConSolucion({ item }: { item: ItemAdmin }) {
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
+
+/** Audio/video: qué fragmento suena y "▶ Repetir" (también con la tecla R). */
+function Fragmento({ item, onRepetir }: { item: ItemAdmin; onRepetir: () => void }) {
+  const inicio = Number(item.content.inicio ?? 0)
+  const duracion = Number(item.content.duracion ?? 20)
+  return (
+    <div className="mt-3 flex items-center gap-3 rounded-xl bg-crema px-3 py-2">
+      <p className="flex-1 text-sm">
+        Fragmento: <span className="font-bold">{mmss(inicio)}</span> a <span className="font-bold">{mmss(inicio + duracion)}</span> ({duracion} s)
+      </p>
+      <button onClick={onRepetir} className="min-h-toque rounded-xl bg-naranja px-4 font-titulo font-semibold text-white">
+        ▶ Repetir <span className="text-xs opacity-80">(R)</span>
+      </button>
     </div>
   )
 }

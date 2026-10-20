@@ -1,22 +1,18 @@
 import { aproximaciones } from './aproximaciones'
 import { dosVerdades } from './dos_verdades'
-import { meta as hipster } from './hipster/meta'
+import { hipster } from './hipster'
 import type { Dinamica, MetaDinamica } from './tipos'
 import { trivia } from './trivia'
 
-/** Dinámicas jugables (con formulario, proyector y validación). Hipster: paso 9. */
+/** Dinámicas jugables (con formulario, proyector y validación). */
 const JUGABLES: Record<string, Dinamica> = {
   trivia,
   dos_verdades: dosVerdades,
   aproximaciones,
-}
-
-const METAS: Record<string, MetaDinamica> = {
-  trivia: trivia.meta,
-  dos_verdades: dosVerdades.meta,
-  aproximaciones: aproximaciones.meta,
   hipster,
 }
+
+const METAS: Record<string, MetaDinamica> = Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta]))
 
 export function dinamicaDe(clave: string | undefined): Dinamica | null {
   return (clave && JUGABLES[clave]) || null

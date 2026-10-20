@@ -42,7 +42,11 @@ export function describirSolucion(tipo: string, contenido: Contenido, solucion: 
 /** Consigna principal del ítem (lo que se lee en grande). */
 export function consigna(tipo: string, contenido: Contenido): string {
   if (tipo === 'trio_verdad_mentira') return '¿Cuál es la mentira?'
-  if (tipo === 'pista_audio') return '¿De qué año es esta canción?'
-  if (tipo === 'clip_video') return '¿De qué año es?'
+  if (tipo === 'pista_audio' || tipo === 'clip_video') {
+    const cual = { musica: 'esta canción', pelicula: 'esta película', serie: 'esta serie', dibujo: 'este dibujo' }[
+      String(contenido.categoria ?? (tipo === 'pista_audio' ? 'musica' : ''))
+    ]
+    return cual ? `¿De qué año es ${cual}?` : '¿De qué año es?'
+  }
   return texto(contenido.texto)
 }

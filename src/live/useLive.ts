@@ -34,7 +34,10 @@ export function useLive(codigo: string) {
   const [live, setLive] = useState<Live | null>(null)
   const [error, setError] = useState<ErrorRpc | null>(null)
   const [desfaseMs, setDesfaseMs] = useState(0)
+  /** Sube en 1 cada vez que el conductor toca "Repetir" (señal directa por el canal, sin pasar por la base). */
+  const [senalRepetir, setSenalRepetir] = useState(0)
   const ultimoPedido = useRef(0)
+  const canalRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
 
   const cargar = useCallback(async () => {
     const pedido = ++ultimoPedido.current
@@ -63,10 +66,12 @@ export function useLive(codigo: string) {
     const canal = supabase
       .channel(`evento:${codigo.toUpperCase()}`)
       .on('broadcast', { event: 'cambio' }, pedirPronto)
+      .on('broadcast', { event: 'repetir' }, () => setSenalRepetir((n) => n + 1))
       .subscribe((estado) => {
         // Al (re)conectar el canal puede haberse perdido algún aviso.
         if (estado === 'SUBSCRIBED') pedirPronto()
       })
+    canalRef.current = canal
     const intervalo = window.setInterval(() => void cargar(), RELECTURA_MS)
     const alVolver = () => {
       if (document.visibilityState === 'visible') pedirPronto()
@@ -79,9 +84,15 @@ export function useLive(codigo: string) {
       window.clearInterval(intervalo)
       document.removeEventListener('visibilitychange', alVolver)
       window.removeEventListener('online', pedirPronto)
+      canalRef.current = null
       void supabase.removeChannel(canal)
     }
   }, [codigo, cargar])
 
-  return { live, error, desfaseMs, recargar: cargar }
+  /** Pide al proyector que repita el fragmento de audio/video (lo usa el panel del conductor). */
+  const pedirRepetir = useCallback(() => {
+    void canalRef.current?.send({ type: 'broadcast', event: 'repetir', payload: {} })
+  }, [])
+
+  return { live, error, desfaseMs, senalRepetir, pedirRepetir, recargar: cargar }
 }

@@ -30,9 +30,14 @@ export default {
           from: { opacity: '0', transform: 'scale(0.6)' },
           to: { opacity: '1', transform: 'scale(1)' },
         },
+        ecualizador: {
+          '0%, 100%': { transform: 'scaleY(0.25)' },
+          '50%': { transform: 'scaleY(1)' },
+        },
       },
       animation: {
         aparecer: 'aparecer 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        ecualizador: 'ecualizador 900ms ease-in-out infinite',
       },
     },
   },

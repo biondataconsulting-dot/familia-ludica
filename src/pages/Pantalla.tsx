@@ -8,14 +8,19 @@ import { ItemEnJuego } from '../projector/ItemEnJuego'
 import { Podio } from '../projector/Podio'
 import { Portada } from '../projector/Portada'
 import { RankingBloque } from '../projector/RankingBloque'
+import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
 import type { Temporizador } from '../live/useTemporizador'
 
 /** Proyector: la pantalla protagonista. Muestra lo que corresponde a la fase actual. */
 export default function Pantalla() {
   const { codigo = '' } = useParams()
-  const { live, error, desfaseMs } = useLive(codigo)
+  const { live, error, desfaseMs, senalRepetir } = useLive(codigo)
   const temporizador = useTemporizador(live, desfaseMs)
+  const conMedia =
+    live != null &&
+    ['pista_audio', 'clip_video'].includes(live.item?.type ?? '') &&
+    ['item_open', 'item_closed', 'item_revealed'].includes(live.phase)
 
   if (!live) {
     return (
@@ -39,7 +44,11 @@ export default function Pantalla() {
 
   return (
     <ProjectorLayout logoEsquina={live.phase !== 'cover'}>
-      <Fase live={live} temporizador={temporizador} />
+      {conMedia && <ReproductorOculto codigo={codigo} live={live} senalRepetir={senalRepetir} />}
+      {/* Capa de contenido por encima del player oculto. */}
+      <div className="relative z-10 h-full">
+        <Fase live={live} temporizador={temporizador} />
+      </div>
       {error && (
         <p className="absolute bottom-[0.8cqw] left-[1cqw] rounded-full bg-naranja/90 px-[1cqw] py-[0.2cqw] text-[1cqw] font-bold">
           Reconectando…

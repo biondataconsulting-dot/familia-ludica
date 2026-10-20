@@ -16,7 +16,7 @@ export function ProjectorLayout({ logoEsquina = true, children }: Props) {
     <div className="flex h-screen h-[100dvh] w-screen items-center justify-center overflow-hidden bg-profundo">
       <div className="escenario fondo-puntos relative overflow-hidden text-white">
         {children}
-        {logoEsquina && <Logo className="absolute right-[1.5cqw] top-[1.5cqw] w-[max(140px,7.5cqw)]" />}
+        {logoEsquina && <Logo className="absolute right-[1.5cqw] top-[1.5cqw] z-20 w-[max(140px,7.5cqw)]" />}
       </div>
     </div>
   )
