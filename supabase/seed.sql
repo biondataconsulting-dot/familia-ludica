@@ -35,11 +35,11 @@ insert into public.catalog_items (id, type, content, difficulty) values
    '{"texto": "¿En qué año se inauguró el Obelisco de Buenos Aires?", "unidad": "", "imagen": null, "formato": "anio"}', 'media'),
   -- Hitster (pista_audio). El youtube_id nunca llega a los celulares.
   ('00000000-0000-4000-b000-000000000010', 'pista_audio',
-   '{"youtube_id": "dQw4w9WgXcQ", "inicio": 43, "duracion": 20, "categoria": "musica"}', 'facil'),
+   '{"youtube_id": "dQw4w9WgXcQ", "inicio": 0, "duracion": 20, "categoria": "musica"}', 'facil'),
   ('00000000-0000-4000-b000-000000000011', 'pista_audio',
-   '{"youtube_id": "fJ9rUzIMcZQ", "inicio": 50, "duracion": 20, "categoria": "musica"}', 'facil'),
+   '{"youtube_id": "fJ9rUzIMcZQ", "inicio": 0, "duracion": 20, "categoria": "musica"}', 'facil'),
   ('00000000-0000-4000-b000-000000000012', 'pista_audio',
-   '{"youtube_id": "9bZkp7q19f0", "inicio": 70, "duracion": 20, "categoria": "musica"}', 'facil')
+   '{"youtube_id": "9bZkp7q19f0", "inicio": 0, "duracion": 20, "categoria": "musica"}', 'facil')
 on conflict do nothing;
 
 insert into public.catalog_solutions (item_id, solution) values

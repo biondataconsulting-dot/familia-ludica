@@ -211,6 +211,10 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Prueba de punta a punta**: catálogo de 15 ítems (7 tipos, con una canción y una escena de YouTube verificadas) armado siguiendo la guía: pasa la vista previa sin errores y se importó como sugerido (etiqueta `prueba-guia`).
 - **Etapa 2 (después del viernes)**: «Aprobar seleccionados», verificación de videos al importar (oembed), imágenes en lote con el JSON, aviso de repetidos.
 
+## Segundo de inicio opcional (vuelve)
+
+- Canciones y escenas arrancan en 0:00 por defecto, pero cada ítem puede tener «Empieza en (s)» (para saltear un comienzo que delata el nombre). `proyector_media` devuelve el `inicio` del ítem (antes lo forzaba a 0). Cuando no arranca en 0, el proyector entra con volumen suave: de 0 a 100 en 1,5 s desde que empieza a sonar (también con «Repetir»). Ensayo, prueba del catálogo y panel ("Suena de 1:05 a 1:25") usan el inicio real. La guía pide a la IA dejar siempre `inicio: 0`. Todos los ítems cargados estaban en 0 (y el seed se pasó a 0).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

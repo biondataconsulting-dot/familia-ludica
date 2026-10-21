@@ -403,10 +403,12 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).
 /** Audio/video: qué fragmento suena y "▶ Repetir" (también con la tecla R). */
 function Fragmento({ item, onRepetir }: { item: ItemAdmin; onRepetir: () => void }) {
   const duracion = Number(item.content.duracion ?? 20)
+  const inicio = Math.max(0, Number(item.content.inicio ?? 0))
   return (
     <div className="mt-3 flex items-center gap-3 rounded-xl bg-crema px-3 py-2">
       <p className="flex-1 text-sm">
-        Suena desde el principio: <span className="font-bold">0:00</span> a <span className="font-bold">{mmss(duracion)}</span> ({duracion} s)
+        {inicio > 0 ? 'Suena de ' : 'Suena desde el principio: '}
+        <span className="font-bold">{mmss(inicio)}</span> a <span className="font-bold">{mmss(inicio + duracion)}</span> ({duracion} s)
       </p>
       <button onClick={onRepetir} className="min-h-toque rounded-xl bg-naranja px-4 font-titulo font-semibold text-white">
         ▶ Repetir <span className="text-xs opacity-80">(R)</span>

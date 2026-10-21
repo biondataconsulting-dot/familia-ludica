@@ -34,6 +34,7 @@ type Campos = {
   explicacion: string
   imagen: string
   youtube: string
+  inicio: string
   duracion: string
   categoria: string
   anio: string
@@ -69,6 +70,7 @@ function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
     explicacion: str(s.explicacion),
     imagen: str(c.imagen),
     youtube: str(c.youtube_id),
+    inicio: str(c.inicio ?? 0),
     duracion: str(c.duracion ?? 20),
     categoria: str(c.categoria ?? (tipo === 'clip_video' ? 'pelicula' : 'musica')),
     anio: str(s.anio),
@@ -89,6 +91,7 @@ function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
 
 const numero = (t: string) => (t.trim() === '' ? undefined : Number(t.trim().replace(/\./g, '').replace(',', '.')))
 const entero = (t: string) => (t.trim() === '' ? undefined : Number(t.trim()))
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 const lineas = (t: string) => t.split(/\n|\|/).map((x) => x.trim()).filter(Boolean)
 
 /** Arma content y solution con la forma que espera la base (spec §5). */
@@ -120,8 +123,8 @@ function armar(tipo: TipoItem, f: Campos): { contenido: Record<string, unknown>;
       return { contenido: { texto: f.texto.trim() }, solucion: {} }
     default:
       return {
-        // Siempre suena desde 0:00 (inicio queda en 0).
-        contenido: { youtube_id: idDeYouTube(f.youtube), inicio: 0, duracion: entero(f.duracion) ?? 20, categoria: f.categoria },
+        // Por defecto desde 0:00; se puede arrancar más adelante (el proyector entra con volumen suave).
+        contenido: { youtube_id: idDeYouTube(f.youtube), inicio: entero(f.inicio) ?? 0, duracion: entero(f.duracion) ?? 20, categoria: f.categoria },
         solucion: {
           anio: entero(f.anio),
           titulo: f.titulo.trim(),
@@ -288,11 +291,11 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                 <Etiqueta texto="Video de YouTube" ayuda="(link o id de 11 caracteres)">
                   <input value={f.youtube} onChange={(e) => poner('youtube', e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={CAMPO} />
                 </Etiqueta>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <Etiqueta
-                    texto={tipo === 'clip_video' ? 'Dura (s)' : 'Suenan (s)'}
-                    ayuda={tipo === 'clip_video' ? '(desde el principio del video)' : '(desde el principio de la canción)'}
-                  >
+                <div className="grid gap-3 md:grid-cols-3">
+                  <Etiqueta texto="Empieza en (s)" ayuda={`(${mmss(entero(f.inicio) ?? 0)}; 0 = desde el principio)`}>
+                    <input value={f.inicio} onChange={(e) => poner('inicio', e.target.value.replace(/\D/g, '').slice(0, 5))} inputMode="numeric" className={CAMPO} />
+                  </Etiqueta>
+                  <Etiqueta texto={tipo === 'clip_video' ? 'Dura (s)' : 'Suenan (s)'}>
                     <input value={f.duracion} onChange={(e) => poner('duracion', e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
                   </Etiqueta>
                   <Etiqueta texto="Categoría">
@@ -304,7 +307,13 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                     </select>
                   </Etiqueta>
                 </div>
-                <PruebaFragmento youtubeId={idDeYouTube(f.youtube)} inicio={0} duracion={entero(f.duracion) ?? 20} />
+                {(entero(f.inicio) ?? 0) > 0 && (
+                  <p className="text-sm text-profundo/70">
+                    Arranca en {mmss(entero(f.inicio) ?? 0)}: en el proyector entra con el volumen suave. Usalo para saltear un comienzo que
+                    delata el nombre.
+                  </p>
+                )}
+                <PruebaFragmento youtubeId={idDeYouTube(f.youtube)} inicio={entero(f.inicio) ?? 0} duracion={entero(f.duracion) ?? 20} />
                 <div className="grid gap-3 md:grid-cols-[0.5fr_1fr_1fr]">
                   <Etiqueta texto="Año">
                     <input value={f.anio} onChange={(e) => poner('anio', e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" className={CAMPO} />

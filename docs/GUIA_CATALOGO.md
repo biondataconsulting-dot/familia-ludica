@@ -25,6 +25,8 @@ Familia Lúdica, en un archivo que la app importa directo. Tiene dos partes: **c
 - Pedí de a **tandas de 20 a 40 ítems** por tipo de juego: salen mejor que un pedido gigante.
 - Las canciones y escenas necesitan links de YouTube **reales**: la IA tiene que buscarlos (con búsqueda web).
   Antes de la noche, el **Ensayo** de la app verifica que cada video se pueda reproducir.
+- Canciones y escenas arrancan en 0:00. Si alguna delata el nombre al principio, abrí el ítem en el catálogo y
+  poné **«Empieza en (s)»** (el botón de prueba te deja escucharlo); en el proyector entra con volumen suave.
 - Revisá siempre los datos (años, cifras, fechas): las IA a veces se equivocan.
 - Logos y «¿Qué ves?» llevan imagen: por ahora la IA te da la lista y las imágenes las subís vos desde el
   formulario de cada ítem en el catálogo (ver «Imágenes» más abajo).
@@ -201,6 +203,9 @@ Suena una canción (de YouTube, desde el principio); las mesas adivinan el **añ
 el **título** y el **artista**.
 
 - `contenido.youtube_id`: el ID del video de YouTube (**11 caracteres**, lo que va después de `watch?v=`).
+- `contenido.inicio`: el segundo donde empieza a sonar. **Siempre `0`** (desde el principio): no sabés en qué
+  segundo está cada parte del video. Si el comienzo delata el título (lo cantan o aparece escrito), avisalo en
+  los pendientes: el conductor ajusta el inicio escuchando.
 - `contenido.duracion`: cuántos segundos suena (de 5 a 120; recomendado **20**).
 - `contenido.categoria`: `"musica"`.
 - `solucion.anio`: año de **lanzamiento original** de la canción (no el de una reedición o remasterización).
@@ -222,7 +227,7 @@ el **título** y el **artista**.
     "tipo": "pista_audio",
     "etiquetas": ["rock nacional", "80s"],
     "dificultad": "media",
-    "contenido": { "youtube_id": "AAAAAAAAAAA", "duracion": 20, "categoria": "musica" },
+    "contenido": { "youtube_id": "AAAAAAAAAAA", "inicio": 0, "duracion": 20, "categoria": "musica" },
     "solucion": { "anio": 1986, "titulo": "Persiana americana", "artista": "Soda Stereo", "variantes_titulo": [], "variantes_artista": ["Soda"] }
   }
 ]
@@ -237,7 +242,8 @@ el **título** y el **artista**.
 Se ve y se escucha una escena; las mesas adivinan el **año**, y suman extra si aciertan el **título** y quién
 la **dirigió**.
 
-- `contenido.youtube_id`, `contenido.duracion`: como en Hitster (recomendado: 20 a 30 segundos).
+- `contenido.youtube_id`, `contenido.inicio` (siempre `0`) y `contenido.duracion`: como en Hitster (duración
+  recomendada: 20 a 30 segundos).
 - `contenido.categoria`: `"pelicula"`, `"serie"` o `"dibujo"`.
 - `solucion.anio`: año de estreno.
 - `solucion.titulo`: obligatorio.
@@ -254,7 +260,7 @@ público.
     "tipo": "clip_video",
     "etiquetas": ["cine", "80s"],
     "dificultad": "facil",
-    "contenido": { "youtube_id": "BBBBBBBBBBB", "duracion": 25, "categoria": "pelicula" },
+    "contenido": { "youtube_id": "BBBBBBBBBBB", "inicio": 0, "duracion": 25, "categoria": "pelicula" },
     "solucion": { "anio": 1985, "titulo": "Volver al futuro", "artista": "Robert Zemeckis", "variantes_titulo": ["Back to the Future"], "variantes_artista": ["Zemeckis"] }
   }
 ]
@@ -338,8 +344,8 @@ siempre a la playa?», «Un superhéroe», «Un deporte que se juega con pelota�
 - [ ] Trivia: 2 a 6 opciones sin vacías; `correcta` es un número de 0 a (opciones − 1).
 - [ ] Dos verdades: exactamente 3 afirmaciones; `mentira` es 0, 1 o 2.
 - [ ] Aproximaciones: `valor` es un número; si `formato` es `anio`, un año entero.
-- [ ] Hitster y Cine: `youtube_id` real de 11 caracteres (buscado, no inventado); año entre 1900 y el actual;
-      título y artista/director completos.
+- [ ] Hitster y Cine: `youtube_id` real de 11 caracteres (buscado, no inventado); `inicio` en 0; año entre 1900
+      y el actual; título y artista/director completos.
 - [ ] Imagen: estilo `emojis` con los emojis completos (logos y ¿Qué ves? van en la lista aparte).
 - [ ] Oveja Oveja: `solucion` vacía `{}`.
 - [ ] Todo es apto para una mesa familiar (ver «Reglas de contenido»).

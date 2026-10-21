@@ -20,7 +20,7 @@ export default function AdminEnsayo() {
         bloque: b.title,
         numero: n + 1,
         youtubeId: String(i.content.youtube_id ?? ''),
-        inicio: 0, // las canciones arrancan siempre desde 0:00
+        inicio: Math.max(0, Number(i.content.inicio ?? 0)), // por defecto 0:00
         duracion: Number(i.content.duracion ?? 20),
         nombre: [i.solution?.anio, i.solution?.titulo, i.solution?.artista].filter(Boolean).join(' · '),
       })),

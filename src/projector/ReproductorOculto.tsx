@@ -16,6 +16,9 @@ function marcar(evento: string) {
 /** Tiempo con las franjas puestas después de que arranca la escena (YouTube muestra el título al empezar). */
 const TELON_MS = 4000
 
+/** Cuánto tarda el volumen en llegar a 100 cuando el ítem arranca después de 0:00. */
+const ENTRADA_SUAVE_MS = 1500
+
 /** Si el video no arrancó a los 8 s de abrir, se recarga desde cero (y otra vez a los 16 s). */
 const REINTENTO_VIDEO_MS = 8000
 
@@ -61,6 +64,9 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const [bloqueado, setBloqueado] = useState(false)
   /** Número del último pedido de reproducir (para descartar chequeos viejos). */
   const ultimoPedido = useRef(0)
+  /** Entrada suave pendiente (el ítem arranca después de 0:00) y el intervalo que sube el volumen. */
+  const entradaSuave = useRef(false)
+  const subida = useRef<number | undefined>(undefined)
   const [falla, setFalla] = useState<string | null>(null)
   const esMedia = ['pista_audio', 'clip_video'].includes(live.item?.type ?? '')
   const itemId = esMedia ? live.item?.block_item_id : undefined
@@ -84,6 +90,16 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const alCambiarEstado = useCallback((estado: number) => {
     window.clearTimeout(demoraCortina.current)
     if (estado === ESTADO_YT.REPRODUCIENDO) {
+      if (entradaSuave.current) {
+        entradaSuave.current = false
+        let volumen = 0
+        window.clearInterval(subida.current)
+        subida.current = window.setInterval(() => {
+          volumen = Math.min(100, volumen + 100 / (ENTRADA_SUAVE_MS / 100))
+          player.current?.setVolume(volumen)
+          if (volumen >= 100) window.clearInterval(subida.current)
+        }, 100)
+      }
       // Si suena con volumen, el aviso de sonido bloqueado (si estaba) se va solo.
       if (player.current && !player.current.isMuted()) setBloqueado(false)
       // El cronómetro corre desde que arranca, no desde que se abrió (la base lo acepta una vez).
@@ -107,7 +123,13 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
     setCortina('preparando')
     setBloqueado(false)
   }, [itemId])
-  useEffect(() => () => window.clearTimeout(demoraCortina.current), [])
+  useEffect(
+    () => () => {
+      window.clearTimeout(demoraCortina.current)
+      window.clearInterval(subida.current)
+    },
+    [],
+  )
 
   // El marco lo dibuja la tarjeta (otra capa): se mide al cambiar de fase y se sigue midiendo por si
   // cambia el tamaño de la ventana o la tarjeta termina de acomodarse.
@@ -208,8 +230,11 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
         cargado.current = m.youtube_id
         p.loadVideoById({ videoId: m.youtube_id, startSeconds: m.inicio })
       }
+      // Si arranca después de 0:00, entra con volumen suave (no suena cortada): sube al empezar a sonar.
+      window.clearInterval(subida.current)
+      entradaSuave.current = m.inicio > 0
       p.unMute()
-      p.setVolume(100)
+      p.setVolume(entradaSuave.current ? 0 : 100)
       // A los 4 s: ¿el navegador bloqueó el sonido? Solo si de verdad pasó (suena silenciado, o nadie tocó la
       // pantalla del proyector desde que se cargó). Una carga lenta no es bloqueo: de eso se ocupan los reintentos.
       // Se descarta si mientras tanto hubo otro pedido (Repetir) o cambió la fase o el ítem. Una pausa nunca es

@@ -23,7 +23,7 @@ const EJEMPLO = [
   {
     tipo: 'pista_audio',
     etiquetas: ['80s', 'rock nacional'],
-    contenido: { youtube_id: 'XXXXXXXXXXX', inicio: 42, duracion: 20, categoria: 'musica' },
+    contenido: { youtube_id: 'XXXXXXXXXXX', inicio: 0, duracion: 20, categoria: 'musica' },
     solucion: { anio: 1986, titulo: 'Persiana americana', artista: 'Soda Stereo', variantes_titulo: [], variantes_artista: ['Soda'] },
   },
   {
