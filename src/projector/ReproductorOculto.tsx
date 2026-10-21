@@ -13,6 +13,9 @@ function marcar(evento: string) {
 }
 
 /** Lugar del marco de video ([data-marco-video] de Cine y series) relativo al escenario, en px. */
+/** Tiempo que la cortina sigue tapando la escena después de que arranca (YouTube muestra el título al empezar). */
+const DEMORA_CORTINA_MS = 2500
+
 type Marco = { left: number; top: number; width: number; height: number }
 
 function medirMarco(escenario: HTMLElement | null): Marco | null {
@@ -52,6 +55,27 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const exterior = useRef<HTMLDivElement>(null)
   const [marco, setMarco] = useState<Marco | null>(null)
   const videoVisible = esCine && !!itemId && (fase === 'item_open' || fase === 'item_closed')
+  // Cortina sobre la escena: YouTube muestra título, "Más videos" y su logo al cargar, en los primeros
+  // segundos y en pausa. La escena se descubre recién un rato después de que empieza a reproducirse.
+  const [cortina, setCortina] = useState<'preparando' | 'fin' | null>('preparando')
+  const seVio = useRef(false)
+  const demoraCortina = useRef<number | undefined>(undefined)
+  const alCambiarEstado = useCallback((estado: number) => {
+    window.clearTimeout(demoraCortina.current)
+    if (estado === ESTADO_YT.REPRODUCIENDO) {
+      demoraCortina.current = window.setTimeout(() => {
+        seVio.current = true
+        setCortina(null)
+      }, DEMORA_CORTINA_MS)
+    } else if (estado !== ESTADO_YT.CARGANDO || !seVio.current) {
+      setCortina(seVio.current ? 'fin' : 'preparando')
+    }
+  }, [])
+  useEffect(() => {
+    seVio.current = false
+    setCortina('preparando')
+  }, [itemId])
+  useEffect(() => () => window.clearTimeout(demoraCortina.current), [])
 
   // El marco lo dibuja la tarjeta (otra capa): se mide al cambiar de fase y se sigue midiendo por si
   // cambia el tamaño de la ventana o la tarjeta termina de acomodarse.
@@ -98,6 +122,7 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
                 },
                 onStateChange: (e) => {
                   if (e.data === ESTADO_YT.REPRODUCIENDO) marcar('suena')
+                  alCambiarEstado(e.data)
                 },
                 onError: (e) => setFalla(`Este video no se puede reproducir acá (error ${e.data}).`),
               },
@@ -107,7 +132,7 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
       )
     }
     return listo.current
-  }, [])
+  }, [alCambiarEstado])
 
   useEffect(() => {
     void obtenerPlayer()
@@ -214,6 +239,12 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
         }
       >
         <div ref={contenedor} className={`absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full ${estiloCine ? 'scale-[1.35]' : ''}`} />
+        {estiloCine && cortina && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.8cqw] bg-profundo text-white">
+            <span className="text-[5cqw] leading-none">🎬</span>
+            <span className="font-titulo text-[2.2cqw] font-semibold">{cortina === 'fin' ? 'Fin de la escena' : 'Preparando la escena…'}</span>
+          </div>
+        )}
       </div>
       {bloqueado && media && (
         <button

@@ -150,6 +150,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - Dinámica nueva `cine` ("Cine y series") para `clip_video`; `hipster` queda solo para `pista_audio`. Mismo formulario y mismo puntaje que Hipster (`score_cine` envuelve a `score_hipster`): año + título (+200) + director (+200, va en `artista`, obligatorio en las escenas).
 - La escena **se ve y se escucha** desde que se abre: el player se ubica encima de un marco 16:9 de la tarjeta, agrandado 35% dentro de un recorte (sin clics) para esconder la barra de título y el logo de YouTube. Se pausa al cerrar respuestas y desaparece al revelar.
+- **Cortina sobre la escena**: YouTube muestra título, "Más videos" y su logo al cargar, al arrancar y en pausa (el recorte no alcanza). Una cortina azul con 🎬 tapa el video mientras no se está reproduciendo y hasta 2,5 s después de que arranca ("Preparando la escena…" / "Fin de la escena"). El sonido arranca igual: los primeros segundos se escuchan con la cortina puesta.
 - Igual que las canciones, las escenas arrancan en 0:00 y duran `duracion`: conviene usar videos que ya sean solo la escena (sin intro con el nombre de la película).
 - **Corrección del conductor**: además de Aceptar / Rechazar en las dudosas, en la tabla de respuestas (con respuestas cerradas) se puede dar vuelta lo que el sistema decidió solo (p. ej. "Volver al futuro 2" se acepta sola contra "Volver al futuro" por similitud). Vale para Hipster y Cine.
 
