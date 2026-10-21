@@ -14,14 +14,15 @@ export const TIPOS = [
 ] as const
 export type TipoItem = (typeof TIPOS)[number]
 
+/** Nombre visible de cada tipo: el del juego (igual que en los bloques de la noche y en la guía para IA). */
 export const NOMBRE_TIPO: Record<TipoItem, string> = {
-  pregunta_opciones: 'Pregunta con opciones',
+  pregunta_opciones: 'Trivia',
   trio_verdad_mentira: 'Dos verdades y una mentira',
-  pregunta_numerica: 'Pregunta numérica',
-  pista_audio: 'Canción (YouTube)',
-  clip_video: 'Escena de cine o serie (YouTube)',
-  imagen_adivinar: 'Imagen o emojis para adivinar',
-  pregunta_mayoria: 'Pregunta de Oveja Oveja',
+  pregunta_numerica: 'Aproximaciones',
+  pista_audio: 'Hitster musical (canción)',
+  clip_video: 'Cine y series (escena)',
+  imagen_adivinar: 'Adiviná la imagen',
+  pregunta_mayoria: 'Oveja Oveja',
 }
 
 /** Qué tipos de ítem acepta cada dinámica (igual que private.tipo_va_en). */

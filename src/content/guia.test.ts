@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import guia from '../../docs/GUIA_CATALOGO.md?raw'
 import { leerImportacion } from './importar'
-import { TIPOS } from './validarItem'
+import { NOMBRE_TIPO, TIPOS } from './validarItem'
 
 /**
  * La guía para generar el catálogo con IA (docs/GUIA_CATALOGO.md) tiene que estar al día con la app:
@@ -11,8 +11,9 @@ import { TIPOS } from './validarItem'
 const bloquesJson = [...guia.matchAll(/```json\r?\n([\s\S]*?)```/g)].map((m) => m[1] ?? '')
 
 describe('guía del catálogo', () => {
-  it.each(TIPOS)('explica el tipo %s', (tipo) => {
-    expect(guia).toContain(`tipo: \`${tipo}\``)
+  it.each(TIPOS)('explica el tipo %s, con el mismo nombre que el catálogo', (tipo) => {
+    const juego = NOMBRE_TIPO[tipo].replace(/ \(.*\)$/, '')
+    expect(guia).toContain(`#### ${juego} — tipo: \`${tipo}\``)
   })
 
   it('tiene el prompt para copiar', () => {

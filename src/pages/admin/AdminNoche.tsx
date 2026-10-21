@@ -448,7 +448,7 @@ function ElegirItems(props: { dinamica: string; catalogo: ItemCatalogo[] | null;
   return (
     <div className="mt-3 rounded-xl border-2 border-azul/30 p-3">
       <p className="mb-2 text-sm text-profundo/70">
-        Ítems de tipo {tipos.map((x) => NOMBRE_TIPO[x]).join(' o ')} que todavía no están en el bloque.
+        Ítems de {tipos.map((x) => NOMBRE_TIPO[x]).join(' o ')} que todavía no están en el bloque.
       </p>
       <div className="mb-2 flex flex-wrap gap-2">
         <select value={etiqueta} onChange={(e) => setEtiqueta(e.target.value)} className={`${CAMPO} w-auto`} aria-label="Etiqueta">
