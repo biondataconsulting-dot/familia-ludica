@@ -29,6 +29,8 @@ export const admin = {
   next: (eventId: string) => llamar('admin_next', { p_event_id: eventId }),
   showBlockRanking: (eventId: string) => llamar('admin_show_block_ranking', { p_event_id: eventId }),
   finish: (eventId: string) => llamar('admin_finish', { p_event_id: eventId }),
+  /** Cuántos proyectores con sonido están abiertos ahora (2 o más = se escucha doble). */
+  proyectores: (eventId: string) => llamar<number>('admin_proyectores', { p_event_id: eventId }),
   /** Vuelve a poner en vivo una noche terminada (del podio al ranking) para jugar más bloques. */
   resume: (eventId: string) => llamar('admin_resume_event', { p_event_id: eventId }),
   /** Mostrar u ocultar el QR (sobre el logo) y "Cómo va la noche"; null = no lo cambia. */

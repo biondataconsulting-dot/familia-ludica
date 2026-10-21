@@ -185,6 +185,10 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Avisos de puntos** (`get_live.aviso`): el último punto manual o de desafío de los últimos 20 s; cada celular lo muestra 10 s ("+300 para Los Pumas · Mejor disfraz" / "🏆 Los Pumas ganó el desafío…"). Las misiones no se avisan (son secretas) y lo anulado tampoco. Solo celulares.
 - **Bloques en vivo**: Armar siempre permitió agregar bloques con la noche en vivo; lo que faltaba es que Conducir los viera: ahora relee la estructura al volver a la pestaña y cada 15 s. **Reanudar la noche** (`admin_resume_event`): una noche terminada vuelve a en vivo y el proyector pasa del podio al ranking; mesas y puntos quedan.
 
+## Aviso de proyectores duplicados
+
+- Causa real del "se escucha doble" (21/10): un segundo proyector de la misma noche abierto en otra pestaña. Cada proyector con «Comenzar la noche» tocado late cada 10 s (`proyector_latido`, id propio de la página, tabla `proyectores`, tope 20 por noche, limpia los de más de 2 min). Conducir consulta cada 10 s `admin_proyectores`: con uno muestra "✔ Proyector con sonido conectado", con ninguno lo avisa en gris y con dos o más avisa que se va a escuchar doble.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

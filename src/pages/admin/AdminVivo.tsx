@@ -2,6 +2,7 @@ import { useCierreAutomatico } from '../../live/useCierreAutomatico'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/useEstructura'
+import { useProyectores } from '../../admin/useProyectores'
 import { PanelPuntos } from '../../admin/PanelPuntos'
 import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
@@ -51,6 +52,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
   const temporizador = useTemporizador(live, desfaseMs)
   // Al llegar a 0 se cierran las respuestas solas (la base confirma que el tiempo se cumplió).
   useCierreAutomatico(evento.code, live, temporizador)
+  const proyectores = useProyectores(evento.id)
   const mesas = useMesasAdmin(evento.id, `${live?.updated_at}|${live?.teams_count}`)
   const [dudosas, setDudosas] = useState(0)
   const [ocupado, setOcupado] = useState(false)
@@ -172,7 +174,18 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           >
             {live.show_ranking ? 'Ocultar cómo va la noche' : '📊 Mostrar cómo va la noche'}
           </button>
+          {proyectores != null && proyectores <= 1 && (
+            <span className={`self-center text-sm font-semibold ${proyectores === 1 ? 'text-green-700' : 'text-profundo/60'}`}>
+              {proyectores === 1 ? '✔ Proyector con sonido conectado' : 'Ningún proyector con sonido (falta tocar «Comenzar la noche»)'}
+            </span>
+          )}
         </div>
+        {proyectores != null && proyectores > 1 && (
+          <Mensaje>
+            ⚠ Hay {proyectores} proyectores con sonido abiertos en esta noche: las canciones y escenas se van a escuchar dobles.
+            Cerrá los que sobran (otra pestaña, otra compu o un celular con la pantalla del proyector).
+          </Mensaje>
+        )}
       </header>
 
       {terminada && (

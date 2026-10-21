@@ -242,6 +242,7 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - "Mostrar QR" (esquina del logo, el juego sigue) y "📊 Mostrar cómo va la noche" (ranking en proyector; puesto + top 5 en celulares; no con una pregunta abierta ni en el podio). `admin_pantalla(event, qr, ranking)`.
 - Puntos manuales y desafíos ganados: cartel de 10 s en todos los celulares (`get_live.aviso`); misiones no.
 - Noche terminada: "Reanudar la noche" (`admin_resume_event`) para seguir con más bloques.
+- Estado del proyector en Conducir: conectado / ninguno / **dos o más (se escucha doble)**, con el latido de cada proyector con sonido (`proyector_latido`, `admin_proyectores`).
 
 ### 8.5 Módulo opcional: misiones secretas y desafíos
 

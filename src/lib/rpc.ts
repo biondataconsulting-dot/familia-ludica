@@ -48,6 +48,9 @@ export type MediaProyector = { block_item_id: string; youtube_id: string; inicio
 /** Video del ítem actual, solo para el proyector (null si no hay audio/video en juego). */
 export const proyectorMedia = (codigo: string) => llamar<MediaProyector | null>('proyector_media', { p_code: codigo })
 
+/** El proyector con sonido late cada 10 s (para que el panel avise si hay dos abiertos). */
+export const proyectorLatido = (codigo: string, id: string) => llamar<null>('proyector_latido', { p_code: codigo, p_id: id })
+
 /** Al llegar el reloj a 0: la base cierra las respuestas solo si el tiempo de verdad se cumplió. */
 export const cerrarSiVencio = (codigo: string) => llamar<boolean>('cerrar_si_vencio', { p_code: codigo })
 

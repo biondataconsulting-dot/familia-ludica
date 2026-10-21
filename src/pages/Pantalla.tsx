@@ -15,6 +15,7 @@ import { ItemEnJuego } from '../projector/ItemEnJuego'
 import { Podio } from '../projector/Podio'
 import { Portada } from '../projector/Portada'
 import { QrEsquina } from '../projector/QrEsquina'
+import { useLatidoProyector } from '../projector/useLatidoProyector'
 import { RankingBloque } from '../projector/RankingBloque'
 import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
@@ -33,6 +34,8 @@ export default function Pantalla() {
   // "Comenzar la noche": un toque por carga de página (el navegador olvida el permiso de sonido al recargar).
   const [comenzada, setComenzada] = useState(false)
   useWakeLock(comenzada)
+  // Para que el panel avise si hay dos proyectores con sonido (se escucharía doble).
+  useLatidoProyector(codigo, comenzada)
   // La API de YouTube se baja de entrada (en segundo plano) para no sumarla a la primera canción.
   useEffect(() => {
     void cargarYouTube().catch(() => undefined)
