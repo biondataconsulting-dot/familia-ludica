@@ -10,6 +10,7 @@ export type ReproductorYT = {
   getPlayerState(): number
   setVolume(volumen: number): void
   unMute(): void
+  isMuted(): boolean
   mute(): void
   getDuration(): number
   destroy(): void

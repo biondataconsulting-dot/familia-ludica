@@ -24,6 +24,12 @@ type Cortina = 'preparando' | 'telon' | 'abierto' | 'fin'
 
 type Marco = { left: number; top: number; width: number; height: number }
 
+/** true si alguien tocó la pantalla del proyector desde que se cargó (el navegador ya deja sonar con volumen). */
+function huboToque(): boolean {
+  const activacion = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation
+  return activacion ? activacion.hasBeenActive : true
+}
+
 function medirMarco(escenario: HTMLElement | null): Marco | null {
   const marco = escenario?.querySelector<HTMLElement>('[data-marco-video]')
   if (!escenario || !marco) return null
@@ -76,6 +82,8 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const alCambiarEstado = useCallback((estado: number) => {
     window.clearTimeout(demoraCortina.current)
     if (estado === ESTADO_YT.REPRODUCIENDO) {
+      // Si suena con volumen, el aviso de sonido bloqueado (si estaba) se va solo.
+      if (player.current && !player.current.isMuted()) setBloqueado(false)
       // El cronómetro corre desde que arranca, no desde que se abrió (la base lo acepta una vez).
       const j = enJuego.current
       if (j.itemId) arrancaron.current.add(j.itemId)
@@ -95,6 +103,7 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   useEffect(() => {
     seVio.current = false
     setCortina('preparando')
+    setBloqueado(false)
   }, [itemId])
   useEffect(() => () => window.clearTimeout(demoraCortina.current), [])
 
@@ -199,10 +208,13 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
       }
       p.unMute()
       p.setVolume(100)
-      // Si a los 4 s no está sonando ni cargando, el navegador bloqueó el audio (falta un toque en la pantalla).
+      // A los 4 s: ¿el navegador bloqueó el sonido? Solo si de verdad pasó (suena silenciado, o nadie tocó la
+      // pantalla del proyector desde que se cargó). Una carga lenta no es bloqueo: de eso se ocupan los reintentos.
       window.setTimeout(() => {
-        const estado = player.current?.getPlayerState()
-        if (estado !== ESTADO_YT.REPRODUCIENDO && estado !== ESTADO_YT.CARGANDO) setBloqueado(true)
+        const p = player.current
+        if (!p) return
+        const sonando = p.getPlayerState() === ESTADO_YT.REPRODUCIENDO
+        if ((sonando && p.isMuted()) || (!sonando && !huboToque())) setBloqueado(true)
       }, 4000)
     },
     [obtenerPlayer],
