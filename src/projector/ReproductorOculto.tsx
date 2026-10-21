@@ -13,8 +13,11 @@ function marcar(evento: string) {
 }
 
 /** Lugar del marco de video ([data-marco-video] de Cine y series) relativo al escenario, en px. */
-/** Tiempo que la cortina sigue tapando la escena después de que arranca (YouTube muestra el título al empezar). */
-const DEMORA_CORTINA_MS = 2500
+/** Tiempo con las franjas puestas después de que arranca la escena (YouTube muestra el título al empezar). */
+const TELON_MS = 2500
+
+/** preparando/fin: cortina completa · telon: franjas arriba y abajo · abierto: escena entera. */
+type Cortina = 'preparando' | 'telon' | 'abierto' | 'fin'
 
 type Marco = { left: number; top: number; width: number; height: number }
 
@@ -55,18 +58,20 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const exterior = useRef<HTMLDivElement>(null)
   const [marco, setMarco] = useState<Marco | null>(null)
   const videoVisible = esCine && !!itemId && (fase === 'item_open' || fase === 'item_closed')
-  // Cortina sobre la escena: YouTube muestra título, "Más videos" y su logo al cargar, en los primeros
-  // segundos y en pausa. La escena se descubre recién un rato después de que empieza a reproducirse.
-  const [cortina, setCortina] = useState<'preparando' | 'fin' | null>('preparando')
+  // Telón sobre la escena: YouTube muestra título, "Más videos" y su logo al cargar, al arrancar y en
+  // pausa. Antes de arrancar y en pausa, cortina completa. Al arrancar, imagen y sonido juntos con dos
+  // franjas tapando los bordes (donde YouTube pone título y logo), que después se abren como un telón.
+  const [cortina, setCortina] = useState<Cortina>('preparando')
   const seVio = useRef(false)
   const demoraCortina = useRef<number | undefined>(undefined)
   const alCambiarEstado = useCallback((estado: number) => {
     window.clearTimeout(demoraCortina.current)
     if (estado === ESTADO_YT.REPRODUCIENDO) {
+      setCortina((c) => (c === 'abierto' ? c : 'telon'))
       demoraCortina.current = window.setTimeout(() => {
         seVio.current = true
-        setCortina(null)
-      }, DEMORA_CORTINA_MS)
+        setCortina('abierto')
+      }, TELON_MS)
     } else if (estado !== ESTADO_YT.CARGANDO || !seVio.current) {
       setCortina(seVio.current ? 'fin' : 'preparando')
     }
@@ -239,11 +244,26 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
         }
       >
         <div ref={contenedor} className={`absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full ${estiloCine ? 'scale-[1.35]' : ''}`} />
-        {estiloCine && cortina && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.8cqw] bg-profundo text-white">
-            <span className="text-[5cqw] leading-none">🎬</span>
-            <span className="font-titulo text-[2.2cqw] font-semibold">{cortina === 'fin' ? 'Fin de la escena' : 'Preparando la escena…'}</span>
-          </div>
+        {estiloCine && (
+          <>
+            {/* Franjas del telón (20% arriba y abajo): al abrirse, una sube y la otra baja en 1 s. */}
+            {(['top-0 origin-top', 'bottom-0 origin-bottom'] as const).map((lado, i) => (
+              <div
+                key={lado}
+                className={`absolute inset-x-0 h-[20%] bg-profundo ${lado} ${
+                  cortina === 'abierto'
+                    ? `${i === 0 ? '-translate-y-full' : 'translate-y-full'} transition-transform duration-1000 ease-in-out motion-reduce:transition-none`
+                    : ''
+                }`}
+              />
+            ))}
+            {(cortina === 'preparando' || cortina === 'fin') && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.8cqw] bg-profundo text-white">
+                <span className="text-[5cqw] leading-none">🎬</span>
+                <span className="font-titulo text-[2.2cqw] font-semibold">{cortina === 'fin' ? 'Fin de la escena' : 'Preparando la escena…'}</span>
+              </div>
+            )}
+          </>
         )}
       </div>
       {bloqueado && media && (
