@@ -25,6 +25,24 @@ const EJEMPLO = [
     contenido: { youtube_id: 'XXXXXXXXXXX', inicio: 42, duracion: 20, categoria: 'musica' },
     solucion: { anio: 1986, titulo: 'Persiana americana', artista: 'Soda Stereo', variantes_titulo: [], variantes_artista: ['Soda'] },
   },
+  {
+    tipo: 'imagen_adivinar',
+    etiquetas: ['disney'],
+    contenido: { estilo: 'emojis', emojis: '🦁👑' },
+    solucion: { respuesta: 'El rey león', variantes_respuesta: ['Rey León'] },
+  },
+  {
+    tipo: 'imagen_adivinar',
+    etiquetas: ['marcas'],
+    contenido: { estilo: 'logo', imagen: 'https://…/logo.png' },
+    solucion: { respuesta: 'Nombre de la marca', variantes_respuesta: [] },
+  },
+  {
+    tipo: 'pregunta_mayoria',
+    etiquetas: ['oveja'],
+    contenido: { texto: '¿Cuál es la mejor comida para un domingo?' },
+    solucion: {},
+  },
 ]
 
 /** /admin/importar — JSON o CSV → vista previa con errores por fila → importar (y opcionalmente a un bloque). */

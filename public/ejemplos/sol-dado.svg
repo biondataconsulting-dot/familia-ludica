@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300">
+  <rect width="640" height="300" fill="#ffffff"/>
+  <!-- Sol -->
+  <g transform="translate(150 150)" stroke="#E8A317" stroke-width="8" stroke-linecap="round">
+    <line x1="0" y1="-118" x2="0" y2="-88"/>
+    <line x1="0" y1="88" x2="0" y2="118"/>
+    <line x1="-118" y1="0" x2="-88" y2="0"/>
+    <line x1="88" y1="0" x2="118" y2="0"/>
+    <line x1="-83" y1="-83" x2="-62" y2="-62"/>
+    <line x1="62" y1="62" x2="83" y2="83"/>
+    <line x1="-83" y1="83" x2="-62" y2="62"/>
+    <line x1="62" y1="-62" x2="83" y2="-83"/>
+    <circle r="70" fill="#F7D21E" stroke="#E8A317" stroke-width="6"/>
+  </g>
+  <!-- Más -->
+  <g stroke="#173F63" stroke-width="12" stroke-linecap="round">
+    <line x1="300" y1="150" x2="350" y2="150"/>
+    <line x1="325" y1="125" x2="325" y2="175"/>
+  </g>
+  <!-- Dado -->
+  <g transform="translate(400 60)">
+    <rect width="180" height="180" rx="28" fill="#ffffff" stroke="#173F63" stroke-width="8"/>
+    <g fill="#173F63">
+      <circle cx="45" cy="45" r="15"/>
+      <circle cx="135" cy="45" r="15"/>
+      <circle cx="90" cy="90" r="15"/>
+      <circle cx="45" cy="135" r="15"/>
+      <circle cx="135" cy="135" r="15"/>
+    </g>
+  </g>
+</svg>

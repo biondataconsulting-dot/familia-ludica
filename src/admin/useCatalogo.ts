@@ -57,5 +57,9 @@ export function resumenItem(type: string, content: Record<string, unknown>, solu
   if (type === 'pista_audio' || type === 'clip_video') {
     return [solution.anio, solution.titulo, solution.artista].filter(Boolean).join(' · ')
   }
+  if (type === 'imagen_adivinar') {
+    const juego = { emojis: `Emojis ${String(content.emojis ?? '')}`, logo: 'Logo', que_ves: '¿Qué ves?' }[String(content.estilo)] ?? 'Imagen'
+    return `${juego} → ${String(solution.respuesta ?? '')}`
+  }
   return String(content.texto ?? '')
 }

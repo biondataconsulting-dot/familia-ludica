@@ -40,8 +40,12 @@ export const admin = {
   manualPoints: (eventId: string, teamId: string, puntos: number, motivo: string) =>
     llamar('admin_manual_points', { p_event_id: eventId, p_team_id: teamId, p_points: puntos, p_reason: motivo }),
   voidEntry: (entryId: string) => llamar('admin_void_entry', { p_entry_id: entryId }),
-  setValidation: (answerId: string, campo: 'titulo' | 'artista', valor: 'aceptada' | 'rechazada') =>
+  setValidation: (answerId: string, campo: 'titulo' | 'artista' | 'respuesta', valor: 'aceptada' | 'rechazada') =>
     llamar('admin_set_validation', { p_answer_id: answerId, p_field: campo, p_value: valor }),
+  /** Oveja Oveja (respuestas cerradas): juntar un grupo con otro o dejar una respuesta sola. */
+  ovejaJuntar: (blockItemId: string, desde: string, hacia: string) =>
+    llamar('admin_oveja_juntar', { p_block_item_id: blockItemId, p_desde: desde, p_hacia: hacia }),
+  ovejaSeparar: (answerId: string) => llamar('admin_oveja_separar', { p_answer_id: answerId }),
   unvoidEntry: (entryId: string) => llamar('admin_unvoid_entry', { p_entry_id: entryId }),
   /** Borra mesas, respuestas y puntos y vuelve a la portada. Pide el código de la noche como confirmación. */
   resetEvent: (eventId: string, codigo: string) => llamar('admin_reset_event', { p_event_id: eventId, p_code: codigo }),

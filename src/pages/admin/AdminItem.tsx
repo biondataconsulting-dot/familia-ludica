@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useCatalogo, type ItemCatalogo } from '../../admin/useCatalogo'
 import { BotonPrincipal, BotonSecundario, CAMPO, Etiqueta, Mensaje, Tarjeta } from '../../admin/ui'
+import { SubirImagen } from '../../admin/SubirImagen'
 import { PruebaFragmento, VistaPrevia } from '../../admin/VistaPrevia'
 import { idDeYouTube, NOMBRE_TIPO, TIPOS, validarItem, type TipoItem } from '../../content/validarItem'
 import { letraOpcion } from '../../dynamics/solucion'
@@ -40,6 +41,11 @@ type Campos = {
   artista: string
   variantesTitulo: string
   variantesArtista: string
+  estilo: 'emojis' | 'logo' | 'que_ves'
+  emojis: string
+  consigna: string
+  respuesta: string
+  variantesRespuesta: string
   etiquetas: string
   dificultad: string
   estado: 'aprobado' | 'sugerido' | 'borrador'
@@ -70,6 +76,11 @@ function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
     artista: str(s.artista),
     variantesTitulo: lista(s.variantes_titulo).join('\n'),
     variantesArtista: lista(s.variantes_artista).join('\n'),
+    estilo: c.estilo === 'logo' || c.estilo === 'que_ves' ? c.estilo : 'emojis',
+    emojis: str(c.emojis),
+    consigna: str(c.consigna),
+    respuesta: str(s.respuesta),
+    variantesRespuesta: lista(s.variantes_respuesta).join('\n'),
     etiquetas: (item?.tags ?? []).join(', '),
     dificultad: item?.difficulty ?? '',
     estado: item?.status ?? 'aprobado',
@@ -96,6 +107,17 @@ function armar(tipo: TipoItem, f: Campos): { contenido: Record<string, unknown>;
         contenido: { texto: f.texto.trim(), unidad: f.unidad.trim(), imagen: f.imagen.trim() || null, formato: f.formato },
         solucion: { valor: numero(f.valor), ...explicacion },
       }
+    case 'imagen_adivinar':
+      return {
+        contenido: {
+          estilo: f.estilo,
+          ...(f.estilo === 'emojis' ? { emojis: f.emojis.trim() } : { imagen: f.imagen.trim() }),
+          ...(f.consigna.trim() ? { consigna: f.consigna.trim() } : {}),
+        },
+        solucion: { respuesta: f.respuesta.trim(), variantes_respuesta: lineas(f.variantesRespuesta), ...explicacion },
+      }
+    case 'pregunta_mayoria':
+      return { contenido: { texto: f.texto.trim() }, solucion: {} }
     default:
       return {
         // Siempre suena desde 0:00 (inicio queda en 0).
@@ -202,10 +224,45 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
               </select>
             </Etiqueta>
 
-            {(tipo === 'pregunta_opciones' || tipo === 'pregunta_numerica') && (
+            {(tipo === 'pregunta_opciones' || tipo === 'pregunta_numerica' || tipo === 'pregunta_mayoria') && (
               <Etiqueta texto="Pregunta">
                 <textarea value={f.texto} onChange={(e) => poner('texto', e.target.value)} rows={2} maxLength={300} className={`${CAMPO} py-2`} />
               </Etiqueta>
+            )}
+            {tipo === 'pregunta_mayoria' && (
+              <p className="text-sm text-profundo/70">
+                No tiene respuesta correcta: suman las mesas que coinciden con la mayoría. Funciona mejor con preguntas abiertas y
+                cortas («¿La mejor comida para un domingo?»).
+              </p>
+            )}
+            {tipo === 'imagen_adivinar' && (
+              <>
+                <Etiqueta texto="Juego">
+                  <select value={f.estilo} onChange={(e) => poner('estilo', e.target.value as Campos['estilo'])} className={CAMPO}>
+                    <option value="emojis">Película con emojis</option>
+                    <option value="logo">Logo (¿de qué marca es?)</option>
+                    <option value="que_ves">¿Qué ves? (acertijo de imagen)</option>
+                  </select>
+                </Etiqueta>
+                {f.estilo === 'emojis' ? (
+                  <Etiqueta texto="Emojis" ayuda="(pegalos o escribilos con Windows + punto)">
+                    <input value={f.emojis} onChange={(e) => poner('emojis', e.target.value)} placeholder="🦁👑" className={`${CAMPO} text-2xl`} />
+                  </Etiqueta>
+                ) : (
+                  <SubirImagen url={f.imagen} onCambio={(u) => poner('imagen', u)} />
+                )}
+                <Etiqueta texto="Consigna" ayuda="(opcional; si no, «¿Qué película es?», «¿De qué marca es este logo?» o «¿Qué ves?»)">
+                  <input value={f.consigna} onChange={(e) => poner('consigna', e.target.value)} maxLength={120} className={CAMPO} />
+                </Etiqueta>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Etiqueta texto="Respuesta">
+                    <input value={f.respuesta} onChange={(e) => poner('respuesta', e.target.value)} maxLength={150} className={CAMPO} />
+                  </Etiqueta>
+                  <Etiqueta texto="Otras formas aceptadas" ayuda="(una por línea)">
+                    <textarea value={f.variantesRespuesta} onChange={(e) => poner('variantesRespuesta', e.target.value)} rows={2} className={`${CAMPO} py-2`} />
+                  </Etiqueta>
+                </div>
+              </>
             )}
             {tipo === 'pregunta_opciones' && listaEditable('opciones', 'correcta', letraOpcion, false)}
             {tipo === 'trio_verdad_mentira' && listaEditable('afirmaciones', 'mentira', (i) => String(i + 1), true)}
@@ -270,7 +327,7 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
               </>
             )}
 
-            {!esMedia && (
+            {!esMedia && tipo !== 'pregunta_mayoria' && (
               <Etiqueta texto="Explicación" ayuda="(opcional, se muestra al revelar)">
                 <input value={f.explicacion} onChange={(e) => poner('explicacion', e.target.value)} maxLength={200} className={CAMPO} />
               </Etiqueta>

@@ -34,6 +34,10 @@ export function describirSolucion(tipo: string, contenido: Contenido, solucion: 
     case 'pista_audio':
     case 'clip_video':
       return [texto(solucion.anio), texto(solucion.titulo), texto(solucion.artista)].filter(Boolean).join(' · ')
+    case 'imagen_adivinar':
+      return texto(solucion.respuesta)
+    case 'pregunta_mayoria':
+      return 'La que elija la mayoría'
     default:
       return JSON.stringify(solucion)
   }
@@ -47,6 +51,11 @@ export function consigna(tipo: string, contenido: Contenido): string {
       String(contenido.categoria ?? (tipo === 'pista_audio' ? 'musica' : ''))
     ]
     return cual ? `¿De qué año es ${cual}?` : '¿De qué año es?'
+  }
+  if (tipo === 'imagen_adivinar') {
+    const propia = texto(contenido.consigna).trim()
+    if (propia) return propia
+    return { emojis: '¿Qué película es?', logo: '¿De qué marca es este logo?', que_ves: '¿Qué ves?' }[String(contenido.estilo)] ?? '¿Qué es?'
   }
   return texto(contenido.texto)
 }

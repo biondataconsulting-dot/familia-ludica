@@ -9,6 +9,8 @@ const DINAMICA_DE_TIPO: Record<string, string> = {
   pregunta_numerica: 'aproximaciones',
   pista_audio: 'hipster',
   clip_video: 'cine',
+  imagen_adivinar: 'imagen',
+  pregunta_mayoria: 'oveja',
 }
 
 /** Cómo se va a ver el ítem en el proyector (abierto o revelado), en chico. */

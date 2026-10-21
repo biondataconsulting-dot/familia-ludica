@@ -98,6 +98,11 @@ function respuestaAlAzar(live: Live): Record<string, unknown> | null {
       return { opcion: azar(0, 2) }
     case 'aproximaciones':
       return { valor: c.formato === 'anio' ? azar(1900, 2025) : azar(0, 10000) }
+    case 'imagen':
+      return { respuesta: ['El rey león', 'rey leon', 'Soldado', 'Coca-Cola', 'ni idea'][azar(0, 4)] }
+    case 'oveja':
+      // Pocas opciones repetidas, para que se formen grupos (y a veces empates o una oveja negra).
+      return { texto: ['Asado', 'asado', 'Milanesas', 'Pizza', 'Asados'][azar(0, 4)] }
     case 'hipster':
     case 'cine':
       return { anio: azar(1960, 2024), titulo: TITULOS[azar(0, TITULOS.length - 1)], artista: ARTISTAS[azar(0, ARTISTAS.length - 1)] }

@@ -182,6 +182,8 @@ Puntaje base: **hasta 1.000 puntos por ítem**, multiplicado por `event_blocks.m
 | `dos_verdades` | Dos verdades y una mentira | trio_verdad_mentira | 3 botones con las afirmaciones resumidas ("1", "2", "3") | 1.000 si elige la mentira |
 | `aproximaciones` | Aproximaciones | pregunta_numerica | Teclado numérico grande; si `formato = anio`, selector de año | d = abs(resp − valor). dmin = 1.000. Resto: `round(800 × (1 − (d − dmin)/(dmax − dmin)))`. La más lejana 0. Si dmax = dmin, todas 1.000 |
 | `hipster` | Hitster musical | pista_audio | Año con − / + y teclado, título y artista opcionales | Año: `max(0, 600 − 75 × abs(diferencia))`. Título aceptado: +200. Artista aceptado: +200 |
+| `imagen` | Adiviná la imagen (película con emojis, logo, ¿Qué ves?) | imagen_adivinar | Una respuesta escrita | Acierto (validado como el título de Hitster, con dudosas): 1.000 |
+| `oveja` | Oveja Oveja (versión local de Herd Mentality) | pregunta_mayoria | Una respuesta escrita: lo que va a responder la mayoría | Grupo más numeroso: 1.000 cada mesa; empate arriba o unanimidad: nadie. Oveja negra (la única distinta): solo se muestra |
 | `cine` | Cine y series | clip_video | Año con − / + y teclado, título y director opcionales | Igual que Hitster (el director va en `artista`, obligatorio en el ítem). La escena **se ve** en el proyector mientras se responde |
 
 **Validación de texto (Hitster)**, en SQL con `pg_trgm` + `unaccent`, y una copia de la función de normalización en TS con tests:

@@ -4,6 +4,7 @@ import { formatearNumero } from '../dynamics/solucion'
 import { ErrorRpc } from '../lib/rpc'
 import { admin } from '../lib/rpcAdmin'
 import type { Live, Revelado } from '../lib/tipos'
+import { GruposOveja } from './GruposOveja'
 import { useRespuestasAdmin, type RespuestaAdmin } from './useRespuestasAdmin'
 
 type Props = {
@@ -45,6 +46,15 @@ export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
           Quedan {dudosas} {dudosas === 1 ? 'dudosa' : 'dudosas'}.{' '}
           {puedeDecidir ? 'Si revelás sin decidir, cuentan como rechazadas.' : 'Se deciden al cerrar las respuestas.'}
         </p>
+      )}
+      {live.block?.dynamic === 'oveja' && respuestas.length > 0 && (
+        <GruposOveja
+          respuestas={respuestas}
+          mesas={live.teams}
+          blockItemId={item.block_item_id}
+          editable={puedeDecidir}
+          onCambio={recargar}
+        />
       )}
       <table className="w-full text-left text-sm">
         <thead className="text-xs uppercase tracking-wide text-profundo/50">
@@ -98,7 +108,7 @@ const ETIQUETA: Record<string, { texto: string; clase: string }> = {
   rechazada: { texto: '✘ rechazada', clase: 'text-profundo/50' },
   dudosa: { texto: '? dudosa', clase: 'text-naranja' },
 }
-const NOMBRE_CAMPO: Record<string, string> = { titulo: 'Título', artista: 'Artista' }
+const NOMBRE_CAMPO: Record<string, string> = { titulo: 'Título', artista: 'Artista', respuesta: 'Respuesta' }
 
 const ACEPTADO = ['auto_ok', 'aceptada']
 
@@ -111,7 +121,7 @@ function Validaciones({ respuesta, puedeDecidir, onCambio, esEscena }: PropsVali
   const campos = Object.entries(respuesta.validation ?? {}).filter(([c]) => c in NOMBRE_CAMPO)
   if (campos.length === 0) return null
 
-  async function decidir(campo: 'titulo' | 'artista', valor: 'aceptada' | 'rechazada') {
+  async function decidir(campo: 'titulo' | 'artista' | 'respuesta', valor: 'aceptada' | 'rechazada') {
     setOcupado(true)
     setError(null)
     try {

@@ -3,7 +3,15 @@
  * mismos mensajes para mostrarlos antes de guardar o importar. Casos compartidos: casos-items.ts.
  */
 
-export const TIPOS = ['pregunta_opciones', 'trio_verdad_mentira', 'pregunta_numerica', 'pista_audio', 'clip_video'] as const
+export const TIPOS = [
+  'pregunta_opciones',
+  'trio_verdad_mentira',
+  'pregunta_numerica',
+  'pista_audio',
+  'clip_video',
+  'imagen_adivinar',
+  'pregunta_mayoria',
+] as const
 export type TipoItem = (typeof TIPOS)[number]
 
 export const NOMBRE_TIPO: Record<TipoItem, string> = {
@@ -12,6 +20,8 @@ export const NOMBRE_TIPO: Record<TipoItem, string> = {
   pregunta_numerica: 'Pregunta numérica',
   pista_audio: 'Canción (YouTube)',
   clip_video: 'Escena de cine o serie (YouTube)',
+  imagen_adivinar: 'Imagen o emojis para adivinar',
+  pregunta_mayoria: 'Pregunta de Oveja Oveja',
 }
 
 /** Qué tipos de ítem acepta cada dinámica (igual que private.tipo_va_en). */
@@ -21,6 +31,8 @@ export const TIPOS_POR_DINAMICA: Record<string, TipoItem[]> = {
   aproximaciones: ['pregunta_numerica'],
   hipster: ['pista_audio'],
   cine: ['clip_video'],
+  imagen: ['imagen_adivinar'],
+  oveja: ['pregunta_mayoria'],
 }
 
 type Obj = Record<string, unknown>
@@ -33,7 +45,7 @@ const listaDeTextos = (v: unknown): v is string[] => Array.isArray(v) && v.every
 /** null si está bien; si no, qué está mal (mismo texto que la base). */
 export function validarItem(tipo: unknown, c: unknown, s: unknown): string | null {
   if (typeof tipo !== 'string' || !(TIPOS as readonly string[]).includes(tipo)) {
-    return `Tipo desconocido: «${typeof tipo === 'string' ? tipo : ''}». Usá pregunta_opciones, trio_verdad_mentira, pregunta_numerica, pista_audio o clip_video.`
+    return `Tipo desconocido: «${typeof tipo === 'string' ? tipo : ''}». Usá pregunta_opciones, trio_verdad_mentira, pregunta_numerica, pista_audio, clip_video, imagen_adivinar o pregunta_mayoria.`
   }
   if (!esObjeto(c)) return 'Falta el contenido.'
   if (!esObjeto(s)) return 'Falta la solución.'
@@ -60,6 +72,24 @@ export function validarItem(tipo: unknown, c: unknown, s: unknown): string | nul
       if (formato !== 'numero' && formato !== 'anio') return '«formato» tiene que ser numero o anio.'
       if (typeof s.valor !== 'number') return 'Falta el valor correcto (un número).'
       if (c.formato === 'anio' && !esEntero(s.valor, -9999, 9999)) return 'Si la respuesta es un año, el valor tiene que ser un año entero.'
+      return null
+    }
+    case 'imagen_adivinar': {
+      if (!['emojis', 'logo', 'que_ves'].includes(String(c.estilo ?? ''))) return '«estilo» tiene que ser emojis, logo o que_ves.'
+      if (c.estilo === 'emojis') {
+        if (!textoLleno(c.emojis)) return 'Faltan los emojis.'
+        if ([...(c.emojis as string)].length > 60) return 'Los emojis pueden ocupar hasta 60 caracteres.'
+      } else {
+        if (!textoLleno(c.imagen)) return 'Falta la imagen.'
+        if ([...(c.imagen as string)].length > 500) return 'El enlace de la imagen es demasiado largo.'
+      }
+      if ('consigna' in c && [...String(c.consigna ?? '')].length > 120) return 'La consigna puede tener hasta 120 caracteres.'
+      if (!textoLleno(s.respuesta)) return 'Falta la respuesta.'
+      if ('variantes_respuesta' in s && !listaDeTextos(s.variantes_respuesta)) return '«variantes_respuesta» tiene que ser una lista de textos.'
+      return null
+    }
+    case 'pregunta_mayoria': {
+      if (!textoLleno(c.texto)) return 'Falta el texto de la pregunta.'
       return null
     }
     default: {

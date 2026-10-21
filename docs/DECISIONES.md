@@ -193,6 +193,15 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - Causa real del "se escucha doble" (21/10): un segundo proyector de la misma noche abierto en otra pestaña. Cada proyector con «Comenzar la noche» tocado late cada 10 s (`proyector_latido`, id propio de la página, tabla `proyectores`, tope 20 por noche, limpia los de más de 2 min). Conducir consulta cada 10 s `admin_proyectores`: con uno muestra "✔ Proyector con sonido conectado", con ninguno lo avisa en gris y con dos o más avisa que se va a escuchar doble.
 
+## Adiviná la imagen y Oveja Oveja (22/10, para el viernes)
+
+- **Adiviná la imagen** (dinámica `imagen`, ítem `imagen_adivinar`): un solo juego con tres estilos (película con emojis, logo, ¿Qué ves?). El zoom queda para más adelante (pedido). Respuesta escrita, validada como el título de Hitster (sin tildes ni mayúsculas, variantes, dudosas para el conductor). Acertar: 1.000. Consigna por estilo o propia.
+- **Imágenes**: bucket público `imagenes` de Supabase Storage; suben solo admins, desde el formulario del catálogo (o se pega un enlace). Nombre de archivo al azar (no delata la respuesta). Hasta 5 MB. Se muestran siempre al mismo alto (26cqw abierto, 15cqw al revelar). Para logos, usar imágenes **sin el nombre de la marca**.
+- **Oveja Oveja** (dinámica `oveja`, ítem `pregunta_mayoria`, versión local de Herd Mentality / Mente Vacuna): una respuesta por mesa; suman 1.000 las mesas del grupo más numeroso. Empate arriba o todas iguales (regla propia): nadie suma. Oveja negra: la única distinta cuando todas las demás coinciden; solo se muestra (dibujo + nombre de la mesa), no resta.
+- **Grupos**: al cerrar, la base agrupa por texto normalizado sin la "s" final de cada palabra (milanesas = milanesa) o por similitud ≥ 0,75 con un grupo existente. Con las respuestas cerradas, el conductor junta grupos ("auto" con "coche") o separa una respuesta, desde la tabla de respuestas. Lo que decidió el conductor no se pisa si se vuelve a cerrar.
+- **Ejemplos** (catálogo, etiqueta "ejemplo", y bloques en la noche EXTRAS): 🦁👑 El rey león; logo de Familia Lúdica; ¿Qué ves? sol + dado = Soldado (`public/ejemplos/sol-dado.svg`); "¿Cuál es la mejor comida para un domingo?".
+- Pruebas: 25 chequeos en PGlite (validación, puntajes, empate, unanimidad, oveja negra, juntar/separar); simulación de 15 mesas con relojes de 5 s: 60/60 respuestas, 0 errores.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.
