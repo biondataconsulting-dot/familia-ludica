@@ -237,6 +237,12 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - Ensayo `/admin/ensayo/:eventId`: chequea que cada video del evento se pueda insertar (crear players ocultos y escuchar `onError` 100/101/150), muestra la lista en verde/rojo; botón "Reiniciar noche".
 - Historial: eventos terminados con podio, ranking por bloque y detalle de puntos por mesa.
 
+### 8.4.1 Botones del conductor (agregados después de la prueba con celulares)
+
+- "Mostrar QR" (esquina del logo, el juego sigue) y "📊 Mostrar cómo va la noche" (ranking en proyector; puesto + top 5 en celulares; no con una pregunta abierta ni en el podio). `admin_pantalla(event, qr, ranking)`.
+- Puntos manuales y desafíos ganados: cartel de 10 s en todos los celulares (`get_live.aviso`); misiones no.
+- Noche terminada: "Reanudar la noche" (`admin_resume_event`) para seguir con más bloques.
+
 ### 8.5 Módulo opcional: misiones secretas y desafíos
 
 Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `events.settings.misiones` / `.desafios`). Con las dos apagadas la noche funciona igual que sin el módulo (ni consultas ni piezas nuevas).

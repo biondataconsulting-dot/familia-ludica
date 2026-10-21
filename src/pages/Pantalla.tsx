@@ -14,6 +14,7 @@ import { IntroBloque } from '../projector/IntroBloque'
 import { ItemEnJuego } from '../projector/ItemEnJuego'
 import { Podio } from '../projector/Podio'
 import { Portada } from '../projector/Portada'
+import { QrEsquina } from '../projector/QrEsquina'
 import { RankingBloque } from '../projector/RankingBloque'
 import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
@@ -75,6 +76,8 @@ export default function Pantalla() {
         <Fase live={live} temporizador={temporizador} />
       </div>
       {desafio && <FranjaDesafio desafio={desafio} />}
+      {/* Botón "Mostrar QR" del conductor (en la portada el QR ya está). */}
+      {live.show_qr && live.phase !== 'cover' && <QrEsquina codigo={live.event.code} />}
       {error && (
         <p className="absolute bottom-[0.8cqw] left-[1cqw] rounded-full bg-naranja/90 px-[1cqw] py-[0.2cqw] text-[1cqw] font-bold">
           Reconectando…
@@ -86,6 +89,8 @@ export default function Pantalla() {
 }
 
 function Fase({ live, temporizador }: { live: Live; temporizador: Temporizador }) {
+  // Botón "Cómo va la noche" del conductor (nunca con una pregunta abierta ni en el podio).
+  if (live.show_ranking && live.phase !== 'item_open' && live.phase !== 'final') return <RankingBloque live={live} enCualquierMomento />
   switch (live.phase) {
     case 'cover':
       return <Portada live={live} />

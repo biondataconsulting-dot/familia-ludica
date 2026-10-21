@@ -42,6 +42,11 @@ export type Live = {
   opened_at: string | null
   /** Canción o escena abierta que el proyector todavía no reprodujo (el reloj espera hasta 30 s). */
   media_waiting?: boolean
+  /** Botones del conductor: QR sobre el logo y "Cómo va la noche" (ranking en proyector y celulares). */
+  show_qr?: boolean
+  /** Último punto manual o de desafío de los últimos 20 s (cartel en los celulares). */
+  aviso?: { id: string; team: string; points: number; reason: string; at: string } | null
+  show_ranking?: boolean
   timer_seconds: number | null
   extra_seconds: number
   updated_at: string | null

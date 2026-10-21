@@ -28,7 +28,18 @@ const FASES: { fase: Fase; nombre: string }[] = [
 /** /admin/vivo/:eventId — el conductor maneja la noche desde acá. */
 export default function AdminVivo() {
   const { eventId = '' } = useParams()
-  const { evento, bloques, error } = useEstructura(eventId)
+  const { evento, bloques, error, recargar: recargarEstructura } = useEstructura(eventId)
+
+  // Bloques agregados en Armar con la noche en vivo: aparecen al volver a esta pestaña (y cada 15 s).
+  useEffect(() => {
+    const id = window.setInterval(() => void recargarEstructura(), 15000)
+    const alVolver = () => void recargarEstructura()
+    window.addEventListener('focus', alVolver)
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener('focus', alVolver)
+    }
+  }, [recargarEstructura])
 
   if (error) return <Mensaje>{error}</Mensaje>
   if (!evento) return <Mensaje>Cargando la noche…</Mensaje>
@@ -142,16 +153,50 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
             </li>
           ))}
         </ol>
+        {/* Botones de pantalla: se prenden y se apagan; el resto del juego sigue igual. */}
+        <div className="flex flex-wrap gap-2">
+          <button
+            disabled={ocupado}
+            aria-pressed={Boolean(live.show_qr)}
+            onClick={() => void ejecutar(() => admin.pantalla(e, !live.show_qr, null))}
+            className={`min-h-toque rounded-xl px-4 font-semibold disabled:opacity-40 ${live.show_qr ? 'bg-profundo text-white' : 'border-2 border-profundo/15 hover:bg-crema'}`}
+          >
+            {live.show_qr ? 'Ocultar QR' : 'Mostrar QR para volver a entrar'}
+          </button>
+          <button
+            disabled={ocupado || (live.phase === 'item_open' && !live.show_ranking) || live.phase === 'final'}
+            title={live.phase === 'item_open' ? 'Con una pregunta abierta no se muestra (taparía las respuestas)' : undefined}
+            aria-pressed={Boolean(live.show_ranking)}
+            onClick={() => void ejecutar(() => admin.pantalla(e, null, !live.show_ranking))}
+            className={`min-h-toque rounded-xl px-4 font-semibold disabled:opacity-40 ${live.show_ranking ? 'bg-profundo text-white' : 'border-2 border-profundo/15 hover:bg-crema'}`}
+          >
+            {live.show_ranking ? 'Ocultar cómo va la noche' : '📊 Mostrar cómo va la noche'}
+          </button>
+        </div>
       </header>
 
       {terminada && (
-        <p className="rounded-carta bg-profundo px-4 py-3 font-semibold text-white">
-          Esta noche terminó. Para volver a usarla,{' '}
-          <Link to={`/admin/ensayo/${evento.id}`} className="underline">
-            reiniciala desde el ensayo
-          </Link>
-          .
-        </p>
+        <div className="flex flex-wrap items-center gap-3 rounded-carta bg-profundo px-4 py-3 font-semibold text-white">
+          <p className="min-w-0 flex-1">
+            Esta noche terminó. ¿Quieren seguir jugando? Reanudala y presentá otro bloque (si hace falta, agregalo en Armar). Para
+            empezar de cero,{' '}
+            <Link to={`/admin/ensayo/${evento.id}`} className="underline">
+              reiniciala desde el ensayo
+            </Link>
+            .
+          </p>
+          <button
+            disabled={ocupado}
+            onClick={() => {
+              if (window.confirm('¿Reanudar la noche? El proyector pasa del podio al ranking y podés presentar otro bloque.')) {
+                void ejecutar(() => admin.resume(e))
+              }
+            }}
+            className="min-h-toque rounded-xl bg-naranja px-4 font-titulo font-semibold text-white disabled:opacity-40"
+          >
+            Reanudar la noche
+          </button>
+        </div>
       )}
       {aviso && (
         <p role="alert" className="rounded-carta bg-naranja/15 px-4 py-3 font-semibold">

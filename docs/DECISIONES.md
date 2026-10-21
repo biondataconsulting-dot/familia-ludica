@@ -180,6 +180,10 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Contador**: "Respondieron · 11 de 15 mesas".
 - **Hitster** (no Hipster): nombre visible y títulos de bloques en todas las noches; la clave interna sigue siendo `hipster`.
 - Simulación rápida (relojes de 5 s, el mínimo de la base; conductor que no cierra a mano): 12 de 12 preguntas cerradas solas, 180/180 respuestas, 0 errores.
+- **Botones de pantalla** (`admin_pantalla`, en `live_state.show_qr` / `show_ranking`): "Mostrar QR" pone el QR (con el código y "¿Se cerró el celu?") en la esquina del logo, sin cortar el juego; en la portada no hace falta. "Cómo va la noche" muestra el ranking completo en el proyector y, en cada celular, su puesto y el top 5. No con una pregunta abierta (la base lo rechaza y abrir una pregunta lo apaga); tampoco en el podio. Prender/apagar no mueve `updated_at` (con la pregunta cerrada es el momento del cierre y congela el reloj): `tocar_updated_at` solo lo mueve si cambia la fase o el reloj.
+- **Aproximaciones**: el revelado muestra las 5 mesas más cercanas (empates con el mismo puesto) y, si hay más, "Las demás… mejor ni hablar 😂". Tamaños ajustados para que entre con la franja de un desafío.
+- **Avisos de puntos** (`get_live.aviso`): el último punto manual o de desafío de los últimos 20 s; cada celular lo muestra 10 s ("+300 para Los Pumas · Mejor disfraz" / "🏆 Los Pumas ganó el desafío…"). Las misiones no se avisan (son secretas) y lo anulado tampoco. Solo celulares.
+- **Bloques en vivo**: Armar siempre permitió agregar bloques con la noche en vivo; lo que faltaba es que Conducir los viera: ahora relee la estructura al volver a la pestaña y cada 15 s. **Reanudar la noche** (`admin_resume_event`): una noche terminada vuelve a en vivo y el proyector pasa del podio al ranking; mesas y puntos quedan.
 
 ## Pendientes de marca
 

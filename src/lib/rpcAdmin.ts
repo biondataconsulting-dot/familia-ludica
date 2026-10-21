@@ -29,6 +29,11 @@ export const admin = {
   next: (eventId: string) => llamar('admin_next', { p_event_id: eventId }),
   showBlockRanking: (eventId: string) => llamar('admin_show_block_ranking', { p_event_id: eventId }),
   finish: (eventId: string) => llamar('admin_finish', { p_event_id: eventId }),
+  /** Vuelve a poner en vivo una noche terminada (del podio al ranking) para jugar más bloques. */
+  resume: (eventId: string) => llamar('admin_resume_event', { p_event_id: eventId }),
+  /** Mostrar u ocultar el QR (sobre el logo) y "Cómo va la noche"; null = no lo cambia. */
+  pantalla: (eventId: string, qr: boolean | null, ranking: boolean | null) =>
+    llamar('admin_pantalla', { p_event_id: eventId, p_qr: qr, p_ranking: ranking }),
   listTeams: (eventId: string) => llamar<MesaAdmin[]>('admin_list_teams', { p_event_id: eventId }),
   manualPoints: (eventId: string, teamId: string, puntos: number, motivo: string) =>
     llamar('admin_manual_points', { p_event_id: eventId, p_team_id: teamId, p_points: puntos, p_reason: motivo }),
