@@ -1,6 +1,6 @@
 import type { Temporizador } from '../live/useTemporizador'
 
-/** Anillo que se vacía. En 0 muestra "¡Tiempo!" pero no cierra: cierra el conductor. */
+/** Anillo que se vacía. En 0 muestra "¡Tiempo!" y las respuestas se cierran solas (useCierreAutomatico). */
 export function TemporizadorCircular({ temporizador }: { temporizador: Temporizador }) {
   if (!temporizador) return null
   const { restantes, total } = temporizador

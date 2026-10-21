@@ -1,3 +1,4 @@
+import { useCierreAutomatico } from '../../live/useCierreAutomatico'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/useEstructura'
@@ -37,6 +38,8 @@ export default function AdminVivo() {
 function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin[] }) {
   const { live, error, desfaseMs, recargar, pedirRepetir } = useLive(evento.code)
   const temporizador = useTemporizador(live, desfaseMs)
+  // Al llegar a 0 se cierran las respuestas solas (la base confirma que el tiempo se cumplió).
+  useCierreAutomatico(evento.code, live, temporizador)
   const mesas = useMesasAdmin(evento.id, `${live?.updated_at}|${live?.teams_count}`)
   const [dudosas, setDudosas] = useState(0)
   const [ocupado, setOcupado] = useState(false)
@@ -107,6 +110,12 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
   const bloque = bloques.find((b) => b.id === live.block?.id)
   const item = bloque?.items.find((i) => i.id === live.item?.block_item_id)
   const enJuego = live.phase === 'item_open' || live.phase === 'item_closed'
+  // Canción o escena abierta que el proyector no reprodujo en 8 s (el reloj la está esperando).
+  const videoTrabado =
+    live.phase === 'item_open' &&
+    Boolean(live.media_waiting) &&
+    live.opened_at != null &&
+    Date.now() + desfaseMs - Date.parse(live.opened_at) > 8000
   const e = evento.id
 
   return (
@@ -156,6 +165,12 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           <Tarjeta titulo="Ahora">
             {item ? <ItemConSolucion item={item} /> : <p className="text-profundo/70">{textoSinItem(live)}</p>}
             {item && conMedia && <Fragmento item={item} onRepetir={pedirRepetir} />}
+            {videoTrabado && (
+              <Mensaje>
+                ⚠ El video todavía no arrancó en el proyector. Tocá «Repetir»; si sigue igual, recargá el proyector (F5 y «Comenzar la
+                noche»): la pregunta sigue abierta y el reloj espera.
+              </Mensaje>
+            )}
             {live.item && <Reloj temporizador={temporizador} fase={live.phase} />}
           </Tarjeta>
 

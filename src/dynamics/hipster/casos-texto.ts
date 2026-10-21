@@ -1,5 +1,5 @@
 /**
- * Casos de validación de texto de Hipster, compartidos por el test de TypeScript y la prueba de SQL.
+ * Casos de validación de texto de Hitster, compartidos por el test de TypeScript y la prueba de SQL.
  * `estado` puede admitir más de un resultado cuando la spec lo deja abierto ("aceptada o dudosa").
  */
 export const CASOS_TEXTO: { nombre: string; respuesta: string; opciones: string[]; estado: string[] }[] = [

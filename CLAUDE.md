@@ -52,6 +52,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 
 ## Tiempo real
 
+- Cierre automático: con el reloj en 0, proyector y panel llaman `cerrar_si_vencio` (`useCierreAutomatico`); la base decide con su hora.
 - Reloj de canciones/escenas: corre desde que el proyector avisa que arrancaron (`proyector_media_arranco`, una vez, ≤ 30 s); mientras, `media_waiting` lo deja quieto.
 - `useLive(codigo)` (`src/live/`) es la única fuente de estado en proyector y celulares: `get_live` + aviso por broadcast + relectura cada 5 s / al volver / al recuperar red.
 - Celular: `useMiMesa` guarda la mesa en `localStorage` (`fl:mesa:<CODIGO>`), valida con `whoami`, late con `heartbeat` cada 10 s.

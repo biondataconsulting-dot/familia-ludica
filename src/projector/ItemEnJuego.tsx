@@ -30,8 +30,12 @@ export function ItemEnJuego({ live, temporizador }: { live: Live; temporizador: 
               <TemporizadorCircular temporizador={temporizador} />
             </div>
           )}
-          <p className="text-center font-titulo text-[2.2cqw] font-semibold">
-            <span className="text-[3.4cqw] text-white">{live.answers_count}</span> de {live.teams_count}
+          <p className="text-center font-titulo font-semibold leading-tight">
+            <span className="block text-[1.7cqw] uppercase tracking-wide text-white/85">Respondieron</span>
+            <span className="text-[2.2cqw]">
+              <span className="text-[3.4cqw] text-white">{live.answers_count}</span> de {live.teams_count}{' '}
+              {live.teams_count === 1 ? 'mesa' : 'mesas'}
+            </span>
           </p>
         </div>
       </div>

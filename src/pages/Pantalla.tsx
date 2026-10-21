@@ -1,3 +1,4 @@
+import { useCierreAutomatico } from '../live/useCierreAutomatico'
 import { useEffect, useState } from 'react'
 import { cargarYouTube } from '../projector/youtube'
 import { useParams } from 'react-router-dom'
@@ -26,6 +27,8 @@ export default function Pantalla() {
   const { codigo = '' } = useParams()
   const { live, error, desfaseMs, senalRepetir } = useLive(codigo)
   const temporizador = useTemporizador(live, desfaseMs)
+  // Al llegar a 0 se cierran las respuestas solas (la base confirma que el tiempo se cumplió).
+  useCierreAutomatico(codigo, live, temporizador)
   // "Comenzar la noche": un toque por carga de página (el navegador olvida el permiso de sonido al recargar).
   const [comenzada, setComenzada] = useState(false)
   useWakeLock(comenzada)
@@ -37,7 +40,7 @@ export default function Pantalla() {
   const extras = useExtras(codigo, live)
   const desafio = live?.phase !== 'final' ? extras?.desafio : null
   const portada = !comenzada && <ComenzarNoche nombre={live?.event.name} onComenzar={() => setComenzada(true)} />
-  // El player de Hipster y Cine se prepara desde la presentación del bloque (así no demora la primera canción).
+  // El player de Hitster y Cine se prepara desde la presentación del bloque (así no demora la primera canción).
   const conMedia =
     live != null &&
     ['hipster', 'cine'].includes(live.block?.dynamic ?? '') &&

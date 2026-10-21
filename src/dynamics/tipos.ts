@@ -3,7 +3,7 @@ import type { ItemActual, Revelado } from '../lib/tipos'
 
 export type MetaDinamica = {
   clave: string
-  /** Nombre por defecto; en pantalla manda el título del bloque (ej.: "Hipster de películas"). */
+  /** Nombre por defecto; en pantalla manda el título del bloque (ej.: "Hitster de películas"). */
   nombre: string
   /** Cómo se juega, 1 o 2 líneas, para la presentación del bloque en el proyector. */
   comoSeJuega: string

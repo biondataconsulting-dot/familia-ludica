@@ -5,7 +5,7 @@ const ANIO_INICIAL = 1990
 
 type Props = { texto: string; onTexto: (t: string) => void }
 
-/** Año con − / + (de a 1 y de a 10) y teclado para escribirlo directo. También lo usa Hipster. */
+/** Año con − / + (de a 1 y de a 10) y teclado para escribirlo directo. También lo usa Hitster. */
 export function SelectorAnio({ texto, onTexto }: Props) {
   const sumar = (n: number) => {
     const actual = texto ? Number(texto) : ANIO_INICIAL - n

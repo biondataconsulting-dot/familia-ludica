@@ -16,6 +16,9 @@ function marcar(evento: string) {
 /** Tiempo con las franjas puestas después de que arranca la escena (YouTube muestra el título al empezar). */
 const TELON_MS = 4000
 
+/** Si el video no arrancó a los 8 s de abrir, se recarga desde cero (y otra vez a los 16 s). */
+const REINTENTO_VIDEO_MS = 8000
+
 /** preparando/fin: cortina completa · telon: franjas arriba y abajo · abierto: escena entera. */
 type Cortina = 'preparando' | 'telon' | 'abierto' | 'fin'
 
@@ -31,10 +34,10 @@ function medirMarco(escenario: HTMLElement | null): Marco | null {
 }
 
 /**
- * Player de YouTube del proyector. En Hipster queda detrás de la tarjeta (nunca se ve: la tarjeta lo tapa).
+ * Player de YouTube del proyector. En Hitster queda detrás de la tarjeta (nunca se ve: la tarjeta lo tapa).
  * En Cine y series se ubica encima del marco de video de la tarjeta mientras se responde, agrandado y
  * recortado para que no se vean el título ni el logo de YouTube.
- * Se monta desde la presentación de un bloque de Hipster, así el player ya está listo cuando se abre
+ * Se monta desde la presentación de un bloque de Hitster, así el player ya está listo cuando se abre
  * la primera canción (al abrir solo falta cargar el video). Suena solo al abrir el ítem, se corta al
  * cumplir la duración, se pausa al cerrar y vuelve a sonar con "Repetir". Si el navegador bloquea el
  * sonido, ofrece un botón para activarlo.
@@ -68,11 +71,14 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const enJuego = useRef({ codigo, itemId, fase })
   enJuego.current = { codigo, itemId, fase }
   const avisados = useRef(new Set<string>())
+  /** Ítems cuyo video llegó a reproducirse (para no reintentar uno que anda). */
+  const arrancaron = useRef(new Set<string>())
   const alCambiarEstado = useCallback((estado: number) => {
     window.clearTimeout(demoraCortina.current)
     if (estado === ESTADO_YT.REPRODUCIENDO) {
       // El cronómetro corre desde que arranca, no desde que se abrió (la base lo acepta una vez).
       const j = enJuego.current
+      if (j.itemId) arrancaron.current.add(j.itemId)
       if (j.fase === 'item_open' && j.itemId && !avisados.current.has(j.itemId)) {
         avisados.current.add(j.itemId)
         void proyectorMediaArranco(j.codigo, j.itemId).catch(() => undefined)
@@ -181,10 +187,10 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   }, [codigo, itemId])
 
   const reproducir = useCallback(
-    async (m: MediaProyector) => {
+    async (m: MediaProyector, forzar = false) => {
       const p = await obtenerPlayer()
       setFalla(null)
-      if (cargado.current === m.youtube_id) {
+      if (!forzar && cargado.current === m.youtube_id) {
         p.seekTo(m.inicio, true)
         p.playVideo()
       } else {
@@ -202,7 +208,8 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
     [obtenerPlayer],
   )
 
-  // Abrir el ítem: suena una vez sola.
+  // Abrir el ítem: suena una vez sola. Si a los 8 s no arrancó (video trabado), lo recarga desde cero
+  // (hasta dos veces).
   const yaSono = useRef<string | null>(null)
   useEffect(() => {
     if (fase === 'item_open' && media && media.block_item_id === itemId && yaSono.current !== itemId) {
@@ -210,13 +217,28 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
       void reproducir(media)
     }
   }, [fase, media, itemId, reproducir])
+  useEffect(() => {
+    if (!media || media.block_item_id !== itemId || !itemId) return
+    const reintentos = [REINTENTO_VIDEO_MS, REINTENTO_VIDEO_MS * 2].map((ms) =>
+      window.setTimeout(() => {
+        if (enJuego.current.fase === 'item_open' && !arrancaron.current.has(itemId)) {
+          marcar('reintento')
+          void reproducir(media, true)
+        }
+      }, ms),
+    )
+    return () => reintentos.forEach((id) => window.clearTimeout(id))
+  }, [media, itemId, reproducir])
 
   // "Repetir" del conductor.
   const ultimaSenal = useRef(senalRepetir)
   useEffect(() => {
     if (senalRepetir !== ultimaSenal.current) {
       ultimaSenal.current = senalRepetir
-      if (media && media.block_item_id === itemId) void reproducir(media)
+      // Trabado (sin arrancar o cargando): recarga el video desde cero; si no, vuelve al inicio.
+      const estado = player.current?.getPlayerState()
+      const trabado = estado !== ESTADO_YT.REPRODUCIENDO && estado !== ESTADO_YT.PAUSADO && estado !== ESTADO_YT.TERMINADO
+      if (media && media.block_item_id === itemId) void reproducir(media, trabado)
     }
   }, [senalRepetir, media, itemId, reproducir])
 
@@ -250,7 +272,7 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const estiloCine: CSSProperties | undefined = videoVisible && marco ? { ...marco } : undefined
   return (
     <>
-      {/* Hipster: detrás de la tarjeta central (la capa de contenido, z-10, lo tapa por completo).
+      {/* Hitster: detrás de la tarjeta central (la capa de contenido, z-10, lo tapa por completo).
           Cine: encima del marco de la tarjeta (z-20), sin poder tocarlo, agrandado 35% dentro de un
           recorte para esconder la barra de título y el logo de YouTube. Fuera del ítem, invisible. */}
       <div

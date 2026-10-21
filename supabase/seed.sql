@@ -33,7 +33,7 @@ insert into public.catalog_items (id, type, content, difficulty) values
    '{"texto": "¿A cuántos metros sobre el nivel del mar está la cumbre del Aconcagua?", "unidad": "metros", "imagen": null, "formato": "numero"}', 'media'),
   ('00000000-0000-4000-b000-000000000009', 'pregunta_numerica',
    '{"texto": "¿En qué año se inauguró el Obelisco de Buenos Aires?", "unidad": "", "imagen": null, "formato": "anio"}', 'media'),
-  -- Hipster (pista_audio). El youtube_id nunca llega a los celulares.
+  -- Hitster (pista_audio). El youtube_id nunca llega a los celulares.
   ('00000000-0000-4000-b000-000000000010', 'pista_audio',
    '{"youtube_id": "dQw4w9WgXcQ", "inicio": 43, "duracion": 20, "categoria": "musica"}', 'facil'),
   ('00000000-0000-4000-b000-000000000011', 'pista_audio',
@@ -78,7 +78,7 @@ insert into public.event_blocks (id, event_id, position, dynamic, title, multipl
   ('00000000-0000-4000-d000-000000000004', '00000000-0000-4000-c000-000000000001', 4, 'aproximaciones',
    'Aproximaciones', 1, false, '{"timer_seconds": 45}'),
   ('00000000-0000-4000-d000-000000000005', '00000000-0000-4000-c000-000000000001', 5, 'hipster',
-   'Hipster musical', 1, false, '{"timer_seconds": 45}')
+   'Hitster musical', 1, false, '{"timer_seconds": 45}')
 on conflict do nothing;
 
 insert into public.block_items (id, block_id, position, catalog_item_id) values

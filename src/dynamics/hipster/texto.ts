@@ -1,5 +1,5 @@
 /**
- * Validación de texto de Hipster (spec §7). La que cuenta es la de SQL (private.normalizar_texto,
+ * Validación de texto de Hitster (spec §7). La que cuenta es la de SQL (private.normalizar_texto,
  * private.similitud_max con pg_trgm); esta copia la replica para documentarla y testearla con los
  * mismos casos (casos-texto.ts).
  */

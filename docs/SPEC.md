@@ -128,7 +128,7 @@ solution: { "mentira": 2, "explicacion": "..." }
 content:  { "texto": "...", "unidad": "km", "imagen": null, "formato": "numero" }   // formato: numero | anio
 solution: { "valor": 1234.5, "explicacion": "..." }
 
-// pista_audio (Hipster) / clip_video (Cine y series; artista = director, obligatorio)
+// pista_audio (Hitster) / clip_video (Cine y series; artista = director, obligatorio)
 content:  { "youtube_id": "XXXXXXXXXXX", "inicio": 42, "duracion": 20, "categoria": "musica" } // musica | pelicula | serie | dibujo
 solution: { "anio": 1986, "titulo": "...", "artista": "...",
             "variantes_titulo": ["..."], "variantes_artista": ["..."] }
@@ -181,10 +181,10 @@ Puntaje base: **hasta 1.000 puntos por ítem**, multiplicado por `event_blocks.m
 | `trivia` | Trivia | pregunta_opciones | Botones grandes con las opciones (A, B, C, D con colores distintos) | 1.000 si correcta, 0 si no |
 | `dos_verdades` | Dos verdades y una mentira | trio_verdad_mentira | 3 botones con las afirmaciones resumidas ("1", "2", "3") | 1.000 si elige la mentira |
 | `aproximaciones` | Aproximaciones | pregunta_numerica | Teclado numérico grande; si `formato = anio`, selector de año | d = abs(resp − valor). dmin = 1.000. Resto: `round(800 × (1 − (d − dmin)/(dmax − dmin)))`. La más lejana 0. Si dmax = dmin, todas 1.000 |
-| `hipster` | Hipster musical | pista_audio | Año con − / + y teclado, título y artista opcionales | Año: `max(0, 600 − 75 × abs(diferencia))`. Título aceptado: +200. Artista aceptado: +200 |
-| `cine` | Cine y series | clip_video | Año con − / + y teclado, título y director opcionales | Igual que Hipster (el director va en `artista`, obligatorio en el ítem). La escena **se ve** en el proyector mientras se responde |
+| `hipster` | Hitster musical | pista_audio | Año con − / + y teclado, título y artista opcionales | Año: `max(0, 600 − 75 × abs(diferencia))`. Título aceptado: +200. Artista aceptado: +200 |
+| `cine` | Cine y series | clip_video | Año con − / + y teclado, título y director opcionales | Igual que Hitster (el director va en `artista`, obligatorio en el ítem). La escena **se ve** en el proyector mientras se responde |
 
-**Validación de texto (Hipster)**, en SQL con `pg_trgm` + `unaccent`, y una copia de la función de normalización en TS con tests:
+**Validación de texto (Hitster)**, en SQL con `pg_trgm` + `unaccent`, y una copia de la función de normalización en TS con tests:
 
 1. normalizar: minúsculas, sin tildes, sin signos, espacios simples, quitar artículos iniciales (el, la, los, las, the, a, an).
 2. comparar contra la solución y cada variante; tomar la mejor similitud.
@@ -201,9 +201,9 @@ Primera vez: botón grande "Comenzar la noche" (habilita audio del navegador y p
 
 - `cover`: título de la noche (Fredoka grande, blanco sobre azul con una línea naranja debajo), "3ra Edición" como sello, fecha; tarjeta blanca inclinada con logo, QR a `/jugar/:codigo`, el código en grande y "Escaneá con un celular por mesa"; fila inferior con las mesas registradas apareciendo en vivo ("9 mesas listas").
 - `block_intro`: nombre de la dinámica, cómo se juega en 1 o 2 líneas, cantidad de ítems, sello de práctica si corresponde.
-- `item_open`: barra superior con dinámica y "canción 3 de 8"; tarjeta central con la consigna (para Hipster, ecualizador animado y "¿De qué año es esta canción?"; el iframe de YouTube suena **detrás** de la tarjeta, oculto; en Cine y series el video se ve dentro de la tarjeta, agrandado y recortado para que no aparezcan el título ni el logo de YouTube, y se pausa al cerrar); temporizador circular (si llega a 0 muestra "¡Tiempo!" pero **no cierra**; en canciones y escenas arranca cuando empiezan a sonar en el proyector, como mucho 30 s después de abrir); **tablero de participación** con todas las mesas: con tilde verde las que respondieron, punteadas las que faltan, apagadas con borde rojo las desconectadas; contador "11 de 15".
+- `item_open`: barra superior con dinámica y "canción 3 de 8"; tarjeta central con la consigna (para Hitster, ecualizador animado y "¿De qué año es esta canción?"; el iframe de YouTube suena **detrás** de la tarjeta, oculto; en Cine y series el video se ve dentro de la tarjeta, agrandado y recortado para que no aparezcan el título ni el logo de YouTube, y se pausa al cerrar); temporizador circular (al llegar a 0 muestra "¡Tiempo!" y **las respuestas se cierran solas** (`cerrar_si_vencio`, la base confirma la hora); en canciones y escenas arranca cuando empiezan a sonar en el proyector, como mucho 30 s después de abrir); **tablero de participación** con todas las mesas: con tilde verde las que respondieron, punteadas las que faltan, apagadas con borde rojo las desconectadas; contador "11 de 15".
 - `item_closed`: igual que abierto con "Respuestas cerradas" y el tablero congelado; el audio se detiene.
-- `item_revealed`: tarjeta clara con la solución (para Hipster: año enorme en naranja, título, artista; Cine: año, título y "Dirección: …"; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto con fondo amarillo y texto azul profundo). En práctica: "Así hubieran sumado".
+- `item_revealed`: tarjeta clara con la solución (para Hitster: año enorme en naranja, título, artista; Cine: año, título y "Dirección: …"; para Trivia: la opción correcta resaltada; Aproximaciones: el valor + la mesa más cercana), chips de las mesas que sumaron con "+800", y a la derecha **"Así va la noche"**: top 5 con flechas de cambio de posición (primer puesto con fondo amarillo y texto azul profundo). En práctica: "Así hubieran sumado".
 - `block_ranking`: ranking completo de la noche al cerrar la dinámica, en dos columnas si hay más de 10 mesas.
 - `final`: podio 1-2-3 grande + resto de la tabla; mensaje de cierre y @familia.ludica.
 
@@ -223,7 +223,7 @@ Siempre: logo pequeño sobre panel blanco en una esquina; patrón de puntos suti
 Pensado para notebook (tres columnas); en celular puede apilarse.
 
 - Barra superior: evento, bloque e ítem, chips de fase con la actual resaltada.
-- Izquierda: ítem actual con **la solución visible** (marcada "Solo lo ves vos"); para Hipster: inicio y duración + botón "▶ Repetir"; botones **Abrir / Cerrar / +15 s / Reabrir / Revelar / Siguiente** habilitados según la fase; navegación de bloques.
+- Izquierda: ítem actual con **la solución visible** (marcada "Solo lo ves vos"); para Hitster: inicio y duración + botón "▶ Repetir"; botones **Abrir / Cerrar / +15 s / Reabrir / Revelar / Siguiente** habilitados según la fase; navegación de bloques.
 - Centro: tabla de respuestas (mesa, respuesta, estado, puntos provisorios) con **Aceptar / Rechazar** en las dudosas; mesas sin respuesta al final.
 - Derecha: puntos manuales (mesa, puntos ±, motivo), historial de movimientos con "Anular", ranking, mesas con PIN y conexión.
 - Atajos de teclado: espacio = acción principal de la fase; R = repetir audio.
@@ -258,7 +258,7 @@ Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `ev
 6. **Trivia + Dos verdades y una mentira**: motor de opciones, `submit_answer`, tablero de participación, `score_trivia`, `score_dos_verdades`, vistas de revelado. *Verificación*: ronda de 3 preguntas con 3 celulares; tildes, puntos (1.000/0) y revelado correctos; cambiar la respuesta antes del cierre funciona; después no.
 7. **Aproximaciones**: entrada numérica y de año, `score_aproximaciones` con la fórmula, tests de casos: empate en la mínima, todas iguales, una sola respuesta, respuesta exacta. *Verificación*: los tests pasan y una ronda real coincide con lo calculado a mano.
 8. **Ranking, práctica y puntos manuales**: vistas `ranking`/`ranking_by_block`, top 5 con movimientos en el revelado, ranking de bloque en proyector y celulares, podio final, puntos manuales, anular/restaurar, `is_practice`. *Verificación*: noche simulada completa (práctica + Trivia + Dos verdades + Aproximaciones) de punta a punta. **Este es el MVP jugable.**
-9. **Hipster**: player de YouTube oculto detrás de la tarjeta (cargar con `start`, cortar al cumplir `duracion` con `seekTo`/`pauseVideo`, botón Repetir, volumen alto), formulario año + título + artista, normalización y similitud (SQL + TS con tests), cola de dudosas en el panel, `score_hipster`. *Verificación*: 3 canciones suenan sin que se vea ningún dato del video; "Soda Estereo" contra "Soda Stereo" queda aceptada o dudosa; aceptar una dudosa suma 200.
+9. **Hitster**: player de YouTube oculto detrás de la tarjeta (cargar con `start`, cortar al cumplir `duracion` con `seekTo`/`pauseVideo`, botón Repetir, volumen alto), formulario año + título + artista, normalización y similitud (SQL + TS con tests), cola de dudosas en el panel, `score_hipster`. *Verificación*: 3 canciones suenan sin que se vea ningún dato del video; "Soda Estereo" contra "Soda Stereo" queda aceptada o dudosa; aceptar una dudosa suma 200.
 10. **Contenido**: catálogo (listado, filtros, formulario por tipo, etiquetas), importador JSON/CSV con vista previa y asignación a bloque, armado de evento (bloques e ítems). Crear y **duplicar** noches con otro nombre, fecha, lugar y código (ej.: "Noche de Halloween", `HALLOWEEN`), incluido el **sello de la portada** (`settings.edicion`, ej.: "Edición especial"); cada noche tiene sus propias mesas, puntos y ranking, y las terminadas quedan en el historial. *Verificación*: importo el JSON del viernes y armo el evento completo sin tocar la base a mano.
 11. **Ensayo y arranque**: página de ensayo de videos, "Comenzar la noche", `admin_reset_event` con confirmación. *Verificación*: un video con inserción bloqueada aparece en rojo; el reinicio deja todo en cero.
 12. **Prueba de carga y pulido**: `scripts/simular-mesas.ts` (`npm run simular -- CODIGO`) que registra 15 mesas y responde cada ítem abierto con valores aleatorios; revisar estados vacíos, errores, textos, accesibilidad y `prefers-reduced-motion`. *Verificación*: 15 mesas simuladas + 2 reales durante una ronda completa sin errores ni demoras visibles.

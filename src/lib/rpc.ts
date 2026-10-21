@@ -48,6 +48,9 @@ export type MediaProyector = { block_item_id: string; youtube_id: string; inicio
 /** Video del ítem actual, solo para el proyector (null si no hay audio/video en juego). */
 export const proyectorMedia = (codigo: string) => llamar<MediaProyector | null>('proyector_media', { p_code: codigo })
 
+/** Al llegar el reloj a 0: la base cierra las respuestas solo si el tiempo de verdad se cumplió. */
+export const cerrarSiVencio = (codigo: string) => llamar<boolean>('cerrar_si_vencio', { p_code: codigo })
+
 /** El proyector avisa que la canción o escena arrancó: el cronómetro corre desde ahí (una vez por apertura). */
 export const proyectorMediaArranco = (codigo: string, blockItemId: string) =>
   llamar('proyector_media_arranco', { p_code: codigo, p_block_item_id: blockItemId })

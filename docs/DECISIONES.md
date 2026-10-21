@@ -85,7 +85,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Fórmula en un solo lugar que cuenta**: `private.score_aproximaciones` (SQL). La copia en `src/dynamics/aproximaciones/puntaje.ts` existe solo para documentar y testear; los casos (`casos.ts`) los usan tanto Vitest como la prueba de SQL, así no pueden divergir.
 - **Redondeo**: `round()` de Postgres (mitad hacia arriba para positivos) = `Math.round` de JS para estos valores (siempre ≥ 0).
 - **Respuesta**: `{"valor": número}`. Se aceptan decimales y negativos (por si hay preguntas de temperatura); tope ±10¹². En preguntas `formato: anio`, entero entre −9999 y 9999.
-- **Teclado propio** en el celular (no el del sistema): coma decimal, botón ± y punto de miles al mostrar. En años: selector con −10/−1/+1/+10 (arranca en 1990) y teclado; con 4 dígitos, el siguiente número empieza un año nuevo. El selector de año queda en `src/dynamics/comun/` para Hipster.
+- **Teclado propio** en el celular (no el del sistema): coma decimal, botón ± y punto de miles al mostrar. En años: selector con −10/−1/+1/+10 (arranca en 1990) y teclado; con 4 dígitos, el siguiente número empieza un año nuevo. El selector de año queda en `src/dynamics/comun/` para Hitster.
 - **Resultado en el celular**: "¡La más cerca!" para la distancia mínima y "¡Bien cerca!" para el resto que suma; "¡Correcta!" queda para las dinámicas con respuesta correcta.
 - **Revelado**: el valor en grande y "La más cerca: …" con lo que respondió (sale del `detail.mas_cerca` del puntaje). Las dinámicas reciben ahora los puntos por mesa (`puntos`) en `ProjectorReveal`.
 - **Seed**: bloque de ejemplo "Aproximaciones" con 2 ítems (Aconcagua en metros; Obelisco, año).
@@ -112,7 +112,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Validación de texto**: se corre al cerrar respuestas (`validate_hipster`) y no pisa lo que el conductor ya aceptó o rechazó. Un cambio de respuesta (mientras está abierto) borra la validación de esa mesa. Las dudosas se deciden solo con el ítem cerrado; al revelar, una dudosa sin decidir cuenta como rechazada y el panel lo advierte con confirmación.
 - **Normalización**: `unaccent` + minúsculas + solo `[a-z0-9]` + espacios simples + artículo inicial (el, la, los, las, the, a, an). Si normalizado coincide exacto, similitud 1. La copia en TS replica `pg_trgm` (trigramas por palabra con dos espacios adelante y uno atrás) y se comprueba contra SQL con los mismos casos.
 - **Respuesta**: `{anio, titulo?, artista?}`; año entero 1800–2100; título y artista hasta 100 caracteres (vacíos no se guardan).
-- **Seed**: bloque "Hipster musical" con 3 canciones conocidas (Rick Astley, Queen, PSY) para probar; las de la noche real se cargan con el importador (paso 10).
+- **Seed**: bloque "Hitster musical" con 3 canciones conocidas (Rick Astley, Queen, PSY) para probar; las de la noche real se cargan con el importador (paso 10).
 
 ## Paso 10
 
@@ -139,7 +139,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 ## Ajustes después del paso 11
 
-- **Demora del audio de Hipster**: el player se crea desde la presentación del bloque (invisible ahí, sin video) y la API de YouTube se baja al abrir el proyector. Al abrir una canción solo falta cargar el video. Medido desde que el proyector ve la canción abierta hasta que suena: 3,0 s antes (en frío), 0,97 s la primera canción y 0,7 s las siguientes. "Repetir" con el mismo video salta al inicio del fragmento (sin recargar). El `youtube_id` sigue llegando solo con la canción en juego.
+- **Demora del audio de Hitster**: el player se crea desde la presentación del bloque (invisible ahí, sin video) y la API de YouTube se baja al abrir el proyector. Al abrir una canción solo falta cargar el video. Medido desde que el proyector ve la canción abierta hasta que suena: 3,0 s antes (en frío), 0,97 s la primera canción y 0,7 s las siguientes. "Repetir" con el mismo video salta al inicio del fragmento (sin recargar). El `youtube_id` sigue llegando solo con la canción en juego.
 - **Aviso de sonido bloqueado**: espera 4 s y no aparece si el video todavía está cargando (antes, con una carga lenta, podía aparecer sin motivo).
 - **Canciones desde 0:00** (pedido del cliente): proyector, ensayo, panel y prueba del catálogo reproducen desde el principio durante `duracion`. El formulario ya no pide "empieza en" (guarda 0); el importador sigue aceptando `inicio` pero se ignora al reproducir.
 - **Puntos manuales**: puntos y motivo en renglones separados (en la columna angosta el motivo quedaba aplastado).
@@ -148,12 +148,12 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 ## Cine y series (pedido del cliente)
 
-- Dinámica nueva `cine` ("Cine y series") para `clip_video`; `hipster` queda solo para `pista_audio`. Mismo formulario y mismo puntaje que Hipster (`score_cine` envuelve a `score_hipster`): año + título (+200) + director (+200, va en `artista`, obligatorio en las escenas).
+- Dinámica nueva `cine` ("Cine y series") para `clip_video`; `hipster` queda solo para `pista_audio`. Mismo formulario y mismo puntaje que Hitster (`score_cine` envuelve a `score_hipster`): año + título (+200) + director (+200, va en `artista`, obligatorio en las escenas).
 - La escena **se ve y se escucha** desde que se abre: el player se ubica encima de un marco 16:9 de la tarjeta, agrandado 35% dentro de un recorte (sin clics) para esconder la barra de título y el logo de YouTube. Se pausa al cerrar respuestas y desaparece al revelar.
 - **Telón sobre la escena**: YouTube muestra título, "Más videos" y su logo al cargar, al arrancar y en pausa (el recorte no alcanza). Antes de arrancar y en pausa/fin, cortina azul completa con 🎬 ("Preparando la escena…" / "Fin de la escena"). Al arrancar, imagen y sonido juntos con dos franjas azules (20% arriba y abajo) que tapan título y logo; a los 4 s se abren como un telón (2,5 s no alcanzaban: todavía se veía el título) (una sube y otra baja, 1 s). Se eligió sobre franjas fijas (cortaban escenas) y sobre la cortina completa (el sonido arrancaba antes que la imagen). Con `prefers-reduced-motion`, las franjas desaparecen sin animación.
 - Igual que las canciones, las escenas arrancan en 0:00 y duran `duracion`: conviene usar videos que ya sean solo la escena (sin intro con el nombre de la película).
-- **Corrección del conductor**: además de Aceptar / Rechazar en las dudosas, en la tabla de respuestas (con respuestas cerradas) se puede dar vuelta lo que el sistema decidió solo (p. ej. "Volver al futuro 2" se acepta sola contra "Volver al futuro" por similitud). Vale para Hipster y Cine.
-- **Cronómetro de canciones y escenas**: corre desde que empiezan a reproducirse en el proyector, no desde que el conductor las abre (cargar el video tarda). El proyector avisa con `proyector_media_arranco` y la base corre `opened_at` a ese momento: una sola vez por apertura y solo dentro de los 30 s de abierto (nadie puede estirar el reloj). Mientras tanto `get_live.media_waiting` deja el reloj quieto en el total, en el proyector y en el panel. Si el proyector nunca avisa (cerrado, sonido bloqueado), a los 30 s corre desde la apertura. Vale para Hipster y Cine.
+- **Corrección del conductor**: además de Aceptar / Rechazar en las dudosas, en la tabla de respuestas (con respuestas cerradas) se puede dar vuelta lo que el sistema decidió solo (p. ej. "Volver al futuro 2" se acepta sola contra "Volver al futuro" por similitud). Vale para Hitster y Cine.
+- **Cronómetro de canciones y escenas**: corre desde que empiezan a reproducirse en el proyector, no desde que el conductor las abre (cargar el video tarda). El proyector avisa con `proyector_media_arranco` y la base corre `opened_at` a ese momento: una sola vez por apertura y solo dentro de los 30 s de abierto (nadie puede estirar el reloj). Mientras tanto `get_live.media_waiting` deja el reloj quieto en el total, en el proyector y en el panel. Si el proyector nunca avisa (cerrado, sonido bloqueado), a los 30 s corre desde la apertura. Vale para Hitster y Cine.
 
 ## Borrar noches (pedido del cliente)
 
@@ -162,8 +162,8 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 ## Paso 12: prueba de carga y pulido
 
 - **Simulador** (`npm run simular -- CODIGO [mesas] [pensar_max_s]`): cada mesa simulada usa su propia conexión y hace lo mismo que un celular (aviso en tiempo real + relectura cada 5 s + latido cada 10 s) y responde al azar después de 2 a N s. Termina solo en el podio y muestra mediana, p95 y máximo de cada llamada.
-- **Resultado** (copia de NAUDIR3, 15 mesas, 12 ítems de las 4 dinámicas + Hipster, conductor automático): 180 de 180 respuestas, 0 errores. Mediana ~190 ms en `get_live` y `submit_answer`, p95 230–330 ms. Hubo un pico aislado (7,6 s en una lectura, 12,9 s en un latido): la relectura cada 5 s lo cubre y no se notó en las respuestas.
-- **Pulido**: podio con empates (el número sale del ranking: dos mesas empatadas arriba son las dos 1° con estrella); catálogo vacío con indicación; contraste de textos secundarios (celular al 75%, ≥ 4,5:1; proyector al 75% y mesas desconectadas al 55%); en Hipster, una canción de categoría película vuelve a pedir "Artista" (solo las escenas piden director). Movimiento reducido ya cubierto por la regla global de `index.css`; `lang="es-AR"` y textos alternativos en orden.
+- **Resultado** (copia de NAUDIR3, 15 mesas, 12 ítems de las 4 dinámicas + Hitster, conductor automático): 180 de 180 respuestas, 0 errores. Mediana ~190 ms en `get_live` y `submit_answer`, p95 230–330 ms. Hubo un pico aislado (7,6 s en una lectura, 12,9 s en un latido): la relectura cada 5 s lo cubre y no se notó en las respuestas.
+- **Pulido**: podio con empates (el número sale del ranking: dos mesas empatadas arriba son las dos 1° con estrella); catálogo vacío con indicación; contraste de textos secundarios (celular al 75%, ≥ 4,5:1; proyector al 75% y mesas desconectadas al 55%); en Hitster, una canción de categoría película vuelve a pedir "Artista" (solo las escenas piden director). Movimiento reducido ya cubierto por la regla global de `index.css`; `lang="es-AR"` y textos alternativos en orden.
 
 ## Misiones secretas y desafíos (módulo opcional, pedido del cliente)
 
@@ -172,6 +172,14 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Misiones**: se abren y cierran todas juntas (pedido); una misión agregada con las misiones abiertas aparece abierta. Se puede tildar con las misiones cerradas (el presentador avisa tarde), no con las ocultas. No se cambian los puntos ni se borra una misión/desafío si alguna mesa ya los sumó.
 - **Desafíos**: de a uno por vez; gana una sola mesa; "Reabrir" corrige una mesa equivocada. La franja del proyector no se muestra en el podio.
 - **Red de seguridad**: etiqueta `probado-simulacion` en git = la versión anterior al módulo (para volver si hiciera falta). Simulación de control (módulo apagado, 15 mesas): igual que antes, 180/180 sin errores.
+
+## Ajustes después de la prueba con celulares (21/10)
+
+- **Cierre automático**: al llegar el reloj a 0, proyector y panel piden `cerrar_si_vencio(code)` (cada 2 s hasta que cierra). La base cierra solo si el tiempo se cumplió con su propia hora (nadie puede adelantarlo), con el mismo cierre del conductor (`validar_item` + `item_closed`), y respeta `+15 s` y la espera de canciones/escenas. Sin reloj no cierra. "Reabrir" sigue disponible. Reemplaza la regla original de la spec ("llegar a 0 no cierra").
+- **Video trabado**: si a los 8 s de abrir no arrancó, el proyector lo recarga desde cero (y otra vez a los 16 s). "Repetir" recarga desde cero cuando el video está trabado (si no, vuelve al inicio). El panel avisa "El video todavía no arrancó en el proyector" con `media_waiting` pasados 8 s.
+- **Contador**: "Respondieron · 11 de 15 mesas".
+- **Hitster** (no Hipster): nombre visible y títulos de bloques en todas las noches; la clave interna sigue siendo `hipster`.
+- Simulación rápida (relojes de 5 s, el mínimo de la base; conductor que no cierra a mano): 12 de 12 preguntas cerradas solas, 180/180 respuestas, 0 errores.
 
 ## Pendientes de marca
 

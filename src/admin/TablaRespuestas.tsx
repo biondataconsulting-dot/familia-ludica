@@ -15,7 +15,7 @@ type Props = {
 
 /**
  * Centro del panel: mesa, respuesta, estado y puntos (provisorios hasta revelar).
- * Campos de texto validados (Hipster y Cine): estado por campo, Aceptar / Rechazar en las dudosas y
+ * Campos de texto validados (Hitster y Cine): estado por campo, Aceptar / Rechazar en las dudosas y
  * corrección de lo que el sistema decidió solo.
  * Las mesas sin respuesta van al final.
  */

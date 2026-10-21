@@ -4,7 +4,7 @@ import { describir, resultado, validar } from './validate'
 
 const item: ItemActual = { block_item_id: 'x', position: 1, number: 1, type: 'pista_audio', content: {} }
 
-describe('validar (Hipster)', () => {
+describe('validar (Hitster)', () => {
   it('el año es obligatorio y razonable', () => {
     expect(validar(item, {})).toMatch(/Elegí el año/)
     expect(validar(item, { anio: 1700 })).toMatch(/no es válido/)
@@ -15,7 +15,7 @@ describe('validar (Hipster)', () => {
   })
 })
 
-describe('describir y resultado (Hipster)', () => {
+describe('describir y resultado (Hitster)', () => {
   it('une lo que mandaron', () => {
     expect(describir({}, { anio: 1986, titulo: 'Persiana americana' })).toBe('1986 · Persiana americana')
   })
