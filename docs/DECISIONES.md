@@ -202,6 +202,15 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Ejemplos** (catálogo, etiqueta "ejemplo", y bloques en la noche EXTRAS): 🦁👑 El rey león; logo de Familia Lúdica; ¿Qué ves? sol + dado = Soldado (`public/ejemplos/sol-dado.svg`); "¿Cuál es la mejor comida para un domingo?".
 - Pruebas: 25 chequeos en PGlite (validación, puntajes, empate, unanimidad, oveja negra, juntar/separar); simulación de 15 mesas con relojes de 5 s: 60/60 respuestas, 0 errores.
 
+## Catálogo con IA (etapa 1)
+
+- **Guía** `docs/GUIA_CATALOGO.md` (para Claude o ChatGPT): cómo usarla, prompt para copiar, contexto familiar, reglas de contenido, formato y un apartado por tipo con ejemplo JSON. Se baja desde Importar («Bajar guía para IA»); es el mismo archivo del proyecto (import `?raw`), así que no se desfasa. `guia.test.ts` falla si la app tiene un tipo que la guía no explica o si un ejemplo no se importa.
+- **Revisión en la app**: Importar queda en «Sugeridos» por defecto; se revisa en Catálogo filtrando por estado, con la vista previa, y se aprueba. «Copiar errores para la IA» arma el texto con las filas con error para pegárselo a la IA.
+- **Videos**: las IA inventan IDs de YouTube; la guía exige buscarlos y, si no hay uno confirmado, dejar el ítem como pendiente. Comprobado: el buscador web general no devuelve links de YouTube, pero buscar en YouTube + la consulta pública `youtube.com/oembed` sí (200 = existe y se puede insertar, 401 = no se puede insertar, 404 = no existe). `oembed` permite consultas desde el navegador (CORS): base para la verificación al importar (etapa 2).
+- **Imágenes**: por ahora fuera del JSON (logos y ¿Qué ves? van en una lista aparte y se cargan a mano). Etapa 2: subida en lote junto con el JSON.
+- **Prueba de punta a punta**: catálogo de 15 ítems (7 tipos, con una canción y una escena de YouTube verificadas) armado siguiendo la guía: pasa la vista previa sin errores y se importó como sugerido (etiqueta `prueba-guia`).
+- **Etapa 2 (después del viernes)**: «Aprobar seleccionados», verificación de videos al importar (oembed), imágenes en lote con el JSON, aviso de repetidos.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

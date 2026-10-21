@@ -1,6 +1,6 @@
 # Familia Lúdica — plataforma de noches de juegos (MVP)
 
-Especificación completa: [docs/SPEC.md](docs/SPEC.md). Servicios externos (Supabase, Google, Vercel): [docs/CONFIGURACION.md](docs/CONFIGURACION.md). Decisiones no cubiertas por la spec: [docs/DECISIONES.md](docs/DECISIONES.md).
+Especificación completa: [docs/SPEC.md](docs/SPEC.md). Servicios externos (Supabase, Google, Vercel): [docs/CONFIGURACION.md](docs/CONFIGURACION.md). Decisiones no cubiertas por la spec: [docs/DECISIONES.md](docs/DECISIONES.md). Guía para generar el catálogo con IA: [docs/GUIA_CATALOGO.md](docs/GUIA_CATALOGO.md) (se baja desde Importar).
 Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 
 ## Contexto
@@ -42,6 +42,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Tabla nueva que cambie lo que ven las pantallas → trigger `private.avisar_cambio()` (broadcast sin datos al canal `evento:<CODIGO>`).
 - Limpieza puntual en la base remota: `supabase db query --linked "<sql>"`.
 - Función nueva → `grant execute` explícito (PUBLIC no tiene EXECUTE por defecto desde el paso 5). Públicas: `to anon, authenticated`; `admin_*`: `to authenticated` y empezar con `private.live_para_operar()` o `private.require_admin()`.
+- Tipo de ítem nuevo → explicarlo en `docs/GUIA_CATALOGO.md` con un ejemplo JSON (lo exige `src/content/guia.test.ts`: falla si falta un tipo o si un ejemplo no se importa).
 - Dinámica nueva → `private.score_<clave>(block_item_id uuid) returns table (team_id uuid, points int, detail jsonb)` con puntos base (≤ 1.000, sin multiplicador) y, si valida texto, `private.validate_<clave>(uuid)`.
 
 ## Panel del conductor (rutas)

@@ -8,6 +8,7 @@ import { metaDe } from '../../dynamics/registro'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import { supabase } from '../../lib/supabase'
+import guia from '../../../docs/GUIA_CATALOGO.md?raw'
 
 type BloqueDestino = { id: string; title: string; dynamic: string; position: number; event: { name: string; code: string } | null }
 
@@ -45,11 +46,22 @@ const EJEMPLO = [
   },
 ]
 
+function descargar(contenido: string, nombre: string, tipo: string) {
+  const url = URL.createObjectURL(new Blob([contenido], { type: `${tipo};charset=utf-8` }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = nombre
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 /** /admin/importar — JSON o CSV → vista previa con errores por fila → importar (y opcionalmente a un bloque). */
 export default function AdminImportar() {
   const [texto, setTexto] = useState('')
   const [nombreArchivo, setNombreArchivo] = useState<string | null>(null)
-  const [estado, setEstado] = useState<'aprobado' | 'sugerido'>('aprobado')
+  // Por defecto, sugeridos: lo que viene de afuera (por ejemplo, de una IA) se revisa en el catálogo antes de usarlo.
+  const [copiado, setCopiado] = useState(false)
+  const [estado, setEstado] = useState<'aprobado' | 'sugerido'>('sugerido')
   const [bloqueId, setBloqueId] = useState('')
   const [bloques, setBloques] = useState<BloqueDestino[]>([])
   const [enviando, setEnviando] = useState(false)
@@ -109,13 +121,30 @@ export default function AdminImportar() {
     }
   }
 
+  /** La guía para generar el catálogo con una IA (docs/GUIA_CATALOGO.md, la misma del proyecto). */
+  function bajarGuia() {
+    descargar(guia, 'guia-catalogo-familia-ludica.md', 'text/markdown')
+  }
+
+  /** Los errores de la vista previa, listos para pegarle a la IA que armó el archivo. */
+  async function copiarErrores() {
+    const lineas = error ? [error] : filas.filter((f) => errorDe(f)).map((f) => `Fila ${f.fila}: ${errorDe(f)}`)
+    const textoIA = [
+      'La app de Familia Lúdica encontró estos errores en el JSON (las filas se cuentan desde 1, en el orden de la lista).',
+      'Corregí solo esas filas siguiendo la guía y devolveme el JSON completo:',
+      ...lineas,
+    ].join('\n')
+    try {
+      await navigator.clipboard.writeText(textoIA)
+      setCopiado(true)
+      window.setTimeout(() => setCopiado(false), 3000)
+    } catch {
+      window.prompt('Copiá este texto:', textoIA)
+    }
+  }
+
   function bajarEjemplo() {
-    const url = URL.createObjectURL(new Blob([JSON.stringify(EJEMPLO, null, 2)], { type: 'application/json' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'ejemplo-familia-ludica.json'
-    a.click()
-    URL.revokeObjectURL(url)
+    descargar(JSON.stringify(EJEMPLO, null, 2), 'ejemplo-familia-ludica.json', 'application/json')
   }
 
   return (
@@ -123,7 +152,12 @@ export default function AdminImportar() {
       <h1 className="text-3xl font-bold">Importar contenido</h1>
       <Tarjeta
         titulo="1. El archivo"
-        acciones={<BotonSecundario onClick={bajarEjemplo}>Bajar un ejemplo (JSON)</BotonSecundario>}
+        acciones={
+          <>
+            <BotonSecundario onClick={bajarGuia}>Bajar guía para IA</BotonSecundario>
+            <BotonSecundario onClick={bajarEjemplo}>Bajar un ejemplo (JSON)</BotonSecundario>
+          </>
+        }
       >
         <p className="mb-3 text-sm text-profundo/70">
           JSON: una lista de ítems con <code>tipo, etiquetas, dificultad, contenido, solucion</code>. CSV: columnas{' '}
@@ -150,7 +184,14 @@ export default function AdminImportar() {
       </Tarjeta>
 
       {(filas.length > 0 || error) && (
-        <Tarjeta titulo={`2. Vista previa · ${validas} bien${conError ? ` · ${conError} con errores` : ''}`}>
+        <Tarjeta
+          titulo={`2. Vista previa · ${validas} bien${conError ? ` · ${conError} con errores` : ''}`}
+          acciones={
+            (conError > 0 || error) && (
+              <BotonSecundario onClick={() => void copiarErrores()}>{copiado ? '✔ Copiado' : 'Copiar errores para la IA'}</BotonSecundario>
+            )
+          }
+        >
           {error ? (
             <Mensaje>{error}</Mensaje>
           ) : (
