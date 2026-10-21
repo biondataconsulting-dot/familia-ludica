@@ -237,6 +237,17 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - Ensayo `/admin/ensayo/:eventId`: chequea que cada video del evento se pueda insertar (crear players ocultos y escuchar `onError` 100/101/150), muestra la lista en verde/rojo; botón "Reiniciar noche".
 - Historial: eventos terminados con podio, ranking por bloque y detalle de puntos por mesa.
 
+### 8.5 Módulo opcional: misiones secretas y desafíos
+
+Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `events.settings.misiones` / `.desafios`). Con las dos apagadas la noche funciona igual que sin el módulo (ni consultas ni piezas nuevas).
+
+- **Misiones secretas**: para todas las mesas. Se cargan por noche (nombre, puntos, descripción opcional), empiezan ocultas, el conductor las **abre y cierra todas juntas**. Cada mesa que la cumple suma los puntos una vez (casilla mesa × misión en conducir; destildar los saca). Con las misiones cerradas el conductor igual puede tildar (aviso tardío).
+- **Desafíos**: inmediatos, de a uno. El conductor lo **lanza**, elige **la primera mesa** que lo cumplió (suma) o lo cierra sin ganadora; "Reabrir" deshace (saca los puntos).
+- Puntos: como puntos manuales (`score_entries`, motivo "Misión: …" / "Desafío: …"), sin multiplicador; cuentan en el total y el podio, no en el ranking por bloque.
+- Celular: el desafío en curso arriba (naranja) y la lista de misiones abiertas con ✔ en las cumplidas por esa mesa. Proyector: franja naranja abajo con el desafío en curso (no en el podio); la capa de contenido se achica para no quedar tapada. Sin aviso de "quién lo cumplió" (más adelante).
+- Base: `event_extras` (kind mision|desafio, status oculto|abierto|cerrado), `extra_completions`; RPC `get_extras(code, token?)` (solo lo abierto; `cumplida` solo con el token de la mesa) y `admin_*` (set_extras, save/delete/get_extras, misiones_estado, mision_marcar, desafio_lanzar/cerrar/reabrir). Duplicar copia la lista (oculta); reiniciar la vuelve a ocultar.
+- Frontend aislado en `src/extras/` (`useExtras` relee con cada relectura de `useLive`, sin canal propio).
+
 ## 9. Pasos (en este orden, frenando después de cada uno)
 
 1. **Esqueleto**: Vite + React + TS + Tailwind con tokens de marca y fuentes; router con `/pantalla/:codigo`, `/jugar/:codigo`, `/admin/*`; layout de proyector 16:9 y de celular; `vercel.json`; `CLAUDE.md` y `docs/SPEC.md`. *Verificación*: build ok, las 3 rutas se ven con logo y paleta en local y en Vercel.

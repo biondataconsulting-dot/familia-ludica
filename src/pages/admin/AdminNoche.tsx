@@ -6,6 +6,7 @@ import { BotonPrincipal, BotonSecundario, CAMPO, Etiqueta, Mensaje, Tarjeta } fr
 import { sugerirCodigo } from '../../content/codigo'
 import { NOMBRE_TIPO, TIPOS_POR_DINAMICA } from '../../content/validarItem'
 import { metaDe } from '../../dynamics/registro'
+import { ArmarExtras } from '../../extras/ArmarExtras'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
@@ -36,6 +37,7 @@ function Noche({ eventId }: { eventId: string }) {
       </div>
       <FormNoche evento={evento} onGuardado={recargar} />
       <Bloques evento={evento} bloques={bloques} onCambio={recargar} />
+      <ArmarExtras eventId={evento.id} />
       <BorrarNoche evento={evento} />
     </div>
   )

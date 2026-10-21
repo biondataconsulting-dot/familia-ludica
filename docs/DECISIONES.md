@@ -165,6 +165,14 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Resultado** (copia de NAUDIR3, 15 mesas, 12 ítems de las 4 dinámicas + Hipster, conductor automático): 180 de 180 respuestas, 0 errores. Mediana ~190 ms en `get_live` y `submit_answer`, p95 230–330 ms. Hubo un pico aislado (7,6 s en una lectura, 12,9 s en un latido): la relectura cada 5 s lo cubre y no se notó en las respuestas.
 - **Pulido**: podio con empates (el número sale del ranking: dos mesas empatadas arriba son las dos 1° con estrella); catálogo vacío con indicación; contraste de textos secundarios (celular al 75%, ≥ 4,5:1; proyector al 75% y mesas desconectadas al 55%); en Hipster, una canción de categoría película vuelve a pedir "Artista" (solo las escenas piden director). Movimiento reducido ya cubierto por la regla global de `index.css`; `lang="es-AR"` y textos alternativos en orden.
 
+## Misiones secretas y desafíos (módulo opcional, pedido del cliente)
+
+- **Aislado y apagado por defecto**: casillas por noche en Armar. Tablas y funciones nuevas; de lo existente solo se extendieron duplicar (copia la lista, oculta) y reiniciar (vuelve todo a oculto). `get_live` no se tocó: las pantallas leen el módulo con `get_extras`, solo si la noche lo tiene prendido, en el mismo ritmo de relectura de `useLive` (sin canal propio).
+- **Puntos como puntos manuales**: el ranking y el podio los suman sin cambios; no figuran en el ranking por bloque; destildar/reabrir anulan el movimiento (queda en el historial como anulado).
+- **Misiones**: se abren y cierran todas juntas (pedido); una misión agregada con las misiones abiertas aparece abierta. Se puede tildar con las misiones cerradas (el presentador avisa tarde), no con las ocultas. No se cambian los puntos ni se borra una misión/desafío si alguna mesa ya los sumó.
+- **Desafíos**: de a uno por vez; gana una sola mesa; "Reabrir" corrige una mesa equivocada. La franja del proyector no se muestra en el podio.
+- **Red de seguridad**: etiqueta `probado-simulacion` en git = la versión anterior al módulo (para volver si hiciera falta). Simulación de control (módulo apagado, 15 mesas): igual que antes, 180/180 sin errores.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

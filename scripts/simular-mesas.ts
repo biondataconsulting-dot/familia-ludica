@@ -31,6 +31,7 @@ const AGRUPAR_AVISOS_MS = 150
 
 type Live = {
   phase: string
+  event: { settings: { misiones?: boolean; desafios?: boolean } }
   block: { dynamic: string; title: string } | null
   item: { block_item_id: string; type: string; content: Record<string, unknown> } | null
 }
@@ -125,6 +126,10 @@ async function jugar(nombre: string) {
 
   const cargar = async () => {
     const live = await medir<Live>('get_live', () => cliente.rpc('get_live', { p_code: CODIGO }))
+    // Con misiones o desafíos prendidos, el celular también lee el módulo en cada relectura.
+    if (live?.event.settings.misiones || live?.event.settings.desafios) {
+      void medir('get_extras', () => cliente.rpc('get_extras', { p_code: CODIGO, p_token: mesa.token }))
+    }
     if (live?.phase === 'final' && !terminando) {
       console.log('\nLlegó el podio: fin de la simulación.')
       void terminar()

@@ -4,6 +4,8 @@ import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/use
 import { PanelPuntos } from '../../admin/PanelPuntos'
 import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
+import { extrasActivos } from '../../extras/useExtras'
+import { VivoExtras } from '../../extras/VivoExtras'
 import { metaDe } from '../../dynamics/registro'
 import { consigna, describirSolucion } from '../../dynamics/solucion'
 import { ErrorRpc } from '../../lib/rpc'
@@ -271,6 +273,9 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           </Tarjeta>
         </section>
       </div>
+
+      {/* Módulo opcional: solo si la noche tiene misiones o desafíos prendidos. */}
+      {extrasActivos(live) && <VivoExtras eventId={evento.id} live={live} />}
     </div>
   )
 }

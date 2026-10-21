@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { cargarYouTube } from '../projector/youtube'
 import { useParams } from 'react-router-dom'
 import { useWakeLock } from '../phone/useWakeLock'
+import { FranjaDesafio } from '../extras/FranjaDesafio'
+import { useExtras } from '../extras/useExtras'
 import { ComenzarNoche } from '../projector/ComenzarNoche'
 import { ProjectorLayout } from '../layouts/ProjectorLayout'
 import { useLive } from '../live/useLive'
@@ -16,6 +18,9 @@ import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
 import type { Temporizador } from '../live/useTemporizador'
 
+/** Alto de la capa de contenido con la franja del desafío abajo (100% menos ALTO_FRANJA). */
+const ALTO_SIN_FRANJA = 'h-[calc(100%-6.5cqw)]'
+
 /** Proyector: la pantalla protagonista. Muestra lo que corresponde a la fase actual. */
 export default function Pantalla() {
   const { codigo = '' } = useParams()
@@ -28,6 +33,9 @@ export default function Pantalla() {
   useEffect(() => {
     void cargarYouTube().catch(() => undefined)
   }, [])
+  // Módulo opcional: el desafío lanzado va en una franja abajo (no en el podio).
+  const extras = useExtras(codigo, live)
+  const desafio = live?.phase !== 'final' ? extras?.desafio : null
   const portada = !comenzada && <ComenzarNoche nombre={live?.event.name} onComenzar={() => setComenzada(true)} />
   // El player de Hipster y Cine se prepara desde la presentación del bloque (así no demora la primera canción).
   const conMedia =
@@ -59,10 +67,11 @@ export default function Pantalla() {
   return (
     <ProjectorLayout logoEsquina={live.phase !== 'cover'}>
       {conMedia && <ReproductorOculto codigo={codigo} live={live} senalRepetir={senalRepetir} />}
-      {/* Capa de contenido por encima del player oculto. */}
-      <div className="relative z-10 h-full">
+      {/* Capa de contenido por encima del player oculto (más baja si hay un desafío en la franja). */}
+      <div className={`relative z-10 ${desafio ? ALTO_SIN_FRANJA : 'h-full'}`}>
         <Fase live={live} temporizador={temporizador} />
       </div>
+      {desafio && <FranjaDesafio desafio={desafio} />}
       {error && (
         <p className="absolute bottom-[0.8cqw] left-[1cqw] rounded-full bg-naranja/90 px-[1cqw] py-[0.2cqw] text-[1cqw] font-bold">
           Reconectando…

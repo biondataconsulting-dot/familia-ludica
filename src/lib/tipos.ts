@@ -9,7 +9,7 @@ export type EventoPublico = {
   venue: string | null
   code: string
   status: 'borrador' | 'listo' | 'en_vivo' | 'terminado'
-  settings: { edicion?: string }
+  settings: { edicion?: string; misiones?: boolean; desafios?: boolean }
 }
 
 export type MesaPublica = { id: string; name: string; connected: boolean }
