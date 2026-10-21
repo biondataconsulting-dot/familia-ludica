@@ -117,11 +117,16 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   }, [videoVisible, itemId])
 
   // Un único player para todo el bloque, creado apenas se monta (sin video).
+  // Cada montaje tiene su número: si la pantalla se desmonta mientras YouTube carga, el player que
+  // llega tarde se descarta (si no, quedaba un player suelto además del nuevo).
+  const montaje = useRef(0)
   const obtenerPlayer = useCallback(() => {
     if (!listo.current) {
+      const mio = montaje.current
       listo.current = cargarYouTube().then(
         (YT) =>
           new Promise<ReproductorYT>((resolver) => {
+            if (mio !== montaje.current) return
             const nodo = document.createElement('div')
             contenedor.current?.appendChild(nodo)
             const p = new YT.Player(nodo, {
@@ -131,6 +136,10 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
               events: {
                 // Los métodos del player existen recién acá: antes, getPlayerState y compañía no están.
                 onReady: () => {
+                  if (mio !== montaje.current) {
+                    p.destroy()
+                    return
+                  }
                   player.current = p
                   marcar('player listo')
                   resolver(p)
@@ -229,6 +238,7 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
 
   useEffect(
     () => () => {
+      montaje.current += 1
       creado.current?.destroy()
       creado.current = null
       player.current = null
