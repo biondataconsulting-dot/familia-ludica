@@ -30,6 +30,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - `npm run dev` · `npm run build` (tsc + vite, sin warnings de TS) · `npm run lint` · `npm test`
 - `npm run db:push` → aplica migraciones + seed al proyecto Supabase vinculado (`gmpcnupjzqqfjkbywzet`). Requiere `supabase login` y `supabase link` hechos por el usuario (pide contraseña de la base).
 - `npm run verificar:rls` → script con la clave anon que confirma lo que se puede y no se puede hacer.
+- `npm run simular -- CODIGO [mesas=15] [pensar_max_s=15]` → mesas simuladas que juegan como celulares reales (tiempo real, relectura, latido, respuestas al azar); el conductor maneja la noche desde el panel. Ctrl+C muestra tiempos y errores. Las mesas se llaman "Simulada NN"; se borran con "Reiniciar noche de prueba". Usar una noche de prueba (o una copia), no la real.
 - No hay Docker: las migraciones nuevas se prueban antes en PGlite (Postgres embebido) con roles `anon`/`authenticated` y `auth.jwt()` simulados.
 
 ## Reglas para migraciones nuevas

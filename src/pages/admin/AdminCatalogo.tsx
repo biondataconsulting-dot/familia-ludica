@@ -85,6 +85,8 @@ export default function AdminCatalogo() {
         {aviso && <Mensaje>{aviso}</Mensaje>}
         {!items ? (
           <p className="text-profundo/70">Cargando…</p>
+        ) : items.length === 0 ? (
+          <p className="text-profundo/70">Todavía no hay ítems. Creá el primero con los botones de arriba o importalos desde un archivo.</p>
         ) : (
           <>
             <p className="mb-2 text-sm text-profundo/60">

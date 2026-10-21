@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
     "verificar:rls": "node --env-file=.env.local scripts/verificar-rls.ts",
+    "simular": "node --env-file=.env.local scripts/simular-mesas.ts",
     "db:push": "supabase db push --include-seed",
     "db:seed": "supabase db query --linked -f supabase/seed.sql"
   },

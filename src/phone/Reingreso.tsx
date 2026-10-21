@@ -88,7 +88,7 @@ function TecladoPin({ codigo, mesa, onEntrar }: { codigo: string; mesa: MesaPubl
         ))}
       </div>
       {error && <Aviso>{error}</Aviso>}
-      <p className="text-sm text-profundo/60">Lo ven arriba, en el otro celular de la mesa.</p>
+      <p className="text-sm text-profundo/75">Lo ven arriba, en el otro celular de la mesa.</p>
       <div className="grid w-full max-w-xs grid-cols-3 gap-3">
         {TECLAS.map((t, i) =>
           t ? (

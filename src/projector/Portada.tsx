@@ -59,7 +59,7 @@ function MesasListas({ mesas }: { mesas: Live['teams'] }) {
           <li
             key={m.id}
             className={`animate-aparecer rounded-full px-[1.2cqw] py-[0.35cqw] text-[1.35cqw] font-bold ${
-              m.connected ? 'bg-white text-profundo' : 'border-[0.15cqw] border-dashed border-white/50 text-white/60'
+              m.connected ? 'bg-white text-profundo' : 'border-[0.15cqw] border-dashed border-white/50 text-white/75'
             }`}
           >
             {m.name}

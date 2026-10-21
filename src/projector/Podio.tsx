@@ -25,7 +25,7 @@ export function Podio({ live }: { live: Live }) {
         <ol className="mt-[1.5cqw] grid grid-cols-3 gap-x-[2cqw] gap-y-[0.3cqw] rounded-[1.2cqw] bg-profundo/40 px-[2cqw] py-[1cqw] text-[1.3cqw] font-semibold">
           {resto.map((r) => (
             <li key={r.team_id} className="flex gap-[0.6cqw]">
-              <span className="w-[2cqw] text-white/60">{r.position}</span>
+              <span className="w-[2cqw] text-white/75">{r.position}</span>
               <span className="min-w-0 flex-1 truncate">{r.name}</span>
               <span className="tabular-nums">{formatearNumero(r.total)}</span>
             </li>
@@ -36,7 +36,8 @@ export function Podio({ live }: { live: Live }) {
   )
 }
 
-/** Escalones blancos (sin fondo amarillo). El ganador: estrella y nombre más grande. */
+/** Escalones blancos (sin fondo amarillo). El ganador: estrella y nombre más grande. Con empate, el
+ * número es el puesto del ranking (dos mesas empatadas arriba son las dos 1°, con estrella). */
 function Escalon({ fila, puesto, alto }: { fila: FilaRanking | undefined; puesto: number; alto: string }) {
   const ganador = puesto === 1
   return (
@@ -46,12 +47,12 @@ function Escalon({ fila, puesto, alto }: { fila: FilaRanking | undefined; puesto
           className="motion-safe:animate-aparecer flex flex-col items-center justify-start gap-[0.6cqw] rounded-t-[1.8cqw] bg-white px-[1.2cqw] pt-[1.4cqw] text-center text-profundo shadow-2xl"
           style={{ height: alto, animationDelay: `${(4 - puesto) * 250}ms` }}
         >
-          {ganador && (
-            <span className="text-[4.5cqw] leading-none text-naranja" aria-hidden>
+          {fila.position === 1 && (
+            <span className={`leading-none text-naranja ${ganador ? 'text-[4.5cqw]' : 'text-[3cqw]'}`} aria-hidden>
               ★
             </span>
           )}
-          <span className={`font-titulo font-bold leading-none ${ganador ? 'text-[3.4cqw] text-naranja' : 'text-[4cqw]'}`}>{puesto}°</span>
+          <span className={`font-titulo font-bold leading-none ${ganador ? 'text-[3.4cqw] text-naranja' : 'text-[4cqw]'}`}>{fila.position}°</span>
           <span
             className={`line-clamp-2 font-titulo font-bold leading-tight ${ganador ? 'text-[3.6cqw]' : 'text-[2.2cqw] font-semibold'}`}
           >

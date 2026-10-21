@@ -45,7 +45,7 @@ export default function Pantalla() {
                 {error.codigo === 'P0002' ? 'No encontramos esta noche' : 'No podemos conectarnos'}
               </h1>
               <p className="text-[2cqw] text-white/90">{error.message}</p>
-              <p className="text-[1.5cqw] text-white/60">Seguimos intentando solos.</p>
+              <p className="text-[1.5cqw] text-white/75">Seguimos intentando solos.</p>
             </>
           ) : (
             <p className="font-titulo text-[3cqw] font-semibold text-white/80">Preparando la noche…</p>

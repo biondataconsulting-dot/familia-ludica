@@ -159,6 +159,12 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - Al pie de `/admin/noche/:id`: "Borrar esta noche…" pide escribir el código (como el reinicio) y borra la noche con bloques, mesas, respuestas y puntos (`admin_delete_event`). El catálogo no se toca. Se puede borrar en cualquier estado; si está en vivo o ya se jugó, la pantalla lo advierte.
 
+## Paso 12: prueba de carga y pulido
+
+- **Simulador** (`npm run simular -- CODIGO [mesas] [pensar_max_s]`): cada mesa simulada usa su propia conexión y hace lo mismo que un celular (aviso en tiempo real + relectura cada 5 s + latido cada 10 s) y responde al azar después de 2 a N s. Termina solo en el podio y muestra mediana, p95 y máximo de cada llamada.
+- **Resultado** (copia de NAUDIR3, 15 mesas, 12 ítems de las 4 dinámicas + Hipster, conductor automático): 180 de 180 respuestas, 0 errores. Mediana ~190 ms en `get_live` y `submit_answer`, p95 230–330 ms. Hubo un pico aislado (7,6 s en una lectura, 12,9 s en un latido): la relectura cada 5 s lo cubre y no se notó en las respuestas.
+- **Pulido**: podio con empates (el número sale del ranking: dos mesas empatadas arriba son las dos 1° con estrella); catálogo vacío con indicación; contraste de textos secundarios (celular al 75%, ≥ 4,5:1; proyector al 75% y mesas desconectadas al 55%); en Hipster, una canción de categoría película vuelve a pedir "Artista" (solo las escenas piden director). Movimiento reducido ya cubierto por la regla global de `index.css`; `lang="es-AR"` y textos alternativos en orden.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

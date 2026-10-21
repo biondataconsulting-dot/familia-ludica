@@ -12,7 +12,7 @@ export function TableroParticipacion({ live }: { live: Live }) {
           ? 'bg-white text-profundo'
           : m.connected
             ? 'border-[0.15cqw] border-dashed border-white/60 text-white/80'
-            : 'border-[0.15cqw] border-naranja/70 text-white/35'
+            : 'border-[0.15cqw] border-naranja/70 text-white/55'
         return (
           <li key={m.id} className={`flex items-center gap-[0.4cqw] rounded-full px-[1.1cqw] py-[0.3cqw] text-[1.3cqw] font-bold ${estilo}`}>
             {listo && (

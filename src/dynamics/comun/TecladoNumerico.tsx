@@ -29,7 +29,7 @@ export function TecladoNumerico({ texto, onTexto, opciones, unidad, placeholder 
         <p className={`flex-1 text-right font-titulo text-4xl font-bold tabular-nums ${texto ? '' : 'text-profundo/30'}`}>
           {texto ? formatearEntrada(texto, opciones.agruparMiles) : placeholder}
         </p>
-        {unidad && <span className="text-lg font-semibold text-profundo/60">{unidad}</span>}
+        {unidad && <span className="text-lg font-semibold text-profundo/75">{unidad}</span>}
       </div>
       <div className="grid w-full grid-cols-3 gap-2">
         {teclas.map((t, i) =>

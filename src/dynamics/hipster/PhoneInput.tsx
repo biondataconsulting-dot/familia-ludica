@@ -9,6 +9,7 @@ export function PhoneInput({ item, valor, onCambiar }: PropsPhoneInput) {
   const [titulo, setTitulo] = useState(() => (typeof valor?.titulo === 'string' ? valor.titulo : ''))
   const [artista, setArtista] = useState(() => (typeof valor?.artista === 'string' ? valor.artista : ''))
   const esMusica = (item.content.categoria ?? 'musica') === 'musica'
+  const esEscena = item.type === 'clip_video'
 
   const emitir = (a: string, t: string, ar: string) => {
     const n = textoANumero(a)
@@ -31,7 +32,7 @@ export function PhoneInput({ item, valor, onCambiar }: PropsPhoneInput) {
       />
       <label className="block">
         <span className="mb-1 block font-bold">
-          {esMusica ? 'Canción' : 'Título'} <span className="font-semibold text-profundo/60">(opcional, +200)</span>
+          {esMusica ? 'Canción' : 'Título'} <span className="font-semibold text-profundo/75">(opcional, +200)</span>
         </span>
         <input
           value={titulo}
@@ -46,7 +47,7 @@ export function PhoneInput({ item, valor, onCambiar }: PropsPhoneInput) {
       </label>
       <label className="block">
         <span className="mb-1 block font-bold">
-          {esMusica ? 'Artista o banda' : 'Director o directora'} <span className="font-semibold text-profundo/60">(opcional, +200)</span>
+          {esEscena ? 'Director o directora' : esMusica ? 'Artista o banda' : 'Artista'} <span className="font-semibold text-profundo/75">(opcional, +200)</span>
         </span>
         <input
           value={artista}
