@@ -24,3 +24,13 @@ export function segundosRestantes(
   const fin = abierto + (timerSeconds + extraSeconds) * 1000
   return (fin - ahoraServidorMs) / 1000
 }
+
+/** Máximo que el reloj espera a que arranque una canción o escena (igual que proyector_media_arranco). */
+export const ESPERA_MEDIA_MAX_S = 30
+
+/** true si la canción o escena se abrió hace menos de 30 s (el reloj todavía la espera). */
+export function esperaMedia(openedAtIso: string | null, ahoraServidorMs: number): boolean {
+  if (!openedAtIso) return false
+  const abierto = Date.parse(openedAtIso)
+  return !Number.isNaN(abierto) && ahoraServidorMs - abierto < ESPERA_MEDIA_MAX_S * 1000
+}

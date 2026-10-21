@@ -48,6 +48,10 @@ export type MediaProyector = { block_item_id: string; youtube_id: string; inicio
 /** Video del ítem actual, solo para el proyector (null si no hay audio/video en juego). */
 export const proyectorMedia = (codigo: string) => llamar<MediaProyector | null>('proyector_media', { p_code: codigo })
 
+/** El proyector avisa que la canción o escena arrancó: el cronómetro corre desde ahí (una vez por apertura). */
+export const proyectorMediaArranco = (codigo: string, blockItemId: string) =>
+  llamar('proyector_media_arranco', { p_code: codigo, p_block_item_id: blockItemId })
+
 /** Envía (o cambia) la respuesta de la mesa al ítem abierto. Devuelve la respuesta normalizada por la base. */
 export const submitAnswer = (token: string, blockItemId: string, respuesta: Record<string, unknown>) =>
   llamar<{ answer: Record<string, unknown> }>('submit_answer', {

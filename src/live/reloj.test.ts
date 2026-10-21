@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { calcularDesfase, segundosRestantes } from './reloj'
+import { calcularDesfase, esperaMedia, segundosRestantes } from './reloj'
 
 describe('calcularDesfase', () => {
   it('usa el punto medio del pedido', () => {
@@ -30,5 +30,21 @@ describe('segundosRestantes', () => {
   it('null sin temporizador o sin apertura', () => {
     expect(segundosRestantes(abierto, null, 0, t(1))).toBeNull()
     expect(segundosRestantes(null, 30, 0, t(1))).toBeNull()
+  })
+})
+
+describe('esperaMedia', () => {
+  const abierto = '2026-10-23T22:00:00.000Z'
+  const t = Date.parse(abierto)
+  it('espera durante los primeros 30 s', () => {
+    expect(esperaMedia(abierto, t + 5_000)).toBe(true)
+    expect(esperaMedia(abierto, t + 29_900)).toBe(true)
+  })
+  it('a los 30 s deja de esperar (el reloj corre desde que se abrió)', () => {
+    expect(esperaMedia(abierto, t + 30_000)).toBe(false)
+  })
+  it('sin hora de apertura no espera', () => {
+    expect(esperaMedia(null, t)).toBe(false)
+    expect(esperaMedia('basura', t)).toBe(false)
   })
 })

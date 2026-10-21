@@ -40,6 +40,8 @@ export type Live = {
   event: EventoPublico
   phase: Fase
   opened_at: string | null
+  /** Canción o escena abierta que el proyector todavía no reprodujo (el reloj espera hasta 30 s). */
+  media_waiting?: boolean
   timer_seconds: number | null
   extra_seconds: number
   updated_at: string | null

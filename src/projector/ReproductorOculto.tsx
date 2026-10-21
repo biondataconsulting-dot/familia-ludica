@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { proyectorMedia, type MediaProyector } from '../lib/rpc'
+import { proyectorMedia, proyectorMediaArranco, type MediaProyector } from '../lib/rpc'
 import type { Live } from '../lib/tipos'
 import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
 
@@ -14,7 +14,7 @@ function marcar(evento: string) {
 
 /** Lugar del marco de video ([data-marco-video] de Cine y series) relativo al escenario, en px. */
 /** Tiempo con las franjas puestas después de que arranca la escena (YouTube muestra el título al empezar). */
-const TELON_MS = 2500
+const TELON_MS = 4000
 
 /** preparando/fin: cortina completa · telon: franjas arriba y abajo · abierto: escena entera. */
 type Cortina = 'preparando' | 'telon' | 'abierto' | 'fin'
@@ -64,9 +64,19 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const [cortina, setCortina] = useState<Cortina>('preparando')
   const seVio = useRef(false)
   const demoraCortina = useRef<number | undefined>(undefined)
+  // Para el aviso de arranque (el handler del player se crea una sola vez).
+  const enJuego = useRef({ codigo, itemId, fase })
+  enJuego.current = { codigo, itemId, fase }
+  const avisados = useRef(new Set<string>())
   const alCambiarEstado = useCallback((estado: number) => {
     window.clearTimeout(demoraCortina.current)
     if (estado === ESTADO_YT.REPRODUCIENDO) {
+      // El cronómetro corre desde que arranca, no desde que se abrió (la base lo acepta una vez).
+      const j = enJuego.current
+      if (j.fase === 'item_open' && j.itemId && !avisados.current.has(j.itemId)) {
+        avisados.current.add(j.itemId)
+        void proyectorMediaArranco(j.codigo, j.itemId).catch(() => undefined)
+      }
       setCortina((c) => (c === 'abierto' ? c : 'telon'))
       demoraCortina.current = window.setTimeout(() => {
         seVio.current = true
