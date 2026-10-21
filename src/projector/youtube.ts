@@ -36,7 +36,17 @@ declare global {
   }
 }
 
-export const ESTADO_YT = { TERMINADO: 0, REPRODUCIENDO: 1, PAUSADO: 2, CARGANDO: 3, LISTO: 5 } as const
+/**
+ * ¿El navegador bloqueó el sonido? Sí si suena silenciado, o si el video ni arrancó y nadie tocó la
+ * pantalla. Una pausa (la pone la app), un video que carga o uno que suena con volumen: no.
+ */
+export function sonidoBloqueado(estado: number, silenciado: boolean, huboToque: boolean): boolean {
+  if (estado === ESTADO_YT.REPRODUCIENDO) return silenciado
+  if (estado === ESTADO_YT.SIN_EMPEZAR || estado === ESTADO_YT.EN_COLA) return !huboToque
+  return false
+}
+
+export const ESTADO_YT = { SIN_EMPEZAR: -1, TERMINADO: 0, REPRODUCIENDO: 1, PAUSADO: 2, CARGANDO: 3, LISTO: 5, EN_COLA: 5 } as const
 
 let cargando: Promise<APIYouTube> | null = null
 

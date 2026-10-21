@@ -187,7 +187,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 ## Aviso de sonido bloqueado (corregido)
 
-- Antes aparecía "Tocá acá para activar el sonido" si a los 4 s el video no estaba sonando por cualquier motivo (una carga lenta) y no se iba más. Ahora solo aparece si el navegador de verdad bloqueó el sonido: el video suena silenciado, o nadie tocó la pantalla del proyector desde que se cargó (`navigator.userActivation`). Se va solo cuando suena con volumen y al pasar a otro ítem. Las cargas lentas las resuelven los reintentos.
+- Antes aparecía "Tocá acá para activar el sonido" si a los 4 s el video no estaba sonando por cualquier motivo (una carga lenta) y no se iba más. Ahora solo aparece si el navegador de verdad bloqueó el sonido: el video suena silenciado, o nadie tocó la pantalla del proyector desde que se cargó (`navigator.userActivation`). Se va solo cuando suena con volumen y al pasar a otro ítem. Las cargas lentas las resuelven los reintentos. Una pausa nunca cuenta (la pone la app al cerrar, revelar o cortar), y el chequeo de 4 s se descarta si mientras tanto cambió la fase, el ítem o hubo otro «Repetir» (`sonidoBloqueado`, con tests).
 
 ## Aviso de proyectores duplicados
 

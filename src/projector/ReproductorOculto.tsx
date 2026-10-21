@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { proyectorMedia, proyectorMediaArranco, type MediaProyector } from '../lib/rpc'
 import type { Live } from '../lib/tipos'
-import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
+import { cargarYouTube, ESTADO_YT, sonidoBloqueado, type ReproductorYT } from './youtube'
 
 type Props = { codigo: string; live: Live; senalRepetir: number }
 
@@ -59,6 +59,8 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
   const cargado = useRef<string | null>(null)
   const [media, setMedia] = useState<MediaProyector | null>(null)
   const [bloqueado, setBloqueado] = useState(false)
+  /** Número del último pedido de reproducir (para descartar chequeos viejos). */
+  const ultimoPedido = useRef(0)
   const [falla, setFalla] = useState<string | null>(null)
   const esMedia = ['pista_audio', 'clip_video'].includes(live.item?.type ?? '')
   const itemId = esMedia ? live.item?.block_item_id : undefined
@@ -210,11 +212,15 @@ export function ReproductorOculto({ codigo, live, senalRepetir }: Props) {
       p.setVolume(100)
       // A los 4 s: ¿el navegador bloqueó el sonido? Solo si de verdad pasó (suena silenciado, o nadie tocó la
       // pantalla del proyector desde que se cargó). Una carga lenta no es bloqueo: de eso se ocupan los reintentos.
+      // Se descarta si mientras tanto hubo otro pedido (Repetir) o cambió la fase o el ítem. Una pausa nunca es
+      // bloqueo: la pone la app (al cerrar, al revelar o al cortar el fragmento).
+      const pedido = ++ultimoPedido.current
+      const fase = enJuego.current.fase
       window.setTimeout(() => {
         const p = player.current
-        if (!p) return
-        const sonando = p.getPlayerState() === ESTADO_YT.REPRODUCIENDO
-        if ((sonando && p.isMuted()) || (!sonando && !huboToque())) setBloqueado(true)
+        const j = enJuego.current
+        if (!p || pedido !== ultimoPedido.current || j.fase !== fase || j.itemId !== m.block_item_id) return
+        if (sonidoBloqueado(p.getPlayerState(), p.isMuted(), huboToque())) setBloqueado(true)
       }, 4000)
     },
     [obtenerPlayer],
