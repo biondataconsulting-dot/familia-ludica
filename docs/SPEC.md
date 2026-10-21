@@ -234,7 +234,7 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - Evento: nombre, fecha, lugar, código (sugerido a partir del nombre), estado; **bloques** (agregar, dinámica, título, multiplicador, práctica, tiempo sugerido, ordenar) y **ítems** de cada bloque (elegir desde el catálogo filtrando por tipo y etiqueta, ordenar, quitar). Botón "Abrir en vivo" + enlaces copiables a proyector y celular.
 - Catálogo: tabla con filtros (tipo, etiqueta, estado, texto), formulario por tipo, vista previa de proyector, prueba del fragmento de YouTube.
 - Importar: subir JSON o CSV → vista previa con errores por fila → importar (estado `aprobado` o `sugerido`, a elección) y opcionalmente **agregar los ítems importados a un bloque** de un evento.
-- Ensayo `/admin/ensayo/:eventId`: chequea que cada video del evento se pueda insertar (crear players ocultos y escuchar `onError` 100/101/150), muestra la lista en verde/rojo; botón "Reiniciar noche de prueba".
+- Ensayo `/admin/ensayo/:eventId`: chequea que cada video del evento se pueda insertar (crear players ocultos y escuchar `onError` 100/101/150), muestra la lista en verde/rojo; botón "Reiniciar noche".
 - Historial: eventos terminados con podio, ranking por bloque y detalle de puntos por mesa.
 
 ## 9. Pasos (en este orden, frenando después de cada uno)

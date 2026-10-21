@@ -6,7 +6,7 @@
 // Uso: npm run simular -- CODIGO [mesas] [pensar_max_s]
 //   npm run simular -- NAUDIR3            15 mesas, responden entre 2 y 15 s después de abrir
 //   npm run simular -- NAUDIR3 25 8       25 mesas, responden entre 2 y 8 s
-// Las mesas se llaman "Simulada 01", "Simulada 02"… Para sacarlas: "Reiniciar noche de prueba" en el
+// Las mesas se llaman "Simulada 01", "Simulada 02"… Para sacarlas: "Reiniciar noche" en el
 // ensayo (borra todas las mesas, respuestas y puntos de esa noche).
 import { createClient, type RealtimeChannel, type SupabaseClient } from '@supabase/supabase-js'
 

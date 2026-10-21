@@ -38,7 +38,7 @@ export default function AdminEnsayo() {
         <h1 className="text-3xl font-bold">Ensayo · {evento.name}</h1>
       </div>
       <Videos videos={videos} />
-      <Reinicio eventId={evento.id} codigo={evento.code} />
+      <Reinicio eventId={evento.id} codigo={evento.code} estado={evento.status} />
     </div>
   )
 }
@@ -126,7 +126,7 @@ function Videos({ videos }: { videos: Video[] }) {
   )
 }
 
-function Reinicio({ eventId, codigo }: { eventId: string; codigo: string }) {
+function Reinicio({ eventId, codigo, estado }: { eventId: string; codigo: string; estado: string }) {
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null)
@@ -147,11 +147,19 @@ function Reinicio({ eventId, codigo }: { eventId: string; codigo: string }) {
   }
 
   return (
-    <Tarjeta titulo="Reiniciar noche de prueba">
+    <Tarjeta titulo="Reiniciar noche">
       <form onSubmit={reiniciar} className="flex flex-col gap-3">
         <p className="text-sm text-profundo/70">
           Borra <strong>todas las mesas, respuestas y puntos</strong> de esta noche y la vuelve a la portada. Los bloques y los ítems
           quedan como están. Los celulares que estaban jugando vuelven a la pantalla de registro.
+          {estado === 'terminado' && (
+            <strong className="block text-red-700">
+              Ojo: esta noche ya se jugó. Se pierde su historial (podio y puntos). Si querés guardarlo, mejor duplicala desde Noches.
+            </strong>
+          )}
+          {estado === 'en_vivo' && (
+            <strong className="block text-red-700">Ojo: esta noche está en vivo. Si se está jugando, se pierde todo lo jugado hasta ahora.</strong>
+          )}
         </p>
         <Etiqueta texto={`Para confirmar, escribí el código de la noche: ${codigo}`}>
           <input value={texto} onChange={(e) => setTexto(e.target.value.toUpperCase())} className={`${CAMPO} max-w-xs font-titulo tracking-widest`} />
@@ -161,7 +169,7 @@ function Reinicio({ eventId, codigo }: { eventId: string; codigo: string }) {
           disabled={enviando || texto.trim() !== codigo}
           className="min-h-toque self-start rounded-xl bg-red-700 px-4 font-titulo font-semibold text-white disabled:opacity-40"
         >
-          {enviando ? 'Reiniciando…' : 'Reiniciar noche de prueba'}
+          {enviando ? 'Reiniciando…' : 'Reiniciar noche'}
         </button>
       </form>
     </Tarjeta>
