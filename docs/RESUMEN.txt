@@ -1,0 +1,70 @@
+FAMILIA LÚDICA — RESUMEN DE LA APLICACIÓN
+==========================================
+
+OBJETIVO
+--------
+Plataforma para conducir noches de juegos en vivo para familias y grupos (unas 15 mesas, de todas las
+edades). Un proyector muestra el juego en grande, cada mesa responde desde un celular y un conductor maneja
+la noche desde su panel. Los puntos se calculan solos y el ranking se actualiza en tiempo real.
+Lema: "Conectamos personas a través del juego."
+
+LAS TRES PANTALLAS
+------------------
+1. Proyector (/pantalla/CODIGO): la protagonista. Portada con QR, presentación de cada bloque, la pregunta
+   con reloj y tablero de quién respondió, el revelado con la respuesta y los puntos, "Así va la noche" y
+   el podio final. Hay que tocar "Comenzar la noche" una vez para habilitar sonido y pantalla completa.
+2. Celular de mesa (/jugar/CODIGO): se entra escaneando el QR y poniendo nombre a la mesa (sin usuarios ni
+   contraseñas). Muestra solo los controles para responder; mesa y PIN siempre arriba. Si el celular se
+   cierra, se vuelve a entrar con "Ya estamos jugando" y el PIN.
+3. Panel del conductor (/admin): entra con Google (solo cuentas autorizadas). Sirve para preparar el
+   contenido, armar las noches y conducirlas en vivo.
+
+LOS JUEGOS (DINÁMICAS)
+----------------------
+- Trivia: pregunta con opciones; suma quien acierta.
+- Dos verdades y una mentira: encontrar la afirmación falsa.
+- Aproximaciones: respuesta numérica; suma más quien más se acerca (se muestran las 5 más cercanas).
+- Hitster musical: suena una canción de YouTube; adivinar año, título y artista.
+- Cine y series: se ve una escena de YouTube; adivinar año, título y director.
+- Adiviná la imagen: película con emojis, logos o "¿Qué ves?"; se escribe la respuesta.
+- Oveja Oveja: escribir lo que va a responder la mayoría; suma el grupo más numeroso (empate o todas
+  iguales: nadie suma). La "oveja negra" se muestra solo para reírse.
+Cada ítem vale hasta 1.000 puntos, por el multiplicador del bloque. Los textos se aceptan sin tildes ni
+mayúsculas y con variantes; las respuestas dudosas las decide el conductor.
+
+PREPARACIÓN
+-----------
+- Catálogo: banco de ítems reutilizable, con etiquetas, dificultad, estado (sugerido / aprobado) y vista
+  previa de cómo se ve en el proyector. Las imágenes se suben desde la compu.
+- Importar: carga masiva desde JSON o CSV, con vista previa de errores fila por fila. Por defecto quedan
+  "sugeridos" para revisar antes de usarlos.
+- Guía para IA: documento descargable desde Importar para pedirle a Claude o ChatGPT que generen ítems en
+  el formato correcto (contenido familiar, reglas y ejemplos por juego).
+- Armar la noche: nombre, fecha, código (el del QR), bloques (juego, título, multiplicador, tiempo, práctica)
+  y sus ítems. Se puede duplicar una noche o borrarla.
+- Módulo opcional por noche: misiones secretas (para todas las mesas, se abren y cierran juntas) y desafíos
+  (gana la primera mesa). Apagado, la noche funciona como siempre.
+- Ensayo: verifica que todos los videos de la noche se puedan reproducir y permite reiniciar la noche
+  (borra mesas y puntos, mantiene el contenido).
+
+CONDUCCIÓN EN VIVO
+------------------
+- El conductor avanza: presentar bloque, abrir pregunta, cerrar, revelar, siguiente.
+- Al llegar el reloj a 0 las respuestas se cierran solas (+15 s y "Reabrir" disponibles).
+- En canciones y escenas el reloj espera a que empiecen a sonar; "Repetir" las vuelve a poner. Pueden
+  arrancar en un segundo elegido, con entrada suave de volumen.
+- Tabla de respuestas en vivo con puntos provisorios; puntos manuales con motivo (se avisan en los celulares).
+- Botones de pantalla: "Mostrar QR" (en la esquina, sin cortar el juego) y "Cómo va la noche" (ranking en
+  proyector y celulares).
+- Avisos de seguridad: video que no arranca, sonido bloqueado, dos proyectores abiertos a la vez.
+- "Terminar noche" muestra el podio; "Reanudar la noche" permite seguir con más bloques.
+- Historial: noches terminadas con su podio y de dónde salió cada punto.
+
+FUNCIONAMIENTO TÉCNICO (EN BREVE)
+---------------------------------
+- Web hecha en React; publicada en Vercel (familia-ludica.vercel.app). Sin servidor propio.
+- Base de datos, cuentas, tiempo real e imágenes en Supabase. Toda la lógica de puntos y validaciones vive
+  en la base: los celulares nunca ven respuestas ajenas ni soluciones antes de tiempo.
+- Las pantallas se actualizan al instante por avisos en tiempo real, y además releen cada 5 segundos:
+  se recuperan solas de cortes de internet, recargas o pestañas en segundo plano.
+- Probado con simulaciones de 15 mesas jugando a la vez, sin errores.
