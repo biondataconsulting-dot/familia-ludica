@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { proyectorSonido } from '../lib/rpc'
 import type { Live } from '../lib/tipos'
 import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
@@ -6,6 +6,13 @@ import { cargarYouTube, ESTADO_YT, type ReproductorYT } from './youtube'
 const VOLUMEN = 85
 const ENTRADA_MS = 1200
 const SALIDA_MS = 700
+
+/** Solo en desarrollo: pasos del reproductor de sonidos (window.__flSonido), para diagnosticar. */
+function marcar(evento: string) {
+  if (!import.meta.env.DEV) return
+  const w = window as unknown as { __flSonido?: { evento: string; ms: number }[] }
+  ;(w.__flSonido ??= []).push({ evento, ms: Math.round(performance.now()) })
+}
 
 /**
  * Música o sonido que el conductor prende a mano (música de fondo, redoblante…). Un player de YouTube
@@ -18,6 +25,7 @@ export function SonidoProyector({ codigo, live }: { codigo: string; live: Live }
   const listo = useRef<Promise<ReproductorYT> | null>(null)
   const actual = useRef<{ clave: string; inicio: number; fin: number | null; repetir: boolean } | null>(null)
   const rampa = useRef<number | undefined>(undefined)
+  const [falla, setFalla] = useState<string | null>(null)
 
   const enJuegoMedia =
     ['hipster', 'cine'].includes(live.block?.dynamic ?? '') && (live.phase === 'item_open' || live.phase === 'item_closed')
@@ -37,11 +45,17 @@ export function SonidoProyector({ codigo, live }: { codigo: string; live: Live }
               playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, playsinline: 1, rel: 0 },
               events: {
                 onReady: () => {
+                  marcar('player listo')
                   player.current = p
                   resolver(p)
                 },
+                onError: (e) => {
+                  marcar(`error ${e.data}`)
+                  setFalla(`No se pudo reproducir el sonido (YouTube, error ${e.data}). Probá con otro video.`)
+                },
                 // Repetir en bucle: al terminar el video, vuelve al inicio.
                 onStateChange: (e) => {
+                  marcar(`estado ${e.data}`)
                   const a = actual.current
                   if (e.data === ESTADO_YT.TERMINADO && a?.repetir) {
                     p.seekTo(a.inicio, true)
@@ -81,8 +95,14 @@ export function SonidoProyector({ codigo, live }: { codigo: string; live: Live }
       return
     }
     void (async () => {
-      const s = await proyectorSonido(codigo).catch(() => null)
+      marcar(`pedido ${clave}`)
+      const s = await proyectorSonido(codigo).catch((e: unknown) => {
+        marcar(`falla proyector_sonido ${String(e)}`)
+        return null
+      })
+      marcar(`recibido ${s ? s.youtube_id : 'nada'}`)
       if (!vigente || !s) return
+      setFalla(null)
       const p = await obtener()
       if (!vigente) return
       actual.current = { clave, inicio: s.inicio, fin: s.duracion ? s.inicio + s.duracion : null, repetir: s.repetir }
@@ -119,5 +139,12 @@ export function SonidoProyector({ codigo, live }: { codigo: string; live: Live }
     [],
   )
 
-  return <div ref={contenedor} aria-hidden className="pointer-events-none absolute left-0 top-0 h-[112px] w-[200px] overflow-hidden opacity-0" />
+  return (
+    <>
+      <div ref={contenedor} aria-hidden className="pointer-events-none absolute left-0 top-0 h-[112px] w-[200px] overflow-hidden opacity-0" />
+      {falla && clave && (
+        <p className="absolute bottom-[0.8cqw] right-[1cqw] z-30 rounded-full bg-profundo/80 px-[1cqw] py-[0.2cqw] text-[1cqw] text-white/80">{falla}</p>
+      )}
+    </>
+  )
 }

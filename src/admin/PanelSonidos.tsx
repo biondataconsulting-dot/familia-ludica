@@ -67,7 +67,9 @@ export function PanelSonidos({ eventId, live }: { eventId: string; live: Live })
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-bold">🎵 Música y sonidos</span>
         {Array.from({ length: LUGARES }, (_, i) => {
-          const id = elegidos[i] ?? ''
+          // Un sonido que se borró del catálogo deja el lugar vacío.
+          const elegido = elegidos[i] ?? ''
+          const id = catalogo && !catalogo.some((x) => x.id === elegido) ? '' : elegido
           const activo = Boolean(id) && sonando === id
           return (
             <div key={i} className={`flex items-center gap-1 rounded-xl border-2 p-1 ${activo ? 'border-naranja bg-naranja/10' : 'border-profundo/15'}`}>

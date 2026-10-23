@@ -1,3 +1,4 @@
+import { useVersionNueva } from '../lib/useVersionNueva'
 import type { ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
@@ -20,8 +21,14 @@ const SECCIONES = [
  * En la barra va el nombre en texto, no el logo: el manual no permite el logo completo por debajo de 140 px.
  */
 export function AdminLayout({ usuario, onSalir, children }: Props) {
+  const nueva = useVersionNueva()
   return (
     <div className="min-h-screen bg-crema">
+      {nueva && (
+        <button onClick={() => window.location.reload()} className="block w-full bg-naranja px-4 py-2 text-center font-bold text-white">
+          Hay una versión nueva de la app: tocá acá para recargar el panel. Recargá también el proyector (F5).
+        </button>
+      )}
       <header className="border-b border-profundo/10 bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
           <Link to="/admin" className="font-bold text-azul">

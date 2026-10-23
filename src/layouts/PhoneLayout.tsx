@@ -1,3 +1,4 @@
+import { useVersionNueva } from '../lib/useVersionNueva'
 import type { ReactNode } from 'react'
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 
 /** Celular de mesa: barra superior permanente con mesa, dinámica y PIN; un solo foco por pantalla. */
 export function PhoneLayout({ mesa, pin, dinamica, reconectando = false, children }: Props) {
+  const nueva = useVersionNueva()
   return (
     <div className="flex min-h-screen min-h-[100dvh] flex-col bg-crema">
       <header className="sticky top-0 z-10 bg-azul text-white shadow-md">
@@ -27,6 +29,11 @@ export function PhoneLayout({ mesa, pin, dinamica, reconectando = false, childre
             </div>
           )}
         </div>
+        {nueva && (
+          <button onClick={() => window.location.reload()} className="block w-full bg-naranja px-4 py-1 text-center text-sm font-bold">
+            Hay una versión nueva: tocá acá para actualizar
+          </button>
+        )}
         {reconectando && (
           <p role="status" className="bg-naranja px-4 py-1 text-center text-sm font-bold">
             Reconectando…

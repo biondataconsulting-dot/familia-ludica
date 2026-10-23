@@ -228,6 +228,11 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Tarjeta de puntajes** para imprimir: `docs/tarjeta-puntajes.html`.
 - `verificar:rls` acepta el código de una noche (`npm run verificar:rls -- JUEGO`); con la fase revelada, la solución puede aparecer (es lo que se muestra), el youtube_id nunca.
 
+## Aviso de versión nueva y ajustes de sonidos (23/10)
+
+- **Versión nueva**: cada build genera `/version.json` y lleva su versión en el código (`__VERSION__`, vite.config.ts). Proyector, panel y celulares consultan cada minuto (y al volver a la pestaña): si no coincide, avisan ("recargá esta pantalla"; en panel y celular, botón para recargar; el celular no pierde la mesa). Motivo: un proyector abierto desde antes de publicar los botones de música no tenía el reproductor y no sonaba. Funciona a partir de las pantallas cargadas con esta versión.
+- **Sonidos**: un lugar con un sonido que se borró del catálogo queda vacío (antes mostraba "— elegir —" con el ▶ activo). Si YouTube no deja reproducir un sonido, el proyector lo dice abajo a la derecha. Probado en el navegador integrado: el reproductor pide, recibe y suena (estado 1).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.
