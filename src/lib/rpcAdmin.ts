@@ -29,6 +29,9 @@ export const admin = {
   next: (eventId: string) => llamar('admin_next', { p_event_id: eventId }),
   showBlockRanking: (eventId: string) => llamar('admin_show_block_ranking', { p_event_id: eventId }),
   finish: (eventId: string) => llamar('admin_finish', { p_event_id: eventId }),
+  /** Música y sonidos: los (hasta 3) de la noche, y prender (id) o apagar (null) el que suena. */
+  setSonidos: (eventId: string, ids: string[]) => llamar('admin_set_sonidos', { p_event_id: eventId, p_ids: ids }),
+  sonido: (eventId: string, itemId: string | null) => llamar('admin_sonido', { p_event_id: eventId, p_item_id: itemId }),
   /** Cuántos proyectores con sonido están abiertos ahora (2 o más = se escucha doble). */
   proyectores: (eventId: string) => llamar<number>('admin_proyectores', { p_event_id: eventId }),
   /** Vuelve a poner en vivo una noche terminada (del podio al ranking) para jugar más bloques. */

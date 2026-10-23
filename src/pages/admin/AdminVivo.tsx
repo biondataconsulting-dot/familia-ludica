@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useEstructura, type BloqueAdmin, type ItemAdmin } from '../../admin/useEstructura'
 import { useProyectores } from '../../admin/useProyectores'
+import { PanelSonidos } from '../../admin/PanelSonidos'
 import { PanelPuntos } from '../../admin/PanelPuntos'
 import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
@@ -180,6 +181,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
             </span>
           )}
         </div>
+        <PanelSonidos eventId={e} live={live} />
         {proyectores != null && proyectores > 1 && (
           <Mensaje>
             ⚠ Hay {proyectores} proyectores con sonido abiertos en esta noche: las canciones y escenas se van a escuchar dobles.
@@ -447,7 +449,10 @@ function NavBloque(props: {
             {b.is_practice && <span className="ml-2 text-xs font-extrabold uppercase text-naranja">práctica</span>}
           </p>
           <p className="text-xs text-profundo/60">
-            {metaDe(b.dynamic).nombre} · ×{b.multiplier} · {b.config.timer_seconds ? `${b.config.timer_seconds} s` : 'sin tiempo'}
+            {b.config.emoji ? `${b.config.emoji} ` : ''}
+            {b.dynamic === 'especial'
+              ? `${metaDe(b.dynamic).nombre} · «Siguiente» pasa al bloque que sigue`
+              : `${metaDe(b.dynamic).nombre} · ×${b.multiplier} · ${b.config.timer_seconds ? `${b.config.timer_seconds} s` : 'sin tiempo'}`}
           </p>
         </div>
         <button

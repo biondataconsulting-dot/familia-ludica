@@ -11,6 +11,7 @@ export const TIPOS = [
   'clip_video',
   'imagen_adivinar',
   'pregunta_mayoria',
+  'sonido',
 ] as const
 export type TipoItem = (typeof TIPOS)[number]
 
@@ -23,6 +24,7 @@ export const NOMBRE_TIPO: Record<TipoItem, string> = {
   clip_video: 'Cine y series (escena)',
   imagen_adivinar: 'Adiviná la imagen',
   pregunta_mayoria: 'Oveja Oveja',
+  sonido: 'Música o sonido',
 }
 
 /** Qué tipos de ítem acepta cada dinámica (igual que private.tipo_va_en). */
@@ -46,7 +48,7 @@ const listaDeTextos = (v: unknown): v is string[] => Array.isArray(v) && v.every
 /** null si está bien; si no, qué está mal (mismo texto que la base). */
 export function validarItem(tipo: unknown, c: unknown, s: unknown): string | null {
   if (typeof tipo !== 'string' || !(TIPOS as readonly string[]).includes(tipo)) {
-    return `Tipo desconocido: «${typeof tipo === 'string' ? tipo : ''}». Usá pregunta_opciones, trio_verdad_mentira, pregunta_numerica, pista_audio, clip_video, imagen_adivinar o pregunta_mayoria.`
+    return `Tipo desconocido: «${typeof tipo === 'string' ? tipo : ''}». Usá pregunta_opciones, trio_verdad_mentira, pregunta_numerica, pista_audio, clip_video, imagen_adivinar, pregunta_mayoria o sonido.`
   }
   if (!esObjeto(c)) return 'Falta el contenido.'
   if (!esObjeto(s)) return 'Falta la solución.'
@@ -87,6 +89,17 @@ export function validarItem(tipo: unknown, c: unknown, s: unknown): string | nul
       if ('consigna' in c && [...String(c.consigna ?? '')].length > 120) return 'La consigna puede tener hasta 120 caracteres.'
       if (!textoLleno(s.respuesta)) return 'Falta la respuesta.'
       if ('variantes_respuesta' in s && !listaDeTextos(s.variantes_respuesta)) return '«variantes_respuesta» tiene que ser una lista de textos.'
+      return null
+    }
+    case 'sonido': {
+      if (!textoLleno(c.titulo)) return 'Falta el nombre (por ejemplo, «Redoblante»).'
+      if ([...(c.titulo as string)].length > 80) return 'El nombre puede tener hasta 80 caracteres.'
+      if (typeof c.youtube_id !== 'string' || !/^[A-Za-z0-9_-]{11}$/.test(c.youtube_id)) {
+        return 'El youtube_id tiene que tener 11 caracteres (letras, números, - o _).'
+      }
+      if ('inicio' in c && !esEntero(c.inicio, 0, 36000)) return '«inicio» tiene que ser los segundos donde empieza (entero, 0 o más).'
+      if ('duracion' in c && c.duracion !== null && !esEntero(c.duracion, 1, 3600)) return '«duracion» tiene que ser de 1 a 3600 segundos (o vacía: hasta el final).'
+      if ('repetir' in c && typeof c.repetir !== 'boolean') return '«repetir» tiene que ser true o false.'
       return null
     }
     case 'pregunta_mayoria': {

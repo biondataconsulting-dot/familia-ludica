@@ -336,6 +336,37 @@ siempre a la playa?», «Un superhéroe», «Un deporte que se juega con pelota�
 
 ---
 
+#### Música o sonido — tipo: `sonido`
+
+No es un juego: es **música funcional o un efecto** que el conductor prende y apaga a mano durante la noche
+(música de fondo en una trivia o una pausa, un redoblante en un sorteo, aplausos). Suena en el proyector.
+
+- `contenido.titulo`: un nombre corto para reconocerlo en el panel (hasta 80 caracteres). Ej.: «Música de pausa»,
+  «Redoblante», «Aplausos».
+- `contenido.youtube_id`: el ID del video de YouTube (mismas reglas que en Hitster: **buscado, nunca inventado**).
+- `contenido.inicio`: el segundo donde empieza (`0` si no sabés).
+- `contenido.duracion` (opcional): cuántos segundos suena (de 1 a 3600). Para efectos cortos (un redoblante de 8
+  segundos). Si no lo ponés, suena hasta el final.
+- `contenido.repetir` (opcional): `true` para que vuelva a empezar al terminar (música de fondo).
+- `solucion`: siempre vacía: `{}`.
+
+Buenas prácticas: música **sin letra** o instrumental para el fondo (no compite con el presentador); videos largos
+(«1 hora de…») para la música de fondo; efectos cortos y claros. Todo apto para todo público.
+
+```json
+[
+  {
+    "tipo": "sonido",
+    "etiquetas": ["musica-fondo"],
+    "dificultad": "facil",
+    "contenido": { "titulo": "Música de pausa", "youtube_id": "CCCCCCCCCCC", "inicio": 0, "repetir": true },
+    "solucion": {}
+  }
+]
+```
+
+---
+
 ### Checklist antes de entregar
 
 - [ ] Es **un solo bloque JSON** con una lista, y es JSON válido (comillas dobles, sin comas finales).

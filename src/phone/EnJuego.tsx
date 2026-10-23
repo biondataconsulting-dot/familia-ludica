@@ -23,8 +23,15 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
       )
 
     case 'block_intro':
+      if (live.block?.dynamic === 'especial') {
+        return (
+          <Centro emoji={live.block.emoji ?? '✨'} titulo={live.block.title}>
+            {live.block.subtitulo || 'Miren el proyector.'}
+          </Centro>
+        )
+      }
       return (
-        <Centro titulo={live.block?.title ?? ''} sello={practica}>
+        <Centro emoji={live.block?.emoji ?? undefined} titulo={live.block?.title ?? ''} sello={practica}>
           {meta.comoSeJuega}
         </Centro>
       )

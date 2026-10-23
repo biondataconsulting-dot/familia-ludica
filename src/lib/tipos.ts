@@ -9,7 +9,7 @@ export type EventoPublico = {
   venue: string | null
   code: string
   status: 'borrador' | 'listo' | 'en_vivo' | 'terminado'
-  settings: { edicion?: string; misiones?: boolean; desafios?: boolean }
+  settings: { edicion?: string; misiones?: boolean; desafios?: boolean; sonidos?: string[] }
 }
 
 export type MesaPublica = { id: string; name: string; connected: boolean }
@@ -25,6 +25,10 @@ export type BloqueActual = {
   total_blocks: number
   total_items: number
   timer_seconds: number | null
+  /** Emoji decorativo del bloque (opcional) y, en el bloque especial, subtítulo e imagen. */
+  emoji?: string | null
+  subtitulo?: string | null
+  imagen?: string | null
 }
 
 export type ItemActual = {
@@ -44,6 +48,8 @@ export type Live = {
   media_waiting?: boolean
   /** Botones del conductor: QR sobre el logo y "Cómo va la noche" (ranking en proyector y celulares). */
   show_qr?: boolean
+  /** Música o sonido que el conductor prendió (sin el video: ese lo pide solo el proyector). */
+  sonido?: { id: string; desde: string } | null
   /** Último punto manual o de desafío de los últimos 20 s (cartel en los celulares). */
   aviso?: { id: string; team: string; points: number; reason: string; at: string } | null
   show_ranking?: boolean

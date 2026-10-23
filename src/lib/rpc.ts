@@ -48,6 +48,10 @@ export type MediaProyector = { block_item_id: string; youtube_id: string; inicio
 /** Video del ítem actual, solo para el proyector (null si no hay audio/video en juego). */
 export const proyectorMedia = (codigo: string) => llamar<MediaProyector | null>('proyector_media', { p_code: codigo })
 
+export type SonidoProyector = { id: string; desde: string; youtube_id: string; inicio: number; duracion: number | null; repetir: boolean }
+/** Solo el proyector: el video de la música o el sonido que está sonando. */
+export const proyectorSonido = (codigo: string) => llamar<SonidoProyector | null>('proyector_sonido', { p_code: codigo })
+
 /** El proyector con sonido late cada 10 s (para que el panel avise si hay dos abiertos). */
 export const proyectorLatido = (codigo: string, id: string) => llamar<null>('proyector_latido', { p_code: codigo, p_id: id })
 

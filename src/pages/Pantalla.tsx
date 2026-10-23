@@ -15,6 +15,7 @@ import { ItemEnJuego } from '../projector/ItemEnJuego'
 import { Podio } from '../projector/Podio'
 import { Portada } from '../projector/Portada'
 import { QrEsquina } from '../projector/QrEsquina'
+import { SonidoProyector } from '../projector/SonidoProyector'
 import { useLatidoProyector } from '../projector/useLatidoProyector'
 import { RankingBloque } from '../projector/RankingBloque'
 import { ReproductorOculto } from '../projector/ReproductorOculto'
@@ -74,6 +75,8 @@ export default function Pantalla() {
   return (
     <ProjectorLayout logoEsquina={live.phase !== 'cover'}>
       {conMedia && <ReproductorOculto codigo={codigo} live={live} senalRepetir={senalRepetir} />}
+      {/* Música o sonido del conductor (solo con «Comenzar la noche» tocado: sin eso el navegador no deja sonar). */}
+      {comenzada && <SonidoProyector codigo={codigo} live={live} />}
       {/* Capa de contenido por encima del player oculto (más baja si hay un desafío en la franja). */}
       <div className={`relative z-10 ${desafio ? ALTO_SIN_FRANJA : 'h-full'}`}>
         <Fase live={live} temporizador={temporizador} />

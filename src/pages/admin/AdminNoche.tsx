@@ -7,11 +7,12 @@ import { sugerirCodigo } from '../../content/codigo'
 import { NOMBRE_TIPO, TIPOS_POR_DINAMICA } from '../../content/validarItem'
 import { metaDe } from '../../dynamics/registro'
 import { ArmarExtras } from '../../extras/ArmarExtras'
+import { SubirImagen } from '../../admin/SubirImagen'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
 
-const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja'] as const
+const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja', 'especial'] as const
 const mensajeDe = (e: unknown) => (e instanceof ErrorRpc ? e.message : 'Algo salió mal. Probá de nuevo.')
 
 /** /admin/noche/:id — datos de la noche, bloques e ítems de cada bloque. "nueva" crea una. */
@@ -271,6 +272,10 @@ function EditorBloque(props: {
   const [mult, setMult] = useState(String(bloque?.multiplier ?? 1))
   const [practica, setPractica] = useState(bloque?.is_practice ?? false)
   const [tiempo, setTiempo] = useState(bloque?.config.timer_seconds != null ? String(bloque.config.timer_seconds) : '30')
+  const [emoji, setEmoji] = useState(bloque?.config.emoji ?? '')
+  const [subtitulo, setSubtitulo] = useState(bloque?.config.subtitulo ?? '')
+  const [imagen, setImagen] = useState(bloque?.config.imagen ?? '')
+  const especial = dinamica === 'especial'
   const [ocupado, setOcupado] = useState(false)
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null)
   const [eligiendo, setEligiendo] = useState(false)
@@ -298,6 +303,9 @@ function EditorBloque(props: {
           event_id: eventId,
           dynamic: dinamica,
           title: titulo,
+          emoji,
+          subtitulo: especial ? subtitulo : '',
+          imagen: especial ? imagen : '',
           multiplier: Number(mult.replace(',', '.')),
           is_practice: practica,
           timer_seconds: tiempo ? Number(tiempo) : null,
@@ -359,16 +367,39 @@ function EditorBloque(props: {
         <Etiqueta texto="Título" ayuda="(en pantalla)">
           <input value={titulo} onChange={(e) => setTitulo(e.target.value)} maxLength={80} required className={CAMPO} />
         </Etiqueta>
-        <Etiqueta texto="Puntos ×">
-          <input value={mult} onChange={(e) => setMult(e.target.value)} inputMode="decimal" className={CAMPO} />
-        </Etiqueta>
-        <Etiqueta texto="Tiempo (s)" ayuda="(vacío: sin reloj)">
-          <input value={tiempo} onChange={(e) => setTiempo(e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
-        </Etiqueta>
-        <label className="flex min-h-toque items-center gap-2 font-semibold">
-          <input type="checkbox" checked={practica} onChange={(e) => setPractica(e.target.checked)} className="h-5 w-5" />
-          Práctica
-        </label>
+        {!especial && (
+          <>
+          <Etiqueta texto="Puntos ×">
+            <input value={mult} onChange={(e) => setMult(e.target.value)} inputMode="decimal" className={CAMPO} />
+          </Etiqueta>
+          <Etiqueta texto="Tiempo (s)" ayuda="(vacío: sin reloj)">
+            <input value={tiempo} onChange={(e) => setTiempo(e.target.value.replace(/\D/g, ''))} inputMode="numeric" className={CAMPO} />
+          </Etiqueta>
+          <label className="flex min-h-toque items-center gap-2 font-semibold">
+            <input type="checkbox" checked={practica} onChange={(e) => setPractica(e.target.checked)} className="h-5 w-5" />
+            Práctica
+          </label>
+          </>
+        )}
+        <div className="grid gap-3 md:col-span-6 md:grid-cols-[0.6fr_2fr]">
+          <Etiqueta texto="Decoración" ayuda="(un emoji, opcional: 🎃)">
+            <input value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={16} placeholder="🎃" className={`${CAMPO} text-2xl`} />
+          </Etiqueta>
+          {especial && (
+            <Etiqueta texto="Subtítulo" ayuda="(opcional)">
+              <input value={subtitulo} onChange={(e) => setSubtitulo(e.target.value)} maxLength={160} placeholder="Ej.: Tengan a mano el número de mesa" className={CAMPO} />
+            </Etiqueta>
+          )}
+        </div>
+        {especial && (
+          <div className="md:col-span-6">
+            <SubirImagen url={imagen} onCambio={setImagen} />
+            <p className="mt-1 text-sm text-profundo/70">
+              Momento especial (pausa, sorteo, encuesta…): se ve a pantalla completa con el título, el subtítulo y la imagen. No
+              tiene preguntas: en Conducir, «Siguiente» pasa al bloque que sigue.
+            </p>
+          </div>
+        )}
         <div className="flex gap-2">
           <BotonPrincipal disabled={ocupado}>{bloque ? 'Guardar' : 'Crear'}</BotonPrincipal>
           {onCancelar && (
@@ -384,7 +415,7 @@ function EditorBloque(props: {
         </div>
       )}
 
-      {bloque && (
+      {bloque && !especial && (
         <div className="mt-4 border-t border-profundo/10 pt-3">
           <div className="mb-2 flex items-center gap-2">
             <h3 className="font-bold">Ítems · {bloque.items.length}</h3>

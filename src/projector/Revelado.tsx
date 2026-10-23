@@ -1,5 +1,6 @@
 import { dinamicaDe } from '../dynamics/registro'
 import { describirSolucion, formatearNumero } from '../dynamics/solucion'
+import { DecoBloque } from './DecoBloque'
 import type { Live, Revelado as DatosRevelado } from '../lib/tipos'
 import { BarraSuperior } from './BarraSuperior'
 import { ContenidoItem } from './ContenidoItem'
@@ -24,7 +25,8 @@ export function Revelado({ live }: { live: Live }) {
 
       <div className="flex min-h-0 flex-1 gap-[2cqw]">
         <div className="flex min-w-0 flex-1 flex-col gap-[1.2cqw]">
-          <div className="flex min-h-0 flex-1 flex-col justify-center gap-[1.5cqw] rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
+          <div className="relative flex min-h-0 flex-1 flex-col justify-center gap-[1.5cqw] rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
+            <DecoBloque emoji={live.block?.emoji} />
             {conVistaPropia ? (
               <ContenidoItem dinamica={live.block?.dynamic} item={item} solucion={sol} puntos={revelado.points} />
             ) : (

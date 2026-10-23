@@ -29,7 +29,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 
 - `npm run dev` · `npm run build` (tsc + vite, sin warnings de TS) · `npm run lint` · `npm test`
 - `npm run db:push` → aplica migraciones + seed al proyecto Supabase vinculado (`gmpcnupjzqqfjkbywzet`). Requiere `supabase login` y `supabase link` hechos por el usuario (pide contraseña de la base).
-- `npm run verificar:rls` → script con la clave anon que confirma lo que se puede y no se puede hacer.
+- `npm run verificar:rls -- CODIGO` → script con la clave anon que confirma lo que se puede y no se puede hacer (con una noche que exista; por defecto NAUDIR3).
 - `npm run simular -- CODIGO [mesas=15] [pensar_max_s=15]` → mesas simuladas que juegan como celulares reales (tiempo real, relectura, latido, respuestas al azar); el conductor maneja la noche desde el panel. Ctrl+C muestra tiempos y errores. Las mesas se llaman "Simulada NN"; se borran con "Reiniciar noche". Usar una noche de prueba (o una copia), no la real.
 - No hay Docker: las migraciones nuevas se prueban antes en PGlite (Postgres embebido) con roles `anon`/`authenticated` y `auth.jwt()` simulados.
 
@@ -95,9 +95,9 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 - Preparación: `admins`, `tags`, `catalog_items` (type, content jsonb, status, difficulty…), `item_tags`, `catalog_solutions`, `events` (code único, status), `event_blocks` (dynamic, multiplier, is_practice, config), `block_items`.
 - Ejecución: `teams` (token uuid secreto, pin 4 dígitos, last_seen), `live_state` (phase ∈ cover, block_intro, item_open, item_closed, item_revealed, block_ranking, final), `answers` (unique block_item+team, validation jsonb), `score_entries` (origin auto/manual, voided).
 - Vistas: `public_teams`, `ranking`, `ranking_by_block`, `public_item`, `answered_teams`.
-- Tipos de ítem: `pregunta_opciones`, `pregunta_numerica`, `pista_audio`, `clip_video`, `trio_verdad_mentira`, `imagen_adivinar` (estilo emojis/logo/que_ves; imagen en Storage `imagenes`), `pregunta_mayoria`.
+- Tipos de ítem: `pregunta_opciones`, `pregunta_numerica`, `pista_audio`, `clip_video`, `trio_verdad_mentira`, `imagen_adivinar` (estilo emojis/logo/que_ves; imagen en Storage `imagenes`), `pregunta_mayoria`, `sonido` (música o efecto para los 3 botones de Conducir; no va en bloques).
 - Módulo opcional por noche (SPEC §8.5): misiones secretas y desafíos en `event_extras` / `extra_completions`, código en `src/extras/`. Apagado (`settings.misiones/desafios` en false) = la noche como siempre.
-- Dinámicas: `trivia`, `dos_verdades`, `aproximaciones`, `hipster` (pista_audio), `cine` (clip_video, video visible; artista = director), `imagen` (imagen_adivinar, 1.000 al acertar), `oveja` (pregunta_mayoria: suma el grupo más numeroso; empate o unanimidad, nadie). Hasta 1.000 pts/ítem × multiplicador.
+- Dinámicas: `trivia`, `dos_verdades`, `aproximaciones`, `hipster` (pista_audio), `cine` (clip_video, video visible; artista = director), `imagen` (imagen_adivinar, 1.000 al acertar), `oveja` (pregunta_mayoria: suma el grupo más numeroso; empate o unanimidad, nadie), `especial` (bloque sin ítems: título, subtítulo e imagen). Aproximaciones por puesto (1.000/700/500/300/100). Hasta 1.000 pts/ítem × multiplicador.
 
 ## Convenciones de código
 

@@ -18,7 +18,20 @@ const JUGABLES: Record<string, Dinamica> = {
   oveja,
 }
 
-const METAS: Record<string, MetaDinamica> = Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta]))
+/** Bloque especial (pausa, sorteo, encuesta…): no es un juego, no tiene ítems. */
+const ESPECIAL: MetaDinamica = {
+  clave: 'especial',
+  nombre: 'Momento especial',
+  comoSeJuega: '',
+  instruccionCelular: 'Miren el proyector.',
+  sustantivo: 'momento',
+  tipos: [],
+}
+
+const METAS: Record<string, MetaDinamica> = {
+  ...Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta])),
+  especial: ESPECIAL,
+}
 
 export function dinamicaDe(clave: string | undefined): Dinamica | null {
   return (clave && JUGABLES[clave]) || null

@@ -246,6 +246,14 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - Noche terminada: "Reanudar la noche" (`admin_resume_event`) para seguir con más bloques.
 - Estado del proyector en Conducir: conectado / ninguno / **dos o más (se escucha doble)**, con el latido de cada proyector con sonido (`proyector_latido`, `admin_proyectores`).
 
+### 8.4.2 Agregados del 22/10
+
+- Bloque especial (`especial`): título, subtítulo, imagen; sin ítems; "Siguiente" pasa al bloque que sigue.
+- Emoji decorativo por bloque (`config.emoji`).
+- Música y sonidos: ítems `sonido` en el catálogo; 3 botones en Conducir; suenan en el proyector; abrir una canción o escena los apaga.
+- Aproximaciones por puesto: 1° 1.000, 2° 700, 3° 500, 4° 300, 5°+ 100 (empatadas comparten puesto).
+- Celular al final: botón a Instagram.
+
 ### 8.5 Módulo opcional: misiones secretas y desafíos
 
 Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `events.settings.misiones` / `.desafios`). Con las dos apagadas la noche funciona igual que sin el módulo (ni consultas ni piezas nuevas).

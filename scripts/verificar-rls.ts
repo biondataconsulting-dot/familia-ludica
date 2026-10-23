@@ -10,7 +10,8 @@ if (!url || !key) {
 }
 
 const supabase = createClient(url, key, { auth: { persistSession: false } })
-const CODIGO = 'NAUDIR3'
+// Una noche que exista (por defecto NAUDIR3, la del seed): npm run verificar:rls -- CODIGO
+const CODIGO = (process.argv[2] ?? 'NAUDIR3').toUpperCase()
 let fallas = 0
 
 function resultado(ok: boolean, texto: string, detalle = '') {
@@ -75,7 +76,12 @@ for (const fn of ['admin_next', 'admin_reveal', 'admin_list_teams']) {
   const live = data as { phase?: string; event?: { name?: string } } | null
   resultado(!error && Boolean(live?.phase), `anon SÍ llama get_live('${CODIGO}')`, error?.message ?? `fase ${live?.phase}, "${live?.event?.name}"`)
   const texto = JSON.stringify(data ?? {})
-  resultado(!texto.includes('correcta') && !texto.includes('youtube_id'), 'get_live no trae soluciones ni youtube_id')
+  // La solución puede aparecer recién al revelar (es lo que se muestra); el youtube_id, nunca.
+  const revelado = live?.phase === 'item_revealed'
+  resultado(
+    (revelado || !texto.includes('correcta')) && !texto.includes('youtube_id'),
+    revelado ? 'get_live no trae youtube_id (fase revelada: la solución sí se muestra)' : 'get_live no trae soluciones ni youtube_id',
+  )
 }
 {
   const { data, error } = await supabase.rpc('get_event_public', { p_code: CODIGO.toLowerCase() })

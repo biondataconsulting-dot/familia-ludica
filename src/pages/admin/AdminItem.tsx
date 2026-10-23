@@ -47,6 +47,8 @@ type Campos = {
   consigna: string
   respuesta: string
   variantesRespuesta: string
+  nombre: string
+  repetir: boolean
   etiquetas: string
   dificultad: string
   estado: 'aprobado' | 'sugerido' | 'borrador'
@@ -71,7 +73,7 @@ function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
     imagen: str(c.imagen),
     youtube: str(c.youtube_id),
     inicio: str(c.inicio ?? 0),
-    duracion: str(c.duracion ?? 20),
+    duracion: str(c.duracion ?? (tipo === 'sonido' ? '' : 20)),
     categoria: str(c.categoria ?? (tipo === 'clip_video' ? 'pelicula' : 'musica')),
     anio: str(s.anio),
     titulo: str(s.titulo),
@@ -83,6 +85,8 @@ function camposDe(item: ItemCatalogo | null, tipo: TipoItem): Campos {
     consigna: str(c.consigna),
     respuesta: str(s.respuesta),
     variantesRespuesta: lista(s.variantes_respuesta).join('\n'),
+    nombre: tipo === 'sonido' ? str(c.titulo) : '',
+    repetir: c.repetir === true,
     etiquetas: (item?.tags ?? []).join(', '),
     dificultad: item?.difficulty ?? '',
     estado: item?.status ?? 'aprobado',
@@ -121,6 +125,17 @@ function armar(tipo: TipoItem, f: Campos): { contenido: Record<string, unknown>;
       }
     case 'pregunta_mayoria':
       return { contenido: { texto: f.texto.trim() }, solucion: {} }
+    case 'sonido':
+      return {
+        contenido: {
+          titulo: f.nombre.trim(),
+          youtube_id: idDeYouTube(f.youtube),
+          inicio: entero(f.inicio) ?? 0,
+          ...(f.duracion.trim() ? { duracion: entero(f.duracion) } : {}),
+          repetir: f.repetir,
+        },
+        solucion: {},
+      }
     default:
       return {
         // Por defecto desde 0:00; se puede arrancar más adelante (el proyector entra con volumen suave).
@@ -286,6 +301,34 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
               </div>
             )}
 
+            {tipo === 'sonido' && (
+              <>
+                <p className="text-sm text-profundo/70">
+                  Música o efecto para prender y apagar a mano desde Conducir (música de fondo, redoblante, aplausos). Suena en el
+                  proyector. No va en los bloques de juego.
+                </p>
+                <Etiqueta texto="Nombre" ayuda="(para reconocerlo en el panel)">
+                  <input value={f.nombre} onChange={(e) => poner('nombre', e.target.value)} maxLength={80} placeholder="Ej.: Música de pausa" className={CAMPO} />
+                </Etiqueta>
+                <Etiqueta texto="Video de YouTube" ayuda="(link o id de 11 caracteres)">
+                  <input value={f.youtube} onChange={(e) => poner('youtube', e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={CAMPO} />
+                </Etiqueta>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <Etiqueta texto="Empieza en (s)" ayuda="(0 = desde el principio)">
+                    <input value={f.inicio} onChange={(e) => poner('inicio', e.target.value.replace(/\D/g, '').slice(0, 5))} inputMode="numeric" className={CAMPO} />
+                  </Etiqueta>
+                  <Etiqueta texto="Dura (s)" ayuda="(vacío = hasta el final)">
+                    <input value={f.duracion} onChange={(e) => poner('duracion', e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" className={CAMPO} />
+                  </Etiqueta>
+                  <label className="flex min-h-toque items-center gap-2 self-end font-semibold">
+                    <input type="checkbox" checked={f.repetir} onChange={(e) => poner('repetir', e.target.checked)} className="h-5 w-5" />
+                    Repetir en bucle
+                  </label>
+                </div>
+                <PruebaFragmento youtubeId={idDeYouTube(f.youtube)} inicio={entero(f.inicio) ?? 0} duracion={entero(f.duracion) ?? 30} />
+              </>
+            )}
+
             {esMedia && (
               <>
                 <Etiqueta texto="Video de YouTube" ayuda="(link o id de 11 caracteres)">
@@ -336,7 +379,7 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
               </>
             )}
 
-            {!esMedia && tipo !== 'pregunta_mayoria' && (
+            {!esMedia && tipo !== 'pregunta_mayoria' && tipo !== 'sonido' && (
               <Etiqueta texto="Explicación" ayuda="(opcional, se muestra al revelar)">
                 <input value={f.explicacion} onChange={(e) => poner('explicacion', e.target.value)} maxLength={200} className={CAMPO} />
               </Etiqueta>
@@ -375,7 +418,11 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
         </Tarjeta>
 
         <Tarjeta>
-          <VistaPrevia tipo={tipo} contenido={contenido} solucion={solucion} />
+          {tipo === 'sonido' ? (
+            <p className="text-profundo/70">Se escucha en el proyector cuando lo prendés desde Conducir. Probalo con el botón de prueba.</p>
+          ) : (
+            <VistaPrevia tipo={tipo} contenido={contenido} solucion={solucion} />
+          )}
         </Tarjeta>
       </div>
     </div>

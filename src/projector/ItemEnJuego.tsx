@@ -1,4 +1,5 @@
 import type { Temporizador } from '../live/useTemporizador'
+import { DecoBloque } from './DecoBloque'
 import type { Live } from '../lib/tipos'
 import { BarraSuperior } from './BarraSuperior'
 import { ContenidoItem } from './ContenidoItem'
@@ -15,7 +16,8 @@ export function ItemEnJuego({ live, temporizador }: { live: Live; temporizador: 
       <BarraSuperior live={live} />
 
       <div className="flex min-h-0 flex-1 items-stretch gap-[2.5cqw]">
-        <div className="flex flex-1 flex-col justify-center rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
+        <div className="relative flex flex-1 flex-col justify-center rounded-[2cqw] bg-crema p-[3cqw] text-profundo shadow-2xl">
+          <DecoBloque emoji={live.block?.emoji} />
           <ContenidoItem dinamica={live.block?.dynamic} item={live.item} />
         </div>
 

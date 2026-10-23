@@ -215,6 +215,19 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 
 - Canciones y escenas arrancan en 0:00 por defecto, pero cada ítem puede tener «Empieza en (s)» (para saltear un comienzo que delata el nombre). `proyector_media` devuelve el `inicio` del ítem (antes lo forzaba a 0). Cuando no arranca en 0, el proyector entra con volumen suave: de 0 a 100 en 1,5 s desde que empieza a sonar (también con «Repetir»). Ensayo, prueba del catálogo y panel ("Suena de 1:05 a 1:25") usan el inicio real. La guía pide a la IA dejar siempre `inicio: 0`. Todos los ítems cargados estaban en 0 (y el seed se pasó a 0).
 
+## Mejoras después de la prueba en vivo (22/10)
+
+- **Respaldo previo**: etiqueta git `respaldo-22-10` y copia JSON de todas las tablas en `C:/Users/colin/familia-ludica-respaldos/22-10/` (sin Docker no hay `db dump`).
+- **Oveja Oveja**: "si las más elegidas empatan, nadie suma" (antes "empate arriba", no se entendía).
+- **Celular**: botón "Seguinos en Instagram" (@familia.ludica) al terminar la noche.
+- **Dos verdades**: el tamaño de letra depende de la afirmación más larga (tres escalones) y el revelado es más compacto; ya no se desborda la tarjeta.
+- **Aproximaciones por puesto** (decisión del cliente): 1° 1.000 · 2° 700 · 3° 500 · 4° 300 · 5°+ 100; empatadas comparten puesto (rank). Antes la más lejana sumaba 0 aunque estuviera cerca. Fórmula en SQL y copia en `puntaje.ts` con casos compartidos.
+- **Bloque especial** (dinámica `especial`): título, subtítulo e imagen a pantalla completa, sin ítems; en su presentación "Siguiente" pasa al bloque que sigue (o al final). Para pausas, sorteos, encuestas.
+- **Emoji decorativo por bloque** (`config.emoji`): en la presentación del bloque, en el celular y como sticker en la esquina de la tarjeta de cada pregunta y del revelado (medido: no tapa título, ronda, reloj ni logo).
+- **Música y sonidos**: tipo de ítem `sonido` (YouTube, nombre, inicio, duración opcional, repetir). Cada noche elige hasta 3 (`settings.sonidos`) y el conductor los prende y apaga desde Conducir (`live_state.sonido_id`); suenan en el proyector con un player propio, entrada y salida suaves. Abrir una canción o escena los apaga (y el proyector no los reproduce con una canción o escena abierta). El youtube_id solo lo pide el proyector (`proyector_sonido`).
+- **Tarjeta de puntajes** para imprimir: `docs/tarjeta-puntajes.html`.
+- `verificar:rls` acepta el código de una noche (`npm run verificar:rls -- JUEGO`); con la fase revelada, la solución puede aparecer (es lo que se muestra), el youtube_id nunca.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.
