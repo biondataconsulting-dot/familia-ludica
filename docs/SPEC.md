@@ -265,6 +265,21 @@ Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `ev
 - Base: `event_extras` (kind mision|desafio, status oculto|abierto|cerrado), `extra_completions`; RPC `get_extras(code, token?)` (solo lo abierto; `cumplida` solo con el token de la mesa) y `admin_*` (set_extras, save/delete/get_extras, misiones_estado, mision_marcar, desafio_lanzar/cerrar/reabrir). Duplicar copia la lista (oculta); reiniciar la vuelve a ocultar.
 - Frontend aislado en `src/extras/` (`useExtras` relee con cada relectura de `useLive`, sin canal propio).
 
+### 8.6 Sorteo (bloque `sorteo`, uno por noche)
+
+Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos). Con eso aparece en Armar la tarjeta «Sorteo».
+
+- **Participantes**: nombre + dato (lote, número de entrada o DNI), cargados antes o durante la noche: a mano, pegando celdas de Excel (columna A nombre, B dato) o subiendo un CSV. Los repetidos (mismo nombre y dato, sin importar mayúsculas) se saltean y se avisan. Hasta 2.000 por carga.
+- **Premios**: hasta 10, se sortean de a uno en el orden de la lista (con imagen opcional). Nadie gana dos veces.
+- **El azar lo pone la base** (`admin_sorteo_sortear`: `order by random()` entre los que no ganaron ni están ausentes); nadie puede influir. El proyector solo anima la ruleta hasta caer en el que eligió la base.
+- **Ruleta** (proyector, presentación del bloque): tambor de madera vertical con los nombres, que gira despacio mientras espera; al sortear gira 9 s (`private.sorteo_giro_segundos()`), frena cada vez más lento y cae en el ganador (sincronizado con la hora del servidor, misma tirada en cualquier pantalla). Sonido: un "clac" de madera por cada nombre que pasa (Web Audio, sin archivos; solo con «Comenzar la noche» tocado). Después: el ganador grande con papelitos. Con movimiento reducido no gira: muestra el resultado al terminar el tiempo.
+- **No está**: el conductor lo marca (solo el último que salió); sale de la ruleta y el mismo premio se vuelve a sortear. Mientras gira no se puede volver a sortear.
+- Con todos los premios sorteados, 15 s después del último el proyector muestra la lista de ganadores.
+- **Celulares**: "Se sortea: premio", "Girando la ruleta…", "¡Ganó! nombre · dato", y la lista final (sin la ruleta).
+- **Conducir**: botón grande «Sortear «premio»» (la barra espaciadora no lo toca, para no saltear el sorteo), cuenta regresiva mientras gira, el nombre recién cuando la ruleta frena, «No está», ganadores y «+ Sumar participantes». «Siguiente» pasa al bloque que sigue.
+- Base: `raffle_participants`, `raffle_prizes`, `raffle_draws` (estado ganador|ausente); `get_sorteo(code)` público (premios con ganador, la ruleta, el último); `admin_sorteo_*`. Reiniciar borra participantes y sorteos (los premios quedan); duplicar copia los premios.
+- Frontend aislado en `src/sorteo/` (`useSorteo` relee con cada relectura de `useLive`, solo durante el bloque del sorteo).
+
 ## 9. Pasos (en este orden, frenando después de cada uno)
 
 1. **Esqueleto**: Vite + React + TS + Tailwind con tokens de marca y fuentes; router con `/pantalla/:codigo`, `/jugar/:codigo`, `/admin/*`; layout de proyector 16:9 y de celular; `vercel.json`; `CLAUDE.md` y `docs/SPEC.md`. *Verificación*: build ok, las 3 rutas se ven con logo y paleta en local y en Vercel.

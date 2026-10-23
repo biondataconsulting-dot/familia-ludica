@@ -233,6 +233,16 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Versión nueva**: cada build genera `/version.json` y lleva su versión en el código (`__VERSION__`, vite.config.ts). Proyector, panel y celulares consultan cada minuto (y al volver a la pestaña): si no coincide, avisan ("recargá esta pantalla"; en panel y celular, botón para recargar; el celular no pierde la mesa). Motivo: un proyector abierto desde antes de publicar los botones de música no tenía el reproductor y no sonaba. Funciona a partir de las pantallas cargadas con esta versión.
 - **Sonidos**: un lugar con un sonido que se borró del catálogo queda vacío (antes mostraba "— elegir —" con el ▶ activo). Si YouTube no deja reproducir un sonido, el proyector lo dice abajo a la derecha. Probado en el navegador integrado: el reproductor pide, recibe y suena (estado 1).
 
+## Sorteo (23/10)
+
+- **Un bloque por noche** (`sorteo`): agregar el bloque activa el módulo; sin él, nada cambia. Detalle en SPEC §8.6.
+- **Ruleta vertical = tambor**: los nombres pasan de arriba abajo en un cilindro (se achican hacia los bordes), con lengüetas naranjas en el centro. Una rueda de porciones no se lee con muchos nombres; el tambor sí, con 20 o con 500.
+- **Giro orgánico pero decidido por la base**: la base elige y guarda el ganador; la animación recorre al menos 40 renglones (con pocos nombres, a veces una vuelta más según el id del sorteo), frena con una curva de potencia 2,6, se pasa un tercio de renglón y vuelve (como el tope de una ruleta de circo).
+- **Sonido de ruleta de madera** generado en el navegador (ruido filtrado + tono corto que cae), uno por renglón (máx. ~25 por segundo) y uno grave al frenar. Sin redoblante.
+- **Panel sin spoiler**: el conductor ve el nombre recién cuando la ruleta frena.
+- **Ausente**: se marca solo el último que salió; queda como "no estaba" en la lista y no vuelve a la ruleta en esa noche (reiniciar la noche lo limpia todo).
+- Prueba: 26 casos en PGlite (bloque único, repetidos, orden de premios, giro de 9 s, ausente y re-sorteo, nadie gana dos veces, 60 tiradas reparten entre los tres, permisos de anon, reiniciar y duplicar) + vista en navegador (proyector y celular) con la noche temporal SORTEO.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

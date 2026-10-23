@@ -34,10 +34,15 @@ export default {
           '0%, 100%': { transform: 'scaleY(0.25)' },
           '50%': { transform: 'scaleY(1)' },
         },
+        confeti: {
+          from: { transform: 'translateY(0) rotate(0deg)' },
+          to: { transform: 'translateY(115vh) rotate(720deg)' },
+        },
       },
       animation: {
         aparecer: 'aparecer 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
         ecualizador: 'ecualizador 900ms ease-in-out infinite',
+        confeti: 'confeti 3.5s linear both',
       },
     },
   },

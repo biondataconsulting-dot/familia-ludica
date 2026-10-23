@@ -28,9 +28,20 @@ const ESPECIAL: MetaDinamica = {
   tipos: [],
 }
 
+/** Sorteo de la noche: ruleta con los participantes; la base elige al ganador. */
+const SORTEO: MetaDinamica = {
+  clave: 'sorteo',
+  nombre: 'Sorteo',
+  comoSeJuega: '',
+  instruccionCelular: 'Miren el proyector: ¡se sortean premios!',
+  sustantivo: 'premio',
+  tipos: [],
+}
+
 const METAS: Record<string, MetaDinamica> = {
   ...Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta])),
   especial: ESPECIAL,
+  sorteo: SORTEO,
 }
 
 export function dinamicaDe(clave: string | undefined): Dinamica | null {

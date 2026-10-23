@@ -20,6 +20,7 @@ import { useLatidoProyector } from '../projector/useLatidoProyector'
 import { RankingBloque } from '../projector/RankingBloque'
 import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
+import { SorteoProyector } from '../sorteo/SorteoProyector'
 import type { Temporizador } from '../live/useTemporizador'
 
 /** Alto de la capa de contenido con la franja del desafío abajo (100% menos ALTO_FRANJA). */
@@ -79,7 +80,7 @@ export default function Pantalla() {
       {comenzada && <SonidoProyector codigo={codigo} live={live} />}
       {/* Capa de contenido por encima del player oculto (más baja si hay un desafío en la franja). */}
       <div className={`relative z-10 ${desafio ? ALTO_SIN_FRANJA : 'h-full'}`}>
-        <Fase live={live} temporizador={temporizador} />
+        <Fase live={live} temporizador={temporizador} conSonido={comenzada} />
       </div>
       {desafio && <FranjaDesafio desafio={desafio} />}
       {/* Botón "Mostrar QR" del conductor (en la portada el QR ya está). */}
@@ -94,13 +95,14 @@ export default function Pantalla() {
   )
 }
 
-function Fase({ live, temporizador }: { live: Live; temporizador: Temporizador }) {
+function Fase({ live, temporizador, conSonido }: { live: Live; temporizador: Temporizador; conSonido: boolean }) {
   // Botón "Cómo va la noche" del conductor (nunca con una pregunta abierta ni en el podio).
   if (live.show_ranking && live.phase !== 'item_open' && live.phase !== 'final') return <RankingBloque live={live} enCualquierMomento />
   switch (live.phase) {
     case 'cover':
       return <Portada live={live} />
     case 'block_intro':
+      if (live.block?.dynamic === 'sorteo') return <SorteoProyector live={live} conSonido={conSonido} />
       return <IntroBloque live={live} />
     case 'item_open':
     case 'item_closed':

@@ -7,12 +7,13 @@ import { sugerirCodigo } from '../../content/codigo'
 import { NOMBRE_TIPO, TIPOS_POR_DINAMICA } from '../../content/validarItem'
 import { metaDe } from '../../dynamics/registro'
 import { ArmarExtras } from '../../extras/ArmarExtras'
+import { ArmarSorteo } from '../../sorteo/ArmarSorteo'
 import { SubirImagen } from '../../admin/SubirImagen'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
 
-const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja', 'especial'] as const
+const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja', 'especial', 'sorteo'] as const
 const mensajeDe = (e: unknown) => (e instanceof ErrorRpc ? e.message : 'Algo salió mal. Probá de nuevo.')
 
 /** /admin/noche/:id — datos de la noche, bloques e ítems de cada bloque. "nueva" crea una. */
@@ -38,6 +39,7 @@ function Noche({ eventId }: { eventId: string }) {
       </div>
       <FormNoche evento={evento} onGuardado={recargar} />
       <Bloques evento={evento} bloques={bloques} onCambio={recargar} />
+      {bloques.some((b) => b.dynamic === 'sorteo') && <ArmarSorteo eventId={evento.id} />}
       <ArmarExtras eventId={evento.id} />
       <BorrarNoche evento={evento} />
     </div>
@@ -276,6 +278,8 @@ function EditorBloque(props: {
   const [subtitulo, setSubtitulo] = useState(bloque?.config.subtitulo ?? '')
   const [imagen, setImagen] = useState(bloque?.config.imagen ?? '')
   const especial = dinamica === 'especial'
+  const sorteo = dinamica === 'sorteo'
+  const sinItems = especial || sorteo
   const [ocupado, setOcupado] = useState(false)
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null)
   const [eligiendo, setEligiendo] = useState(false)
@@ -367,7 +371,7 @@ function EditorBloque(props: {
         <Etiqueta texto="Título" ayuda="(en pantalla)">
           <input value={titulo} onChange={(e) => setTitulo(e.target.value)} maxLength={80} required className={CAMPO} />
         </Etiqueta>
-        {!especial && (
+        {!sinItems && (
           <>
           <Etiqueta texto="Puntos ×">
             <input value={mult} onChange={(e) => setMult(e.target.value)} inputMode="decimal" className={CAMPO} />
@@ -400,6 +404,12 @@ function EditorBloque(props: {
             </p>
           </div>
         )}
+        {sorteo && (
+          <p className="text-sm text-profundo/70 md:col-span-6">
+            Sorteo (uno por noche): la ruleta con los participantes y los premios de a uno. Los premios y la lista de participantes se
+            cargan en la tarjeta «Sorteo», más abajo. En Conducir, «Sortear» hace girar la ruleta.
+          </p>
+        )}
         <div className="flex gap-2">
           <BotonPrincipal disabled={ocupado}>{bloque ? 'Guardar' : 'Crear'}</BotonPrincipal>
           {onCancelar && (
@@ -415,7 +425,7 @@ function EditorBloque(props: {
         </div>
       )}
 
-      {bloque && !especial && (
+      {bloque && !sinItems && (
         <div className="mt-4 border-t border-profundo/10 pt-3">
           <div className="mb-2 flex items-center gap-2">
             <h3 className="font-bold">Ítems · {bloque.items.length}</h3>
