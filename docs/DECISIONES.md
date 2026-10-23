@@ -236,7 +236,8 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 ## Sorteo (23/10)
 
 - **Un bloque por noche** (`sorteo`): agregar el bloque activa el módulo; sin él, nada cambia. Detalle en SPEC §8.6.
-- **Ruleta vertical = tambor**: los nombres pasan de arriba abajo en un cilindro (se achican hacia los bordes), con lengüetas naranjas en el centro. Una rueda de porciones no se lee con muchos nombres; el tambor sí, con 20 o con 500.
+- **Rueda o tambor según cuántos son** (pedido del cliente, 23/10): hasta 30 participantes, rueda de la fortuna (con pocos nombres el tambor parecía repetirlos); con más, tambor. Se decide por el total cargado, así no cambia en medio del sorteo.
+- **Tambor (más de 30)**: los nombres pasan de arriba abajo en un cilindro (se achican hacia los bordes), con lengüetas naranjas en el centro. Una rueda de porciones no se lee con muchos nombres; el tambor sí, con 20 o con 500.
 - **Giro orgánico pero decidido por la base**: la base elige y guarda el ganador; la animación recorre al menos 40 renglones (con pocos nombres, a veces una vuelta más según el id del sorteo), frena con una curva de potencia 2,6, se pasa un tercio de renglón y vuelve (como el tope de una ruleta de circo).
 - **Sonido de ruleta de madera** generado en el navegador (ruido filtrado + tono corto que cae), uno por renglón (máx. ~25 por segundo) y uno grave al frenar. Sin redoblante.
 - **Panel sin spoiler**: el conductor ve el nombre recién cuando la ruleta frena.

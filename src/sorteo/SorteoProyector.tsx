@@ -4,12 +4,17 @@ import { Confeti } from './Confeti'
 import { desfaseDe, momentoDe, type Momento } from './estado'
 import { modulo, posicionEn, recorrido } from './giro'
 import { golpeMadera } from './madera'
+import { Rueda } from './Rueda'
 import type { Persona, SorteoPublico } from './rpc'
 import { useSorteo } from './useSorteo'
 
 /** Ángulo entre renglones del tambor (radianes) y renglones dibujados a cada lado del centro. */
 const PASO = 0.34
 const A_CADA_LADO = 5
+/** Hasta esta cantidad de participantes, rueda de la fortuna (un nombre por porción); con más, tambor. */
+const RUEDA_HASTA = 30
+/** Vueltas completas mínimas de la rueda en cada tirada. */
+const VUELTAS_RUEDA = 3
 /** Con la ruleta quieta (antes del primer sorteo), gira despacito: renglones por segundo. */
 const VUELTA_LENTA = 0.6
 
@@ -42,6 +47,8 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
   const idTirada = sorteo.ultimo?.id ?? null
   if (congelada.current.id !== idTirada || !idTirada) congelada.current = { id: idTirada, rueda: sorteo.rueda }
   const rueda = congelada.current.rueda
+  // Se decide por el total cargado (no por los que quedan): no cambia de rueda a tambor en medio del sorteo.
+  const conRueda = sorteo.participantes <= RUEDA_HASTA
 
   // Animación: cuadro a cuadro mientras gira (o con la vuelta lenta); si no, unas veces por segundo.
   const animando = momento.tipo === 'girando' || (momento.tipo === 'espera' && !quieto)
@@ -62,7 +69,7 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
   if (momento.tipo === 'espera') posicion = quieto ? 0 : ((ahora / 1000) * VUELTA_LENTA) % Math.max(rueda.length, 1)
   else if (momento.tipo !== 'fin' && sorteo.ultimo) {
     const destino = Math.max(0, rueda.findIndex((p) => p.id === sorteo.ultimo!.participante_id))
-    const d = recorrido(rueda.length, destino, sorteo.ultimo.id)
+    const d = recorrido(rueda.length, destino, sorteo.ultimo.id, conRueda ? VUELTAS_RUEDA : 0)
     posicion = momento.tipo === 'girando' && !quieto ? posicionEn(momento.t, sorteo.giro_segundos, d) : d
   }
 
@@ -73,7 +80,7 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
   const proximo = sorteo.premios.find((p) => !p.ganador)
 
   return (
-    <div className="relative grid h-full grid-cols-[38cqw_1fr] items-center gap-[4cqw] px-[6cqw] pb-[3cqw] pt-[9cqw]">
+    <div className="relative grid h-full grid-cols-[38cqw_1fr] items-center gap-[4cqw] px-[6cqw] pb-[2cqw] pt-[7cqw]">
       <div className="flex flex-col items-start gap-[1.5cqw]">
         <Titulo live={live} chico />
         {momento.premio ? (
@@ -102,7 +109,11 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
           </p>
         )}
       </div>
-      <Tambor rueda={rueda} posicion={posicion} tachado={momento.tipo === 'ausente'} />
+      {conRueda ? (
+        <Rueda rueda={rueda} posicion={posicion} tachado={momento.tipo === 'ausente'} />
+      ) : (
+        <Tambor rueda={rueda} posicion={posicion} tachado={momento.tipo === 'ausente'} />
+      )}
 
       {ganador && (
         <div key={ganador.id} className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-[1.5cqw] bg-azul/85 px-[8cqw] text-center">

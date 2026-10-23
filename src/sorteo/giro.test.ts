@@ -27,6 +27,14 @@ describe('ruleta', () => {
     expect(posicionEn(9, 9, d)).toBe(d)
   })
 
+  it('la rueda da al menos las vueltas pedidas', () => {
+    for (const n of [3, 12, 30]) {
+      const d = recorrido(n, 2, 'r', 3)
+      expect(d).toBeGreaterThanOrEqual(3 * n)
+      expect(modulo(d, n)).toBe(2)
+    }
+  })
+
   it('módulo positivo', () => {
     expect(modulo(-1, 5)).toBe(4)
     expect(modulo(12, 5)).toBe(2)

@@ -17,11 +17,14 @@ export function semilla(id: string): number {
   return h >>> 0
 }
 
-/** Cuántos renglones recorre hasta caer en `destino` (índice en la lista de `n` nombres). */
-export function recorrido(n: number, destino: number, id: string): number {
+/**
+ * Cuántos renglones (o porciones de la rueda) recorre hasta caer en `destino` (índice en la lista de
+ * `n` nombres). La rueda pide además `vueltas` completas como mínimo.
+ */
+export function recorrido(n: number, destino: number, id: string, vueltas = 0): number {
   if (n <= 0) return 0
   let d = destino
-  while (d < RECORRIDO_MINIMO) d += n
+  while (d < Math.max(RECORRIDO_MINIMO, vueltas * n)) d += n
   // Con pocos nombres, a veces una vuelta más: no siempre gira igual.
   if (n < 20 && semilla(id) % 2 === 1) d += n
   return d
