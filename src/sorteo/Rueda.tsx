@@ -6,8 +6,11 @@ const PORCIONES = [
   { fondo: '#EC681B', texto: '#FFFFFF' },
   { fondo: '#FFF8F2', texto: '#173F63' },
 ]
-/** Si la cantidad es impar, la última va en celeste (para no juntar dos del mismo color). */
-const PORCION_IMPAR = { fondo: '#3FC0F0', texto: '#173F63' }
+/**
+ * Si la cantidad es impar, la última quedaría naranja al lado de la primera (naranja): va en un naranja
+ * más oscuro, de la misma familia, para que no parezca una porción especial.
+ */
+const PORCION_IMPAR = { fondo: '#C2500F', texto: '#FFFFFF' }
 
 /** Radios (en unidades del dibujo, de -100 a 100): borde, porciones y desde dónde arranca el nombre. */
 const R_BORDE = 96

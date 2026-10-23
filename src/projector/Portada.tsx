@@ -1,13 +1,13 @@
-import { CodigoQr } from '../components/CodigoQr'
-import { Logo } from '../components/Logo'
-import { formatearFecha } from '../lib/fechas'
-import type { Live } from '../lib/tipos'
+import { CodigoQr } from "../components/CodigoQr";
+import { Logo } from "../components/Logo";
+import { formatearFecha } from "../lib/fechas";
+import type { Live } from "../lib/tipos";
 
 /** Fase cover: título de la noche, QR para entrar y las mesas apareciendo en vivo. */
 export function Portada({ live }: { live: Live }) {
-  const { event, teams } = live
-  const urlJugar = `${window.location.origin}/jugar/${event.code}`
-  const fecha = formatearFecha(event.date)
+  const { event, teams } = live;
+  const urlJugar = `${window.location.origin}/jugar/${event.code}`;
+  const fecha = formatearFecha(event.date);
 
   return (
     <div className="flex h-full flex-col px-[5cqw] pb-[2.5cqw] pt-[4cqw]">
@@ -18,11 +18,16 @@ export function Portada({ live }: { live: Live }) {
               {event.settings.edicion}
             </span>
           )}
-          <h1 className="mt-[2cqw] font-titulo text-[5.6cqw] font-bold leading-[1.05] text-white">{event.name}</h1>
-          <span className="mt-[1.2cqw] block h-[0.7cqw] w-[12cqw] rounded-full bg-naranja" aria-hidden />
+          <h1 className="mt-[2cqw] font-titulo text-[5.6cqw] font-bold leading-[1.05] text-white">
+            {event.name}
+          </h1>
+          <span
+            className="mt-[1.2cqw] block h-[0.7cqw] w-[12cqw] rounded-full bg-naranja"
+            aria-hidden
+          />
           {(fecha || event.venue) && (
             <p className="mt-[1.5cqw] text-[2.2cqw] font-semibold text-white/90">
-              {[fecha, event.venue].filter(Boolean).join(' · ')}
+              {[fecha, event.venue].filter(Boolean).join(" · ")}
             </p>
           )}
         </div>
@@ -34,32 +39,72 @@ export function Portada({ live }: { live: Live }) {
           {/* Hasta 12 caracteres: la letra se achica con el largo para entrar en la tarjeta. */}
           <p
             className="font-titulo font-bold leading-none tracking-[0.12em]"
-            style={{ fontSize: `${Math.min(3.6, 21 / (0.9 * Math.max(event.code.length, 1)))}cqw` }}
+            style={{
+              fontSize: `${Math.min(3.6, 21 / (0.9 * Math.max(event.code.length, 1)))}cqw`,
+            }}
           >
             {event.code}
           </p>
-          <p className="text-center text-[1.4cqw] font-bold leading-tight">Escaneá con un celular por mesa</p>
+          <p className="text-center text-[1.4cqw] font-bold leading-tight">
+            Escaneá con un celular por mesa
+          </p>
         </div>
       </div>
 
       <MesasListas mesas={teams} />
+      <PoweredBy />
     </div>
-  )
+  );
 }
 
-function MesasListas({ mesas }: { mesas: Live['teams'] }) {
+/** Firma discreta de quien hizo la plataforma (Bion Data Consulting), abajo a la derecha. */
+function PoweredBy() {
+  return (
+    <div className="mt-[1cqw] flex justify-end">
+      <div className="flex items-center gap-[0.9cqw] rounded-full bg-profundo/60 py-[0.4cqw] pl-[1.4cqw] pr-[1.6cqw] text-white/75 ring-1 ring-[#3FE0EC]/30">
+        <span className="text-[1.1cqw] font-semibold uppercase tracking-[0.18em]">
+          Powered by
+        </span>
+        <img
+          src="/brand/bion.png"
+          alt=""
+          draggable={false}
+          className="h-[3.4cqw] w-[3.4cqw]"
+        />
+        <span className="flex flex-col leading-none">
+          <span className="font-titulo text-[1.6cqw] font-bold tracking-[0.12em] text-white">
+            BION
+          </span>
+          <span className="text-[0.8cqw] font-semibold uppercase tracking-[0.2em] text-[#3FE0EC]">
+            Data Consulting
+          </span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function MesasListas({ mesas }: { mesas: Live["teams"] }) {
   const texto =
-    mesas.length === 0 ? 'Esperando a las mesas…' : mesas.length === 1 ? '1 mesa lista' : `${mesas.length} mesas listas`
+    mesas.length === 0
+      ? "Esperando a las mesas…"
+      : mesas.length === 1
+        ? "1 mesa lista"
+        : `${mesas.length} mesas listas`;
 
   return (
     <div className="mt-[2cqw] flex min-h-[7cqw] items-start gap-[1.5cqw] rounded-[1.5cqw] bg-profundo/40 px-[1.8cqw] py-[1.2cqw]">
-      <p className="shrink-0 pt-[0.2cqw] font-titulo text-[1.9cqw] font-semibold text-celeste">{texto}</p>
+      <p className="shrink-0 pt-[0.2cqw] font-titulo text-[1.9cqw] font-semibold text-celeste">
+        {texto}
+      </p>
       <ul className="flex flex-wrap gap-[0.7cqw]">
         {mesas.map((m) => (
           <li
             key={m.id}
             className={`animate-aparecer rounded-full px-[1.2cqw] py-[0.35cqw] text-[1.35cqw] font-bold ${
-              m.connected ? 'bg-white text-profundo' : 'border-[0.15cqw] border-dashed border-white/50 text-white/75'
+              m.connected
+                ? "bg-white text-profundo"
+                : "border-[0.15cqw] border-dashed border-white/50 text-white/75"
             }`}
           >
             {m.name}
@@ -67,5 +112,5 @@ function MesasListas({ mesas }: { mesas: Live['teams'] }) {
         ))}
       </ul>
     </div>
-  )
+  );
 }
