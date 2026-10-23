@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<title>Tarjeta de puntajes · Familia Lúdica</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Nunito Sans", "Segoe UI", Arial, sans-serif; color: #173F63; margin: 0; font-size: 11.5pt; line-height: 1.35; }
+  .hoja { max-width: 186mm; margin: 0 auto; padding: 6mm 0; }
+  h1 { font-size: 20pt; margin: 0 0 1mm; }
+  .sub { margin: 0 0 4mm; color: #4a6680; }
+  .franja { background: #EC681B; color: #fff; border-radius: 3mm; padding: 2.5mm 4mm; font-weight: 700; margin-bottom: 4mm; }
+  .grilla { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+  .caja { border: 0.5mm solid #d6dfe8; border-radius: 3mm; padding: 3mm 4mm; break-inside: avoid; }
+  .caja h2 { font-size: 12.5pt; margin: 0 0 1.5mm; color: #1166AB; }
+  .caja p { margin: 0 0 1mm; }
+  .grande { font-weight: 800; color: #EC681B; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1mm; font-size: 10.5pt; }
+  td, th { border: 0.3mm solid #d6dfe8; padding: 1mm 2mm; text-align: center; }
+  th { background: #FFF8F2; }
+  .ancha { grid-column: 1 / -1; }
+  .nota { font-size: 9.5pt; color: #4a6680; }
+  @media screen { body { background: #eef2f6; } .hoja { background: #fff; padding: 10mm; margin: 6mm auto; box-shadow: 0 2px 10px #0002; } }
+</style>
+</head>
+<body>
+<div class="hoja">
+  <h1>¿Cómo se suman los puntos?</h1>
+  <p class="sub">Familia Lúdica · ayuda memoria para el conductor</p>
+  <div class="franja">En todos los juegos: puntos × multiplicador del bloque. La ronda de práctica no suma.</div>
+
+  <div class="grilla">
+    <div class="caja">
+      <h2>Trivia</h2>
+      <p>Acierta la opción: <span class="grande">1.000</span></p>
+      <p>Si no: 0</p>
+    </div>
+
+    <div class="caja">
+      <h2>Dos verdades y una mentira</h2>
+      <p>Encuentra la mentira: <span class="grande">1.000</span></p>
+      <p>Si no: 0</p>
+    </div>
+
+    <div class="caja">
+      <h2>Aproximaciones</h2>
+      <p>Por puesto, según qué tan cerca quedó del valor:</p>
+      <table>
+        <tr><th>1°</th><th>2°</th><th>3°</th><th>4°</th><th>5° y más</th></tr>
+        <tr><td><b>1.000</b></td><td>700</td><td>500</td><td>300</td><td>100</td></tr>
+      </table>
+      <p class="nota">Empatadas comparten puesto (1°, 2°, 2°, 4°). Ej.: Jor 1°, Naty y Agus 2° → 1.000, 700 y 700.</p>
+    </div>
+
+    <div class="caja">
+      <h2>Adiviná la imagen</h2>
+      <p>Emojis, logos o «¿Qué ves?»</p>
+      <p>Acierta la respuesta: <span class="grande">1.000</span></p>
+      <p class="nota">Se acepta sin tildes ni mayúsculas y con variantes. Las dudosas las decide el conductor.</p>
+    </div>
+
+    <div class="caja ancha">
+      <h2>Hitster musical y Cine y series</h2>
+      <p>Hasta <span class="grande">1.000</span> = año (hasta 600) + título (200) + artista o director (200).</p>
+      <table>
+        <tr><th>Año: diferencia</th><th>Exacto</th><th>1 año</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8 o más</th></tr>
+        <tr><td>Puntos por el año</td><td><b>600</b></td><td>525</td><td>450</td><td>375</td><td>300</td><td>225</td><td>150</td><td>75</td><td>0</td></tr>
+      </table>
+      <p class="nota">Cada año de diferencia resta 75. Título y artista/director: +200 cada uno si se aceptan (las dudosas las decide el conductor; sin decidir cuentan como no).</p>
+    </div>
+
+    <div class="caja">
+      <h2>Oveja Oveja</h2>
+      <p>Las mesas de la respuesta más elegida: <span class="grande">1.000</span> cada una.</p>
+      <p>Si las más elegidas empatan o todas responden lo mismo: nadie suma.</p>
+      <p class="nota">La oveja negra (la única distinta cuando todas las demás coinciden) no resta: es para reírse.</p>
+    </div>
+
+    <div class="caja">
+      <h2>Fuera de las preguntas</h2>
+      <p><b>Misiones secretas:</b> los puntos de cada misión, una vez por mesa.</p>
+      <p><b>Desafíos:</b> los puntos del desafío, solo para la primera mesa.</p>
+      <p><b>Puntos manuales:</b> lo que cargue el conductor (con motivo).</p>
+      <p class="nota">Estos no se multiplican.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
