@@ -48,8 +48,11 @@ export function PanelSonidos({ eventId, live }: { eventId: string; live: Live })
     }
   }
 
+  /** Solo los que siguen en el catálogo (un sonido borrado deja el lugar vacío y no se manda). */
+  const vigente = (id: string | undefined) => (id && (!catalogo || catalogo.some((x) => x.id === id)) ? id : '')
+
   const elegir = (lugar: number, id: string) => {
-    const nuevos = Array.from({ length: LUGARES }, (_, i) => (i === lugar ? id : (elegidos[i] ?? '')))
+    const nuevos = Array.from({ length: LUGARES }, (_, i) => (i === lugar ? id : vigente(elegidos[i])))
     setElegidos(nuevos)
     void ejecutar(() => admin.setSonidos(eventId, nuevos.filter(Boolean)))
   }
@@ -68,8 +71,7 @@ export function PanelSonidos({ eventId, live }: { eventId: string; live: Live })
         <span className="text-sm font-bold">🎵 Música y sonidos</span>
         {Array.from({ length: LUGARES }, (_, i) => {
           // Un sonido que se borró del catálogo deja el lugar vacío.
-          const elegido = elegidos[i] ?? ''
-          const id = catalogo && !catalogo.some((x) => x.id === elegido) ? '' : elegido
+          const id = vigente(elegidos[i])
           const activo = Boolean(id) && sonando === id
           return (
             <div key={i} className={`flex items-center gap-1 rounded-xl border-2 p-1 ${activo ? 'border-naranja bg-naranja/10' : 'border-profundo/15'}`}>

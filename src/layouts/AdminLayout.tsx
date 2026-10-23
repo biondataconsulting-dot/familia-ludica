@@ -67,6 +67,7 @@ export function AdminLayout({ usuario, onSalir, children }: Props) {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+      <p className="pb-4 text-center text-xs text-profundo/40">Versión {__VERSION__}</p>
     </div>
   )
 }

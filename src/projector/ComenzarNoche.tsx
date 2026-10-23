@@ -40,6 +40,7 @@ export function ComenzarNoche({ nombre, onComenzar }: { nombre?: string; onComen
         Comenzar la noche
       </button>
       <p className="max-w-[60cqw] text-[1.5cqw] text-white/75">Habilita el sonido y pone el proyector en pantalla completa.</p>
+      <p className="text-[1cqw] text-white/50">Versión {__VERSION__}</p>
     </div>
   )
 }
