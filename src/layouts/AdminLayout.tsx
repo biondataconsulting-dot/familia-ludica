@@ -49,6 +49,15 @@ export function AdminLayout({ usuario, onSalir, children }: Props) {
                   {s.texto}
                 </NavLink>
               ))}
+              {/* Ayuda memoria para imprimir (public/tarjeta-puntajes.html), en otra pestaña. */}
+              <a
+                href="/tarjeta-puntajes.html"
+                target="_blank"
+                rel="noopener"
+                className="rounded-lg px-3 py-1.5 text-sm font-semibold text-profundo/70 hover:bg-crema"
+              >
+                Puntajes ↗
+              </a>
             </nav>
           )}
           {usuario && (
