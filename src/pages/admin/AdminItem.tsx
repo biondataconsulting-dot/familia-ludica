@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useCatalogo, type ItemCatalogo } from '../../admin/useCatalogo'
 import { BotonPrincipal, BotonSecundario, CAMPO, Etiqueta, Mensaje, Tarjeta } from '../../admin/ui'
@@ -13,10 +13,21 @@ import { admin } from '../../lib/rpcAdmin'
 export default function AdminItem() {
   const { itemId = 'nuevo' } = useParams()
   const [busqueda] = useSearchParams()
-  const { items, error } = useCatalogo()
-  if (error) return <Mensaje>{error}</Mensaje>
-  if (itemId !== 'nuevo' && !items) return <p className="text-profundo/70">Cargando…</p>
+  const { items, error, recargar } = useCatalogo()
   const item = items?.find((i) => i.id === itemId) ?? null
+  // Recién guardado (el formulario pasa de "nuevo" a su id): la lista es de antes de guardarlo; se relee una vez.
+  const [releidoPara, setReleidoPara] = useState<string | null>(null)
+  const [releyendo, setReleyendo] = useState(false)
+  const falta = itemId !== 'nuevo' && items != null && !item
+  useEffect(() => {
+    if (falta && releidoPara !== itemId) {
+      setReleidoPara(itemId)
+      setReleyendo(true)
+      void recargar().finally(() => setReleyendo(false))
+    }
+  }, [falta, itemId, releidoPara, recargar])
+  if (error) return <Mensaje>{error}</Mensaje>
+  if (itemId !== 'nuevo' && (!items || releyendo || (falta && releidoPara !== itemId))) return <p className="text-profundo/70">Cargando…</p>
   if (itemId !== 'nuevo' && !item) return <Mensaje>No encontramos ese ítem. Puede que lo hayan borrado.</Mensaje>
   const tipo = (item?.type ?? busqueda.get('tipo') ?? 'pregunta_opciones') as TipoItem
   return <Formulario key={itemId} item={item} tipoInicial={TIPOS.includes(tipo) ? tipo : 'pregunta_opciones'} />
