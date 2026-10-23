@@ -64,7 +64,7 @@ export function GruposOveja({ respuestas, mesas, blockItemId, editable, onCambio
       <p className="text-sm font-bold">
         🐑 Grupos{' '}
         <span className="font-semibold text-profundo/70">
-          {todas ? '· todas iguales: nadie suma' : empateArriba ? '· empate arriba: nadie suma' : `· suma el grupo de ${max}`}
+          {todas ? '· todas iguales: nadie suma' : empateArriba ? '· las más elegidas empatan: nadie suma' : `· suma el grupo de ${max}`}
         </span>
       </p>
       <p className="mb-2 text-xs text-profundo/70">

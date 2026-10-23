@@ -16,3 +16,10 @@ export function describir(contenido: Record<string, unknown>, r: Respuesta): str
   const unidad = typeof contenido.unidad === 'string' && contenido.unidad ? ` ${contenido.unidad}` : ''
   return formatearNumero(v) + unidad
 }
+
+/** Lo que ve la mesa al revelar: su puesto según qué tan cerca quedó. */
+export function resultado(detail: Record<string, unknown>, puntos: number): { titulo: string; lineas: string[] } {
+  const puesto = Number(detail.puesto ?? 0)
+  const titulo = puesto === 1 ? '¡La más cerca! 🥇' : puesto > 0 ? `Quedaron en el ${puesto}° puesto` : 'Respuesta registrada'
+  return { titulo, lineas: puesto > 0 ? [`Por quedar ${puesto}°: +${puntos.toLocaleString('es-AR')} puntos`] : [] }
+}

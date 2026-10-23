@@ -1,20 +1,24 @@
 /**
- * Fórmula de Aproximaciones (spec §7). La que cuenta es la de SQL (private.score_aproximaciones);
- * esta copia existe para tenerla documentada y testeada con los mismos casos.
+ * Fórmula de Aproximaciones. La que cuenta es la de SQL (private.score_aproximaciones); esta copia existe
+ * para tenerla documentada y testeada con los mismos casos (casos.ts).
  *
- * d = |respuesta − valor|. Las mesas con la distancia mínima: 1.000.
- * El resto: round(800 × (1 − (d − dmin) / (dmax − dmin))); la más lejana, 0.
- * Si todas están a la misma distancia: 1.000 para todas.
+ * Por puesto, como un podio, según la distancia al valor correcto (d = |respuesta − valor|):
+ * 1° 1.000 · 2° 700 · 3° 500 · 4° 300 · 5° y siguientes 100.
+ * Las empatadas comparten puesto y el siguiente se saltea (1°, 2°, 2°, 4°).
  */
+export const PUNTOS_POR_PUESTO = [1000, 700, 500, 300] as const
+export const PUNTOS_RESTO = 100
+
+export function puntosDelPuesto(puesto: number): number {
+  return PUNTOS_POR_PUESTO[puesto - 1] ?? PUNTOS_RESTO
+}
+
 export function puntajesAproximacion(respuestas: { id: string; valor: number }[], correcto: number): Map<string, number> {
   const distancias = respuestas.map((r) => ({ id: r.id, d: Math.abs(r.valor - correcto) }))
   const resultado = new Map<string, number>()
-  if (distancias.length === 0) return resultado
-  const dmin = Math.min(...distancias.map((x) => x.d))
-  const dmax = Math.max(...distancias.map((x) => x.d))
   for (const { id, d } of distancias) {
-    if (dmax === dmin || d === dmin) resultado.set(id, 1000)
-    else resultado.set(id, Math.round(800 * (1 - (d - dmin) / (dmax - dmin))))
+    const puesto = 1 + distancias.filter((o) => o.d < d).length
+    resultado.set(id, puntosDelPuesto(puesto))
   }
   return resultado
 }

@@ -111,7 +111,16 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
               {live.ranking.length}, con <span className="font-bold">{formatearNumero(mia.total)}</span> puntos.
             </span>
           )}
-          Nos vemos en la próxima. Seguinos en <span className="font-bold">@familia.ludica</span>
+          Nos vemos en la próxima.
+          <a
+            href="https://www.instagram.com/familia.ludica/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto mt-5 flex min-h-toque w-full max-w-xs items-center justify-center gap-2 rounded-carta bg-naranja px-5 py-3 font-titulo text-lg font-semibold text-white shadow-md"
+          >
+            📸 Seguinos en Instagram
+          </a>
+          <span className="mt-1 block text-sm font-bold">@familia.ludica</span>
         </Centro>
       )
     }

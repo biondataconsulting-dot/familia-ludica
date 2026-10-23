@@ -3,7 +3,7 @@ import { meta } from './meta'
 import { PhoneInput } from './PhoneInput'
 import { ProjectorOpen } from './ProjectorOpen'
 import { ProjectorReveal } from './ProjectorReveal'
-import { describir, validar } from './validate'
+import { describir, resultado, validar } from './validate'
 
 export const aproximaciones: Dinamica = {
   meta,
@@ -12,5 +12,6 @@ export const aproximaciones: Dinamica = {
   ProjectorReveal,
   validar,
   describir,
+  resultado,
   instruccion: (item) => (item.content.formato === 'anio' ? '¿En qué año?' : meta.instruccionCelular),
 }

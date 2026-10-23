@@ -2,7 +2,7 @@ import { describirSolucion } from '../solucion'
 import type { PropsProyector } from '../tipos'
 import { describir } from './validate'
 
-type Detalle = { valor?: number; diferencia?: number }
+type Detalle = { valor?: number; diferencia?: number; puesto?: number }
 
 const MOSTRADAS = 5
 
@@ -13,7 +13,8 @@ export function ProjectorReveal({ item, solucion = {}, puntos = [] }: PropsProye
     .sort((a, b) => a.d - b.d || a.name.localeCompare(b.name))
   const cercanas = ordenadas.slice(0, MOSTRADAS)
   const resto = ordenadas.length - cercanas.length
-  const puesto = (d: number) => ordenadas.findIndex((p) => p.d === d) + 1
+  // El puesto lo calcula la base (las empatadas comparten puesto); si faltara, se deduce del orden.
+  const puesto = (p: (typeof ordenadas)[number]) => (p.detail as Detalle | null)?.puesto ?? ordenadas.findIndex((o) => o.d === p.d) + 1
 
   return (
     <div className="flex flex-col gap-[0.8cqw]">
@@ -25,7 +26,7 @@ export function ProjectorReveal({ item, solucion = {}, puntos = [] }: PropsProye
           <ol className="flex flex-col gap-[0.1cqw]">
             {cercanas.map((p) => (
               <li key={p.team_id} className="flex items-baseline gap-[1cqw] text-[1.75cqw] leading-tight">
-                <span className="w-[2.6cqw] font-titulo font-bold text-naranja">{puesto(p.d)}°</span>
+                <span className="w-[2.6cqw] font-titulo font-bold text-naranja">{puesto(p)}°</span>
                 <span className="min-w-0 flex-1 truncate font-extrabold">{p.name}</span>
                 <span className="font-semibold text-profundo/75">{describir(item.content, { valor: (p.detail as Detalle).valor })}</span>
               </li>

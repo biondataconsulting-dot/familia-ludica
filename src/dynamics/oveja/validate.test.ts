@@ -16,7 +16,7 @@ describe('agrupar (Oveja Oveja)', () => {
     ])
     expect(r.empate).toBe(false)
   })
-  it('detecta empate arriba (nadie es mayoría)', () => {
+  it('detecta empate entre las más elegidas (nadie es mayoría)', () => {
     const r = agrupar([p('A', { grupo: 'a', tam: 1 }), p('B', { grupo: 'b', tam: 1 })])
     expect(r.empate).toBe(true)
   })

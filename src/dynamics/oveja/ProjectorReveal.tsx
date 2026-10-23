@@ -40,7 +40,7 @@ export function ProjectorReveal({ item, puntos = [] }: PropsProyector) {
       )}
       {sueltas > 0 && <p className="text-[1.5cqw] font-semibold text-profundo/75">Y {sueltas} respuestas sueltas más.</p>}
       {unanimidad && <p className="font-titulo text-[2.2cqw] font-bold">¡Todas pensaron igual! Nadie suma 😅</p>}
-      {empate && <p className="font-titulo text-[2.2cqw] font-bold">¡Empate arriba! Nadie suma 🤷</p>}
+      {empate && <p className="font-titulo text-[2.2cqw] font-bold">Las más elegidas empataron: nadie suma 🤷</p>}
       {ovejaNegra && <OvejaNegra mesa={ovejaNegra} />}
     </div>
   )

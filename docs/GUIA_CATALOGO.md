@@ -309,7 +309,7 @@ todo público; la imagen tiene que mostrar **el logo sin el nombre de la marca**
 #### Oveja Oveja — tipo: `pregunta_mayoria`
 
 Se hace una pregunta abierta y cada mesa escribe **lo que cree que va a responder la mayoría**. Suman las
-mesas que coinciden con la respuesta más repetida; si hay empate arriba o todas responden lo mismo, nadie
+mesas que coinciden con la respuesta más repetida; si las más elegidas empatan o todas responden lo mismo, nadie
 suma. No hay respuesta correcta.
 
 - `contenido.texto`: la pregunta (hasta 100 caracteres).
