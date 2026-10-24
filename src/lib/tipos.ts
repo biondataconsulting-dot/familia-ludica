@@ -53,6 +53,8 @@ export type Live = {
   /** Último punto manual o de desafío de los últimos 20 s (cartel en los celulares). */
   aviso?: { id: string; team: string; points: number; reason: string; at: string } | null
   show_ranking?: boolean
+  /** Botón "Podio" del conductor: el podio en cualquier momento, sin terminar la noche. */
+  show_podio?: boolean
   timer_seconds: number | null
   extra_seconds: number
   updated_at: string | null
@@ -75,6 +77,8 @@ export type FilaRanking = {
   position: number
   /** Puntos de la mesa en el bloque actual. */
   block_total: number
+  /** Puntos descontados a mano (penalizaciones vigentes), en positivo; 0 si no tiene. */
+  penalizacion?: number
 }
 
 /** Credenciales de la mesa en este celular. El token es secreto: identifica a la mesa ante la base. */

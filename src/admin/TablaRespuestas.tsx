@@ -16,8 +16,9 @@ type Props = {
 
 /**
  * Centro del panel: mesa, respuesta, estado y puntos (provisorios hasta revelar).
- * Campos de texto validados (Hitster y Cine): estado por campo, Aceptar / Rechazar en las dudosas y
- * corrección de lo que el sistema decidió solo.
+ * Campos de texto validados (Hitster, Cine e Imagen): estado por campo, Aceptar / Rechazar en las dudosas y
+ * corrección de lo que el sistema decidió solo. Con la pregunta revelada también se corrige (la base
+ * recalcula los puntos de esa pregunta).
  * Las mesas sin respuesta van al final.
  */
 export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
@@ -37,14 +38,23 @@ export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
   const porMesa = new Map(respuestas.map((r) => [r.team_id, r]))
   const conRespuesta = live.teams.filter((m) => porMesa.has(m.id))
   const sinRespuesta = live.teams.filter((m) => !porMesa.has(m.id))
-  const puedeDecidir = live.phase === 'item_closed'
+  const puedeDecidir = live.phase === 'item_closed' || live.phase === 'item_revealed'
 
   return (
     <div className="overflow-x-auto">
       {dudosas > 0 && (
         <p className="mb-2 rounded-xl bg-naranja/15 px-3 py-2 text-sm font-bold">
           Quedan {dudosas} {dudosas === 1 ? 'dudosa' : 'dudosas'}.{' '}
-          {puedeDecidir ? 'Si revelás sin decidir, cuentan como rechazadas.' : 'Se deciden al cerrar las respuestas.'}
+          {live.phase === 'item_closed'
+            ? 'Si revelás sin decidir, cuentan como rechazadas.'
+            : revelado
+              ? 'Cuentan como rechazadas; si aceptás una, los puntos se recalculan.'
+              : 'Se deciden al cerrar las respuestas.'}
+        </p>
+      )}
+      {revelado && !revelado.practice && (
+        <p className="mb-2 text-xs text-profundo/60">
+          ¿Una respuesta bien escrita de otra forma (en inglés, abreviada)? Aceptala acá: los puntos y el ranking se recalculan solos.
         </p>
       )}
       {live.block?.dynamic === 'oveja' && respuestas.length > 0 && (
@@ -56,7 +66,7 @@ export function TablaRespuestas({ live, eventId, onDudosas }: Props) {
           onCambio={recargar}
         />
       )}
-      <table className="w-full text-left text-sm">
+      <table className="w-full text-left">
         <thead className="text-xs uppercase tracking-wide text-profundo/50">
           <tr>
             <th className="py-1 pr-2">Mesa</th>
@@ -164,9 +174,13 @@ function Validaciones({ respuesta, puedeDecidir, onCambio, esEscena }: PropsVali
               <button
                 disabled={ocupado}
                 onClick={() => void decidir(campo as 'titulo', ACEPTADO.includes(estado) ? 'rechazada' : 'aceptada')}
-                className="rounded-lg px-1.5 py-0.5 text-xs font-semibold text-profundo/60 underline disabled:opacity-40"
+                className={
+                  ACEPTADO.includes(estado)
+                    ? 'rounded-lg px-1.5 py-0.5 text-xs font-semibold text-profundo/60 underline disabled:opacity-40'
+                    : 'rounded-lg border-2 border-green-700 px-2 py-0.5 text-xs font-bold text-green-800 hover:bg-green-50 disabled:opacity-40'
+                }
               >
-                {ACEPTADO.includes(estado) ? 'Rechazar' : 'Aceptar'}
+                {ACEPTADO.includes(estado) ? 'Rechazar' : 'Aceptar igual'}
               </button>
             )}
           </div>

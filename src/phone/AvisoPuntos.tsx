@@ -19,10 +19,17 @@ export function AvisoPuntos({ aviso, desfaseMs }: { aviso: Live['aviso']; desfas
   if (!aviso || restante <= 0) return null
   const desafio = aviso.reason.startsWith('Desafío: ')
   const signo = aviso.points > 0 ? '+' : '−'
+  const penalizacion = aviso.points < 0
   return (
     <div role="status" className="fixed inset-x-0 top-16 z-50 mx-auto max-w-md px-4">
-      <div className="rounded-carta bg-profundo px-4 py-3 text-white shadow-2xl">
-        {desafio ? (
+      <div className={`rounded-carta px-4 py-3 text-white shadow-2xl ${penalizacion ? 'bg-red-700' : 'bg-profundo'}`}>
+        {penalizacion ? (
+          <p className="font-titulo text-lg font-semibold leading-tight">
+            ⚠ Penalización para {aviso.team}:{' '}
+            <span className="whitespace-nowrap font-bold">−{formatearNumero(Math.abs(aviso.points))}</span>
+            <span className="block text-base font-normal">{aviso.reason}</span>
+          </p>
+        ) : desafio ? (
           <p className="font-titulo text-lg font-semibold leading-tight">
             🏆 {aviso.team} ganó el desafío: {aviso.reason.slice('Desafío: '.length)}{' '}
             <span className="whitespace-nowrap font-bold">+{formatearNumero(aviso.points)}</span>

@@ -13,6 +13,9 @@ export function RankingMesa({ live, teamId }: { live: Live; teamId: string }) {
         <p className="mt-1 text-lg">
           Están <span className="font-titulo text-3xl font-bold">{mia.position}°</span> con{' '}
           <span className="font-bold">{formatearNumero(mia.total)}</span> puntos
+          {(mia.penalizacion ?? 0) > 0 && (
+            <span className="mt-1 block text-sm font-bold">⚠ Les descontaron {formatearNumero(mia.penalizacion!)} por penalización</span>
+          )}
         </p>
       ) : (
         <p className="mt-1">Todavía no tienen puntos.</p>

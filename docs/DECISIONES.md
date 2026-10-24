@@ -246,6 +246,15 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Ausente**: se marca solo el último que salió; queda como "no estaba" en la lista y no vuelve a la ruleta en esa noche (reiniciar la noche lo limpia todo).
 - Prueba: 26 casos en PGlite (bloque único, repetidos, orden de premios, giro de 9 s, ausente y re-sorteo, nadie gana dos veces, 60 tiradas reparten entre los tres, permisos de anon, reiniciar y duplicar) + vista en navegador (proyector y celular) con la noche temporal SORTEO.
 
+## Mejoras después de la primera noche real (24/10)
+
+- **Corregir después de revelar** solo con la pregunta actual (la que está revelada): es la que el conductor tiene en pantalla y la única cuyo revelado ven las pantallas. Una vez que se pasa a la siguiente, se corrige con puntos manuales.
+- **Recalcular no mueve `updated_at`** (se compara el revelado sin sus puntos): así no se reinician animaciones ni relojes. Lo que el conductor anuló sigue anulado.
+- **Nombres alternativos**: ya existían (`variantes_titulo`, `variantes_artista`, `variantes_respuesta`) y la mayoría del catálogo los tiene; lo que falló fue un ítem sin el título en inglés. Se agrandó el campo en el formulario (con ejemplo) y la guía pide siempre el título original y el de Argentina.
+- **Podio con botón** en vez de solo al terminar: la noche puede seguir con sorteo o un bloque especial de cierre después del podio.
+- **Penalización** = punto manual negativo (no hay tipo aparte): se suma en el ranking como siempre; la marca roja es la suma de los negativos vigentes.
+- **Ranking a 16:9 medido**: 1 columna ≤ 8 mesas (letra 2), 2 columnas ≤ 14 (2) y ≤ 20 (1,6), 3 columnas ≤ 30 (1,5). Con 10 mesas en una columna la última quedaba cortada.
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

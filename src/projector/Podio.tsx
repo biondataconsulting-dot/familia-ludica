@@ -1,15 +1,18 @@
 import { formatearNumero } from '../dynamics/solucion'
 import type { FilaRanking, Live } from '../lib/tipos'
 
-/** Fase final: podio 1-2-3 grande, el resto de la tabla y el cierre. */
-export function Podio({ live }: { live: Live }) {
+/**
+ * Fase final: podio 1-2-3 grande, el resto de la tabla y el cierre. También con el botón «Podio» del
+ * conductor en cualquier momento (enCualquierMomento): mismo podio, sin despedida (la noche sigue).
+ */
+export function Podio({ live, enCualquierMomento = false }: { live: Live; enCualquierMomento?: boolean }) {
   const [primero, segundo, tercero] = live.ranking
   const resto = live.ranking.slice(3)
 
   return (
     <div className="flex h-full flex-col px-[4cqw] pb-[2cqw] pt-[3cqw]">
       <div className="libre-logo-derecha">
-        <h1 className="font-titulo text-[4.2cqw] font-bold leading-none">¡Gracias por jugar!</h1>
+        <h1 className="font-titulo text-[4.2cqw] font-bold leading-none">{enCualquierMomento ? '¡El podio de la noche!' : '¡Gracias por jugar!'}</h1>
         <p className="mt-[0.6cqw] text-[1.8cqw] font-semibold text-white/85">
           {live.event.name} · seguinos en <span className="font-extrabold text-white">@familia.ludica</span>
         </p>

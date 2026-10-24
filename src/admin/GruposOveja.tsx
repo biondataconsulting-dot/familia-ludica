@@ -9,7 +9,7 @@ type Props = {
   respuestas: RespuestaAdmin[]
   mesas: Live['teams']
   blockItemId: string
-  /** Con las respuestas cerradas y antes de revelar. */
+  /** Con las respuestas cerradas o la pregunta revelada (al revelar, los puntos se recalculan). */
   editable: boolean
   onCambio: () => void
 }
@@ -70,7 +70,7 @@ export function GruposOveja({ respuestas, mesas, blockItemId, editable, onCambio
       <p className="mb-2 text-xs text-profundo/70">
         {editable
           ? 'Si dos grupos dicen lo mismo, juntalos. Si una respuesta quedó mal agrupada, separala.'
-          : 'Se pueden juntar o separar con las respuestas cerradas, antes de revelar.'}
+          : 'Se pueden juntar o separar con las respuestas cerradas (o ya reveladas).'}
       </p>
       {falla && <p className="mb-2 text-sm font-semibold text-naranja">{falla}</p>}
       <ul className="flex flex-col gap-2">
@@ -87,7 +87,7 @@ export function GruposOveja({ respuestas, mesas, blockItemId, editable, onCambio
                   disabled={ocupado}
                   value=""
                   onChange={(e) => e.target.value && void ejecutar(() => admin.ovejaJuntar(blockItemId, g.clave, e.target.value))}
-                  className="ml-auto rounded-lg border-2 border-profundo/15 px-2 py-1 text-xs"
+                  className="ml-auto rounded-lg border-2 border-naranja/50 px-2 py-1.5 text-sm font-semibold"
                 >
                   <option value="">Juntar con…</option>
                   {grupos
@@ -102,7 +102,7 @@ export function GruposOveja({ respuestas, mesas, blockItemId, editable, onCambio
             </div>
             <div className="mt-1 flex flex-wrap gap-1">
               {g.miembros.map((m) => (
-                <span key={m.id} className="flex items-center gap-1 rounded-full bg-crema px-2 py-0.5 text-xs">
+                <span key={m.id} className="flex items-center gap-1 rounded-full bg-crema px-2 py-0.5 text-sm">
                   <b>{m.mesa}:</b> {m.texto}
                   {editable && g.miembros.length > 1 && (
                     <button

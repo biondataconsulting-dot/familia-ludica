@@ -10,10 +10,12 @@ type Props = {
   movimiento?: number
   /** Tamaño base de la letra en cqw. */
   tam?: number
+  /** Puntos descontados a mano (penalizaciones): se marcan en rojo junto al nombre. */
+  penalizacion?: number
 }
 
 /** Una fila del ranking sobre tarjeta clara. El primer puesto va con fondo amarillo (nunca texto amarillo). */
-export function FilaPuesto({ puesto, nombre, total, extra, movimiento, tam = 1.6 }: Props) {
+export function FilaPuesto({ puesto, nombre, total, extra, movimiento, tam = 1.6, penalizacion = 0 }: Props) {
   const primero = puesto === 1
   return (
     <div
@@ -22,6 +24,11 @@ export function FilaPuesto({ puesto, nombre, total, extra, movimiento, tam = 1.6
     >
       <span className="w-[1.6em] shrink-0 text-center font-titulo">{puesto}</span>
       <span className="min-w-0 flex-1 truncate">{nombre}</span>
+      {penalizacion > 0 && (
+        <span className="shrink-0 rounded-[0.4em] bg-red-700 px-[0.4em] text-[0.7em] font-bold text-white" title="Penalización">
+          −{formatearNumero(penalizacion)}
+        </span>
+      )}
       {extra && <span className="shrink-0 text-[0.75em] font-semibold text-profundo/60">{extra}</span>}
       <span className="shrink-0 font-titulo tabular-nums">{formatearNumero(total)}</span>
       {movimiento !== undefined && <Flecha movimiento={movimiento} />}

@@ -229,6 +229,14 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 - Centro: tabla de respuestas (mesa, respuesta, estado, puntos provisorios) con **Aceptar / Rechazar** en las dudosas; mesas sin respuesta al final.
 - Derecha: puntos manuales (mesa, puntos ±, motivo), historial de movimientos con "Anular", ranking, mesas con PIN y conexión.
 - Atajos de teclado: espacio = acción principal de la fase; R = repetir audio.
+- **Después de la primera noche (24/10):**
+  - Barra superior compacta (nombre, bloque, fases chicas, QR, «Cómo va la noche», **Podio**, **Misiones y desafíos**, música) y controles más chicos: la columna de **Respuestas** es la más ancha.
+  - Con las respuestas cerradas, si hay dudosas (o es Oveja Oveja), la tarjeta de respuestas se resalta en naranja y «Revelar» dice cuántas dudosas quedan.
+  - **Corregir después de revelar** (mientras sea la pregunta actual): aceptar o rechazar respuestas y juntar o separar grupos de Oveja; la base recalcula los puntos de esa pregunta (`private.repuntuar_revelado`) y las pantallas se actualizan. «Aceptar igual» en cualquier respuesta marcada como incorrecta.
+  - **Podio en cualquier momento** (`live_state.show_podio`): el podio sin terminar la noche («¡El podio de la noche!»); excluye al ranking y se saca al abrir una pregunta. «Terminar la noche» queda como cierre: historial, sin mesas ni respuestas nuevas, celulares con el final.
+  - **Misiones y desafíos** en una ventana sobre el panel (botón arriba; se cierra con ✕, Esc o tocando afuera).
+  - **Penalizaciones**: el ranking (`get_live`) trae `penalizacion` (puntos manuales negativos vigentes); se marca en rojo en «Así va la noche», el panel y el celular de la mesa; el aviso del celular de un descuento va en rojo («⚠ Penalización»).
+  - «Así va la noche»: una columna hasta 8 mesas, dos hasta 20, tres hasta 30.
 
 ### 8.4 Preparación `/admin`
 

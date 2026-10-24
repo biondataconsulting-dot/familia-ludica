@@ -98,6 +98,8 @@ export default function Pantalla() {
 function Fase({ live, temporizador, conSonido }: { live: Live; temporizador: Temporizador; conSonido: boolean }) {
   // Botón "Cómo va la noche" del conductor (nunca con una pregunta abierta ni en el podio).
   if (live.show_ranking && live.phase !== 'item_open' && live.phase !== 'final') return <RankingBloque live={live} enCualquierMomento />
+  // Botón "Podio" del conductor: el podio sin terminar la noche (por ejemplo, antes del sorteo).
+  if (live.show_podio && live.phase !== 'item_open' && live.phase !== 'final') return <Podio live={live} enCualquierMomento />
   switch (live.phase) {
     case 'cover':
       return <Portada live={live} />

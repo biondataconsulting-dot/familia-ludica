@@ -287,8 +287,14 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                   <Etiqueta texto="Respuesta">
                     <input value={f.respuesta} onChange={(e) => poner('respuesta', e.target.value)} maxLength={150} className={CAMPO} />
                   </Etiqueta>
-                  <Etiqueta texto="Otras formas aceptadas" ayuda="(una por línea)">
-                    <textarea value={f.variantesRespuesta} onChange={(e) => poner('variantesRespuesta', e.target.value)} rows={2} className={`${CAMPO} py-2`} />
+                  <Etiqueta texto="Otras formas aceptadas" ayuda="(una por línea: en inglés, sin artículo, abreviada)">
+                    <textarea
+                      value={f.variantesRespuesta}
+                      onChange={(e) => poner('variantesRespuesta', e.target.value)}
+                      rows={3}
+                      placeholder={'Lion King\nRey León'}
+                      className={`${CAMPO} py-2`}
+                    />
                   </Etiqueta>
                 </div>
               </>
@@ -380,8 +386,14 @@ function Formulario({ item, tipoInicial }: { item: ItemCatalogo | null; tipoInic
                   </Etiqueta>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
-                  <Etiqueta texto="Otras formas del título" ayuda="(una por línea; también se aceptan)">
-                    <textarea value={f.variantesTitulo} onChange={(e) => poner('variantesTitulo', e.target.value)} rows={2} className={`${CAMPO} py-2`} />
+                  <Etiqueta texto="Otras formas del título" ayuda="(una por línea: el título en inglés u original, el de Argentina…)">
+                    <textarea
+                      value={f.variantesTitulo}
+                      onChange={(e) => poner('variantesTitulo', e.target.value)}
+                      rows={3}
+                      placeholder={tipo === 'clip_video' ? 'Back to the Future\nVolver al futuro' : 'Título original'}
+                      className={`${CAMPO} py-2`}
+                    />
                   </Etiqueta>
                   <Etiqueta texto={tipo === 'clip_video' ? 'Otras formas del director' : 'Otras formas del artista'} ayuda="(una por línea)">
                     <textarea value={f.variantesArtista} onChange={(e) => poner('variantesArtista', e.target.value)} rows={2} className={`${CAMPO} py-2`} />

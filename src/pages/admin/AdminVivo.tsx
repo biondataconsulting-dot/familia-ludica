@@ -7,7 +7,7 @@ import { PanelSonidos } from '../../admin/PanelSonidos'
 import { PanelPuntos } from '../../admin/PanelPuntos'
 import { TablaRespuestas } from '../../admin/TablaRespuestas'
 import { useMesasAdmin } from '../../admin/useMesasAdmin'
-import { extrasActivos } from '../../extras/useExtras'
+import { extrasActivos, useExtras } from '../../extras/useExtras'
 import { VivoExtras } from '../../extras/VivoExtras'
 import { VivoSorteo } from '../../sorteo/VivoSorteo'
 import { metaDe } from '../../dynamics/registro'
@@ -59,6 +59,9 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
   const [dudosas, setDudosas] = useState(0)
   const [ocupado, setOcupado] = useState(false)
   const [aviso, setAviso] = useState<string | null>(null)
+  const [verExtras, setVerExtras] = useState(false)
+  const cerrarExtras = useCallback(() => setVerExtras(false), [])
+  const extras = useExtras(evento.code, live)
   const enCurso = useRef(false)
 
   const ejecutar = useCallback(
@@ -134,57 +137,72 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
     live.opened_at != null &&
     Date.now() + desfaseMs - Date.parse(live.opened_at) > 8000
   const e = evento.id
+  // Hay que decidir algo antes de revelar: dudosas, o revisar los grupos de Oveja Oveja.
+  const revisar = live.phase === 'item_closed' && (dudosas > 0 || live.block?.dynamic === 'oveja')
 
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-3 rounded-carta bg-white p-4 shadow-md">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+      {/* Barra compacta: lo importante del panel son las respuestas (más abajo, al centro). */}
+      <header className="flex flex-col gap-2 rounded-carta bg-white px-4 py-2.5 shadow-md">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Link to="/admin" className="text-sm font-semibold text-azul">
             ← Noches
           </Link>
-          <h1 className="text-2xl font-bold">{live.event.name}</h1>
-          <p className="text-profundo/70">
+          <h1 className="text-lg font-bold">{live.event.name}</h1>
+          <p className="text-sm text-profundo/70">
             {live.block ? `${live.block.title}${live.item ? ` · ${metaDe(live.block.dynamic).sustantivo} ${live.item.number} de ${live.block.total_items}` : ''}` : 'Sin bloque'}
           </p>
+          <ol className="ml-auto flex flex-wrap gap-1" aria-label="Fases">
+            {FASES.map((f) => (
+              <li
+                key={f.fase}
+                aria-current={f.fase === live.phase ? 'step' : undefined}
+                className={`rounded-full px-2 py-0.5 text-xs font-bold ${f.fase === live.phase ? 'bg-naranja text-white' : 'bg-crema text-profundo/40'}`}
+              >
+                {f.nombre}
+              </li>
+            ))}
+          </ol>
           {error && <span className="rounded-full bg-naranja px-3 py-0.5 text-sm font-bold text-white">Reconectando…</span>}
         </div>
-        <ol className="flex flex-wrap gap-2" aria-label="Fases">
-          {FASES.map((f) => (
-            <li
-              key={f.fase}
-              aria-current={f.fase === live.phase ? 'step' : undefined}
-              className={`rounded-full px-3 py-1 text-sm font-bold ${f.fase === live.phase ? 'bg-naranja text-white' : 'bg-crema text-profundo/50'}`}
-            >
-              {f.nombre}
-            </li>
-          ))}
-        </ol>
         {/* Botones de pantalla: se prenden y se apagan; el resto del juego sigue igual. */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            disabled={ocupado}
-            aria-pressed={Boolean(live.show_qr)}
-            onClick={() => void ejecutar(() => admin.pantalla(e, !live.show_qr, null))}
-            className={`min-h-toque rounded-xl px-4 font-semibold disabled:opacity-40 ${live.show_qr ? 'bg-profundo text-white' : 'border-2 border-profundo/15 hover:bg-crema'}`}
-          >
-            {live.show_qr ? 'Ocultar QR' : 'Mostrar QR para volver a entrar'}
-          </button>
-          <button
+        <div className="flex flex-wrap items-center gap-2">
+          <BotonPantalla activo={Boolean(live.show_qr)} disabled={ocupado} onClick={() => void ejecutar(() => admin.pantalla(e, !live.show_qr, null))}>
+            {live.show_qr ? 'Ocultar QR' : 'Mostrar QR'}
+          </BotonPantalla>
+          <BotonPantalla
+            activo={Boolean(live.show_ranking)}
             disabled={ocupado || (live.phase === 'item_open' && !live.show_ranking) || live.phase === 'final'}
             title={live.phase === 'item_open' ? 'Con una pregunta abierta no se muestra (taparía las respuestas)' : undefined}
-            aria-pressed={Boolean(live.show_ranking)}
             onClick={() => void ejecutar(() => admin.pantalla(e, null, !live.show_ranking))}
-            className={`min-h-toque rounded-xl px-4 font-semibold disabled:opacity-40 ${live.show_ranking ? 'bg-profundo text-white' : 'border-2 border-profundo/15 hover:bg-crema'}`}
           >
-            {live.show_ranking ? 'Ocultar cómo va la noche' : '📊 Mostrar cómo va la noche'}
-          </button>
-          {proyectores != null && proyectores <= 1 && (
-            <span className={`self-center text-sm font-semibold ${proyectores === 1 ? 'text-green-700' : 'text-profundo/60'}`}>
-              {proyectores === 1 ? '✔ Proyector con sonido conectado' : 'Ningún proyector con sonido (falta tocar «Comenzar la noche»)'}
-            </span>
+            {live.show_ranking ? 'Ocultar cómo va' : '📊 Cómo va la noche'}
+          </BotonPantalla>
+          <BotonPantalla
+            activo={Boolean(live.show_podio)}
+            disabled={ocupado || (live.phase === 'item_open' && !live.show_podio) || live.phase === 'final'}
+            title={live.phase === 'item_open' ? 'Con una pregunta abierta no se muestra (taparía las respuestas)' : undefined}
+            onClick={() => void ejecutar(() => admin.pantalla(e, null, null, !live.show_podio))}
+          >
+            {live.show_podio ? 'Ocultar podio' : '🏆 Podio'}
+          </BotonPantalla>
+          {extrasActivos(live) && (
+            <button
+              onClick={() => setVerExtras(true)}
+              className="min-h-[36px] rounded-lg bg-profundo px-3 text-sm font-semibold text-white hover:brightness-110"
+            >
+              🎯 Misiones y desafíos{extras?.desafio ? ' · desafío en curso' : ''}
+            </button>
           )}
+          <div className="ml-auto">
+            <PanelSonidos eventId={e} live={live} />
+          </div>
         </div>
-        <PanelSonidos eventId={e} live={live} />
+        {proyectores != null && proyectores <= 1 && (
+          <p className={`text-xs font-semibold ${proyectores === 1 ? 'text-green-700' : 'text-naranja'}`}>
+            {proyectores === 1 ? '✔ Proyector con sonido conectado' : 'Ningún proyector con sonido (falta tocar «Comenzar la noche»)'}
+          </p>
+        )}
         {proyectores != null && proyectores > 1 && (
           <Mensaje>
             ⚠ Hay {proyectores} proyectores con sonido abiertos en esta noche: las canciones y escenas se van a escuchar dobles.
@@ -222,10 +240,10 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
         </p>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr_0.85fr]">
-        {/* Izquierda: ítem actual con solución y controles */}
-        <section className="flex flex-col gap-4">
-          <Tarjeta titulo="Ahora">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.45fr)_minmax(0,0.8fr)]">
+        {/* Izquierda: ítem actual con solución y controles (compactos) */}
+        <section className="flex flex-col gap-3">
+          <Tarjeta titulo="Ahora" chica>
             {item ? <ItemConSolucion item={item} /> : <p className="text-profundo/70">{textoSinItem(live)}</p>}
             {item && conMedia && <Fragmento item={item} onRepetir={pedirRepetir} />}
             {videoTrabado && (
@@ -239,10 +257,16 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
 
           {live.block?.dynamic === 'sorteo' && <VivoSorteo eventId={evento.id} live={live} desfaseMs={desfaseMs} />}
 
-          <div className="flex flex-col gap-3 rounded-carta bg-white p-4 shadow-md">
+          <div className="flex flex-col gap-2 rounded-carta bg-white p-3 shadow-md">
             {principal && !terminada && (
-              <button disabled={ocupado} onClick={() => void ejecutar(principal.accion)} className="boton-principal w-full text-xl">
-                {principal.etiqueta} <span className="ml-2 text-sm font-normal opacity-80">(espacio)</span>
+              <button
+                disabled={ocupado}
+                onClick={() => void ejecutar(principal.accion)}
+                className="min-h-toque w-full rounded-xl bg-naranja px-4 font-titulo text-lg font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50"
+              >
+                {principal.etiqueta}
+                {live.phase === 'item_closed' && dudosas > 0 && ` (${dudosas} ${dudosas === 1 ? 'dudosa' : 'dudosas'})`}{' '}
+                <span className="ml-1 text-xs font-normal opacity-80">(espacio)</span>
               </button>
             )}
             <div className="grid grid-cols-3 gap-2">
@@ -273,7 +297,7 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
                 Siguiente
               </Boton>
             </div>
-            <div className="flex flex-wrap gap-2 border-t border-profundo/10 pt-3 text-sm">
+            <div className="flex flex-wrap gap-1.5 border-t border-profundo/10 pt-2 text-sm">
               <BotonChico
                 activo={!enJuego && live.phase !== 'cover'}
                 ocupado={ocupado}
@@ -318,11 +342,14 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           </Tarjeta>
         </section>
 
-        {/* Centro: respuestas con estado y puntos provisorios */}
+        {/* Centro: respuestas con estado y puntos provisorios. Se resalta si hay algo para decidir antes de revelar. */}
         <section>
-          <Tarjeta titulo={live.item ? `Respuestas · ${live.answers_count} de ${live.teams_count}` : 'Respuestas'}>
+          <div className={`rounded-carta bg-white p-4 shadow-md ${revisar ? 'ring-4 ring-naranja' : ''}`}>
+            <h2 className="mb-3 text-xl font-bold">
+              {live.item ? `Respuestas · ${live.answers_count} de ${live.teams_count}` : 'Respuestas'}
+            </h2>
             <TablaRespuestas live={live} eventId={evento.id} onDudosas={setDudosas} />
-          </Tarjeta>
+          </div>
         </section>
 
         {/* Derecha: puntos (ranking, manuales, historial) y mesas con PIN y conexión */}
@@ -354,8 +381,12 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
         </section>
       </div>
 
-      {/* Módulo opcional: solo si la noche tiene misiones o desafíos prendidos. */}
-      {extrasActivos(live) && <VivoExtras eventId={evento.id} live={live} />}
+      {/* Módulo opcional (misiones y desafíos): en una ventana sobre el panel, sin scrollear. */}
+      {verExtras && extrasActivos(live) && (
+        <Ventana titulo="Misiones y desafíos" onCerrar={cerrarExtras}>
+          <VivoExtras eventId={evento.id} live={live} />
+        </Ventana>
+      )}
     </div>
   )
 }
@@ -392,12 +423,12 @@ function textoSinItem(live: Live): string {
 
 function ItemConSolucion({ item }: { item: ItemAdmin }) {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-lg font-semibold">{consigna(item.tipo, item.content) || '(sin consigna)'}</p>
+    <div className="flex flex-col gap-2">
+      <p className="font-semibold">{consigna(item.tipo, item.content) || '(sin consigna)'}</p>
       {item.solution && (
         <div className="rounded-xl border-2 border-dashed border-naranja bg-naranja/5 px-3 py-2">
           <p className="text-xs font-extrabold uppercase tracking-wide text-naranja">Solo lo ves vos</p>
-          <p className="text-lg font-bold">{describirSolucion(item.tipo, item.content, item.solution)}</p>
+          <p className="font-bold">{describirSolucion(item.tipo, item.content, item.solution)}</p>
           {typeof item.solution.explicacion === 'string' && (
             <p className="text-sm text-profundo/70">{item.solution.explicacion}</p>
           )}
@@ -492,11 +523,55 @@ function NavBloque(props: {
   )
 }
 
-function Tarjeta({ titulo, children }: { titulo: string; children: ReactNode }) {
+function Tarjeta({ titulo, chica = false, children }: { titulo: string; chica?: boolean; children: ReactNode }) {
   return (
-    <div className="rounded-carta bg-white p-4 shadow-md">
-      <h2 className="mb-3 text-lg font-bold">{titulo}</h2>
+    <div className={`rounded-carta bg-white shadow-md ${chica ? 'p-3' : 'p-4'}`}>
+      <h2 className={`font-bold ${chica ? 'mb-1.5 text-base' : 'mb-3 text-lg'}`}>{titulo}</h2>
       {children}
+    </div>
+  )
+}
+
+/** Botón de pantalla (QR, cómo va, podio): prendido = oscuro. */
+function BotonPantalla(props: { activo: boolean; disabled: boolean; title?: string; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      disabled={props.disabled}
+      title={props.title}
+      aria-pressed={props.activo}
+      onClick={props.onClick}
+      className={`min-h-[36px] rounded-lg px-3 text-sm font-semibold disabled:opacity-40 ${
+        props.activo ? 'bg-profundo text-white' : 'border-2 border-profundo/15 hover:bg-crema'
+      }`}
+    >
+      {props.children}
+    </button>
+  )
+}
+
+/** Ventana sobre el panel (se cierra con ✕, con Esc o tocando afuera). */
+function Ventana({ titulo, onCerrar, children }: { titulo: string; onCerrar: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const alTeclear = (ev: KeyboardEvent) => ev.key === 'Escape' && onCerrar()
+    window.addEventListener('keydown', alTeclear)
+    return () => window.removeEventListener('keydown', alTeclear)
+  }, [onCerrar])
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-profundo/50 p-4 pt-10" onClick={onCerrar}>
+      <div
+        role="dialog"
+        aria-label={titulo}
+        className="max-h-[88vh] w-full max-w-5xl overflow-y-auto rounded-carta bg-crema p-4 shadow-2xl"
+        onClick={(ev) => ev.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold">{titulo}</h2>
+          <button onClick={onCerrar} className="ml-auto min-h-toque rounded-xl border-2 border-profundo/15 bg-white px-4 font-semibold">
+            ✕ Cerrar
+          </button>
+        </div>
+        {children}
+      </div>
     </div>
   )
 }
@@ -506,7 +581,7 @@ function Boton({ activo, ocupado, onClick, children }: { activo: boolean; ocupad
     <button
       disabled={!activo || ocupado}
       onClick={onClick}
-      className="min-h-toque rounded-xl bg-azul px-3 font-titulo text-lg font-semibold text-white disabled:bg-profundo/10 disabled:text-profundo/30"
+      className="min-h-[40px] rounded-lg bg-azul px-2 font-titulo text-base font-semibold text-white disabled:bg-profundo/10 disabled:text-profundo/30"
     >
       {children}
     </button>
@@ -518,7 +593,7 @@ function BotonChico({ activo, ocupado, onClick, children }: { activo: boolean; o
     <button
       disabled={!activo || ocupado}
       onClick={onClick}
-      className="min-h-toque rounded-xl border-2 border-profundo/15 px-3 font-semibold hover:bg-crema disabled:opacity-40"
+      className="min-h-[36px] rounded-lg border-2 border-profundo/15 px-2.5 text-sm font-semibold hover:bg-crema disabled:opacity-40"
     >
       {children}
     </button>

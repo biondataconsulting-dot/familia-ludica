@@ -23,6 +23,11 @@ export function PanelPuntos({ live, eventId }: Props) {
               <li key={r.team_id} className={`flex gap-2 rounded-lg px-2 py-1 ${r.position === 1 ? 'bg-amarillo font-bold' : 'odd:bg-crema'}`}>
                 <span className="w-5 text-profundo/60">{r.position}</span>
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
+                {(r.penalizacion ?? 0) > 0 && (
+                  <span className="rounded bg-red-700 px-1 text-xs font-bold text-white" title="Penalizaciones vigentes">
+                    −{formatearNumero(r.penalizacion!)}
+                  </span>
+                )}
                 <span className="font-semibold tabular-nums">{formatearNumero(r.total)}</span>
               </li>
             ))}

@@ -48,7 +48,9 @@ export default function Jugar() {
       {mesa ? (
         <>
           <AvisoPuntos aviso={live.aviso} desfaseMs={desfaseMs} />
-          {live.show_ranking && live.phase !== 'item_open' && live.phase !== 'final' && <RankingMesa live={live} teamId={mesa.team_id} />}
+          {(live.show_ranking || live.show_podio) && live.phase !== 'item_open' && live.phase !== 'final' && (
+            <RankingMesa live={live} teamId={mesa.team_id} />
+          )}
           {extras?.desafio && <DesafioMesa desafio={extras.desafio} />}
           <EnJuego live={live} mesa={mesa} />
           {extras && extras.misiones.length > 0 && <MisionesMesa misiones={extras.misiones} />}

@@ -210,8 +210,9 @@ el **título** y el **artista**.
 - `contenido.categoria`: `"musica"`.
 - `solucion.anio`: año de **lanzamiento original** de la canción (no el de una reedición o remasterización).
 - `solucion.titulo` y `solucion.artista`: obligatorios.
-- `solucion.variantes_titulo` y `solucion.variantes_artista`: otras formas que también se aceptan (lista,
-  puede ir vacía). Ej.: `["Soda"]` para Soda Stereo.
+- `solucion.variantes_titulo` y `solucion.variantes_artista`: otras formas que también se aceptan (lista).
+  Ej.: `["Soda"]` para Soda Stereo. **Si la canción tiene título en otro idioma o se la conoce de otra forma,
+  ponelo siempre**: lo que no está en la lista, la app lo da por mal y el conductor tiene que aceptarlo a mano.
 
 **Videos de YouTube — muy importante:**
 
@@ -248,7 +249,8 @@ la **dirigió**.
 - `solucion.anio`: año de estreno.
 - `solucion.titulo`: obligatorio.
 - `solucion.artista`: **el director o la directora** (obligatorio; en series, quien la creó).
-- `solucion.variantes_titulo`, `solucion.variantes_artista`: como en Hitster (títulos en español y en inglés).
+- `solucion.variantes_titulo`, `solucion.variantes_artista`: como en Hitster. **Siempre el título original
+  (en inglés u otro idioma) y el que se usó en Argentina**, si son distintos: la gente escribe cualquiera de los dos.
 
 Las mismas reglas de YouTube que en Hitster. Además: que la escena **no muestre el título** de la película en
 los primeros segundos (un tráiler suele mostrarlo: preferí escenas). Solo películas y series aptas para todo
@@ -284,7 +286,8 @@ Campos comunes:
 - `contenido.consigna` (opcional): la pregunta que se lee, si querés cambiarla (por defecto: «¿Qué película
   es?», «¿De qué marca es este logo?», «¿Qué ves?»). Hasta 120 caracteres.
 - `solucion.respuesta`: la respuesta (obligatoria).
-- `solucion.variantes_respuesta`: otras formas aceptadas: con y sin artículo, título en inglés, abreviaturas.
+- `solucion.variantes_respuesta`: otras formas aceptadas: con y sin artículo, **título en inglés u original**,
+  abreviaturas. No la dejes vacía si hay otra forma conocida de decirlo.
   Ej.: `["Rey León", "Lion King"]`.
 
 ```json
