@@ -13,6 +13,7 @@ const SECCIONES = [
   { a: '/admin', texto: 'Noches', exacto: true },
   { a: '/admin/catalogo', texto: 'Catálogo', exacto: false },
   { a: '/admin/importar', texto: 'Importar', exacto: false },
+  { a: '/admin/bingo', texto: 'Bingo', exacto: false },
   { a: '/admin/historial', texto: 'Historial', exacto: false },
 ]
 
@@ -23,13 +24,13 @@ const SECCIONES = [
 export function AdminLayout({ usuario, onSalir, children }: Props) {
   const nueva = useVersionNueva()
   return (
-    <div className="min-h-screen bg-crema">
+    <div className="min-h-screen bg-crema print:bg-white">
       {nueva && (
-        <button onClick={() => window.location.reload()} className="block w-full bg-naranja px-4 py-2 text-center font-bold text-white">
+        <button onClick={() => window.location.reload()} className="block w-full print:hidden bg-naranja px-4 py-2 text-center font-bold text-white">
           Hay una versión nueva de la app: tocá acá para recargar el panel. Recargá también el proyector (F5).
         </button>
       )}
-      <header className="border-b border-profundo/10 bg-white">
+      <header className="border-b border-profundo/10 bg-white print:hidden">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
           <Link to="/admin" className="font-bold text-azul">
             Familia Lúdica
@@ -75,8 +76,9 @@ export function AdminLayout({ usuario, onSalir, children }: Props) {
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
-      <p className="pb-4 text-center text-xs text-profundo/40">Versión {__VERSION__}</p>
+      {/* Al imprimir (cartones de bingo) solo va el contenido, sin márgenes ni barra. */}
+      <main className="mx-auto max-w-7xl px-4 py-6 print:m-0 print:max-w-none print:p-0">{children}</main>
+      <p className="pb-4 text-center text-xs text-profundo/40 print:hidden">Versión {__VERSION__}</p>
     </div>
   )
 }

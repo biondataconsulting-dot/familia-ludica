@@ -288,6 +288,19 @@ Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos).
 - Base: `raffle_participants`, `raffle_prizes`, `raffle_draws` (estado ganador|ausente); `get_sorteo(code)` público (premios con ganador, la ruleta, el último); `admin_sorteo_*`. Reiniciar borra participantes y sorteos (los premios quedan); duplicar copia los premios.
 - Frontend aislado en `src/sorteo/` (`useSorteo` relee con cada relectura de `useLive`, solo durante el bloque del sorteo).
 
+### 8.7 Bingo musical (bloque `bingo`)
+
+Un **set** fijo de hasta 90 canciones numeradas (`/admin/bingo`): cada número apunta a una canción del catálogo (tipo `pista_audio`) con **su propio inicio de estribillo y su duración** (no los de Hitster: acá el estribillo sí delata el título, y es lo buscado) y, opcional, un título corto para el cartón.
+
+- **Dos tipos**, cada uno con su juego de cartones impresos y plastificados (se reutilizan):
+  - **Express** (cartones **A**): canciones 1 a 40; cartón 3 × 5 con 9 (3 por fila; columnas de 8 números); A5 apaisado; ~11–15 min.
+  - **Full** (cartones **C**): canciones 1 a 90; cartón 3 × 9 con 15 (5 por fila; columnas por decena, 1–9 … 80–90); A4 apaisado; ~27–30 min.
+  - (La letra B queda para un tipo intermedio, si hace falta.)
+- **Cartones**: los genera la app (`src/bingo/formato.ts`): todos distintos y sin filas repetidas entre cartones; la base los vuelve a validar. Se imprimen desde `/admin/bingo/:set/imprimir/:tipo` (uno por hoja, Ctrl+P). Con cartones generados, la canción de cada número queda fija (sí se cambian el video, el inicio y la duración); cambiarla obliga a regenerar e imprimir.
+- **En vivo** (se juega en la presentación del bloque, como el sorteo): «Sacar bolilla» → la base elige al azar entre las que no salieron (no deja sacar otra mientras suena) y apaga la música de fondo. El proyector pasa el estribillo (player propio; si se recarga a mitad, sigue desde donde va) y muestra la bolilla grande **sin el título**; cuando termina el fragmento, la base recién manda título y artista. Tablero con todos los números (los que salieron, marcados) y las últimas con nombre. «Repetir» la vuelve a pasar. Celulares: la lista de las que salieron.
+- **Verificar cartón** (Conducir): por número (A-007 / C-012) → qué canciones ya salieron, líneas y bingo. Opcional: «Dar puntos» a una mesa (punto manual, motivo «Bingo: línea (A-007)»). Empates: los resuelve el conductor.
+- Base: `bingo_sets`, `bingo_songs`, `bingo_cards`, `bingo_draws`; `admin_bingo_*`, `get_bingo(code)` (público, título solo con el fragmento terminado), `proyector_bingo(code)` (video, solo proyector). Una canción usada en un set no se borra del catálogo. Reiniciar borra las bolillas (los cartones quedan).
+
 ## 9. Pasos (en este orden, frenando después de cada uno)
 
 1. **Esqueleto**: Vite + React + TS + Tailwind con tokens de marca y fuentes; router con `/pantalla/:codigo`, `/jugar/:codigo`, `/admin/*`; layout de proyector 16:9 y de celular; `vercel.json`; `CLAUDE.md` y `docs/SPEC.md`. *Verificación*: build ok, las 3 rutas se ven con logo y paleta en local y en Vercel.

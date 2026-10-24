@@ -3,6 +3,7 @@ import { dinamicaDe, metaDe } from '../dynamics/registro'
 import { formatearNumero } from '../dynamics/solucion'
 import type { Live, MiMesa, Revelado } from '../lib/tipos'
 import { SorteoCelular } from '../sorteo/SorteoCelular'
+import { BingoCelular } from '../bingo/BingoCelular'
 import { Responder } from './Responder'
 import { useMiRespuesta } from './useMiRespuesta'
 
@@ -25,6 +26,7 @@ export function EnJuego({ live, mesa }: { live: Live; mesa: MiMesa }) {
 
     case 'block_intro':
       if (live.block?.dynamic === 'sorteo') return <SorteoCelular live={live} />
+      if (live.block?.dynamic === 'bingo') return <BingoCelular live={live} />
       if (live.block?.dynamic === 'especial') {
         return (
           <Centro emoji={live.block.emoji ?? '✨'} titulo={live.block.title}>

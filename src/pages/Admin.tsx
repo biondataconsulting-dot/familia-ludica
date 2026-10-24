@@ -3,6 +3,8 @@ import { Route, Routes } from 'react-router-dom'
 import { useSesionAdmin } from '../auth/useSesionAdmin'
 import { Logo } from '../components/Logo'
 import { AdminLayout } from '../layouts/AdminLayout'
+import AdminBingo from './admin/AdminBingo'
+import AdminBingoImprimir from './admin/AdminBingoImprimir'
 import AdminCatalogo from './admin/AdminCatalogo'
 import AdminEnsayo from './admin/AdminEnsayo'
 import AdminHistorial from './admin/AdminHistorial'
@@ -26,6 +28,9 @@ export default function Admin() {
           <Route path="catalogo" element={<AdminCatalogo />} />
           <Route path="catalogo/:itemId" element={<AdminItem />} />
           <Route path="importar" element={<AdminImportar />} />
+          <Route path="bingo" element={<AdminBingo />} />
+          <Route path="bingo/:setId" element={<AdminBingo />} />
+          <Route path="bingo/:setId/imprimir/:tipo" element={<AdminBingoImprimir />} />
           <Route path="ensayo/:eventId" element={<AdminEnsayo />} />
           <Route path="historial" element={<AdminHistorial />} />
           <Route path="historial/:eventId" element={<AdminHistorial />} />

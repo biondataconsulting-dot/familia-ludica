@@ -21,6 +21,7 @@ import { RankingBloque } from '../projector/RankingBloque'
 import { ReproductorOculto } from '../projector/ReproductorOculto'
 import { Revelado } from '../projector/Revelado'
 import { SorteoProyector } from '../sorteo/SorteoProyector'
+import { BingoProyector } from '../bingo/BingoProyector'
 import type { Temporizador } from '../live/useTemporizador'
 
 /** Alto de la capa de contenido con la franja del desafío abajo (100% menos ALTO_FRANJA). */
@@ -80,7 +81,7 @@ export default function Pantalla() {
       {comenzada && <SonidoProyector codigo={codigo} live={live} />}
       {/* Capa de contenido por encima del player oculto (más baja si hay un desafío en la franja). */}
       <div className={`relative z-10 ${desafio ? ALTO_SIN_FRANJA : 'h-full'}`}>
-        <Fase live={live} temporizador={temporizador} conSonido={comenzada} />
+        <Fase live={live} temporizador={temporizador} conSonido={comenzada} senalRepetir={senalRepetir} />
       </div>
       {desafio && <FranjaDesafio desafio={desafio} />}
       {/* Botón "Mostrar QR" del conductor (en la portada el QR ya está). */}
@@ -95,7 +96,8 @@ export default function Pantalla() {
   )
 }
 
-function Fase({ live, temporizador, conSonido }: { live: Live; temporizador: Temporizador; conSonido: boolean }) {
+function Fase(props: { live: Live; temporizador: Temporizador; conSonido: boolean; senalRepetir: number }) {
+  const { live, temporizador, conSonido, senalRepetir } = props
   // Botón "Cómo va la noche" del conductor (nunca con una pregunta abierta ni en el podio).
   if (live.show_ranking && live.phase !== 'item_open' && live.phase !== 'final') return <RankingBloque live={live} enCualquierMomento />
   // Botón "Podio" del conductor: el podio sin terminar la noche (por ejemplo, antes del sorteo).
@@ -105,6 +107,7 @@ function Fase({ live, temporizador, conSonido }: { live: Live; temporizador: Tem
       return <Portada live={live} />
     case 'block_intro':
       if (live.block?.dynamic === 'sorteo') return <SorteoProyector live={live} conSonido={conSonido} />
+      if (live.block?.dynamic === 'bingo') return <BingoProyector live={live} conSonido={conSonido} senalRepetir={senalRepetir} />
       return <IntroBloque live={live} />
     case 'item_open':
     case 'item_closed':

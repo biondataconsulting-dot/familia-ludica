@@ -10,6 +10,7 @@ import { useMesasAdmin } from '../../admin/useMesasAdmin'
 import { extrasActivos, useExtras } from '../../extras/useExtras'
 import { VivoExtras } from '../../extras/VivoExtras'
 import { VivoSorteo } from '../../sorteo/VivoSorteo'
+import { VivoBingo } from '../../bingo/VivoBingo'
 import { metaDe } from '../../dynamics/registro'
 import { consigna, describirSolucion } from '../../dynamics/solucion'
 import { ErrorRpc } from '../../lib/rpc'
@@ -128,8 +129,8 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
   const bloque = bloques.find((b) => b.id === live.block?.id)
   const item = bloque?.items.find((i) => i.id === live.item?.block_item_id)
   const enJuego = live.phase === 'item_open' || live.phase === 'item_closed'
-  // Bloque especial y sorteo: no tienen ítems; «Siguiente» pasa al bloque que sigue.
-  const sinItems = live.block?.dynamic === 'especial' || live.block?.dynamic === 'sorteo'
+  // Bloque especial, sorteo y bingo: no tienen ítems; «Siguiente» pasa al bloque que sigue.
+  const sinItems = ['especial', 'sorteo', 'bingo'].includes(live.block?.dynamic ?? '')
   // Canción o escena abierta que el proyector no reprodujo en 8 s (el reloj la está esperando).
   const videoTrabado =
     live.phase === 'item_open' &&
@@ -256,6 +257,16 @@ function Vivo({ evento, bloques }: { evento: EventoPublico; bloques: BloqueAdmin
           </Tarjeta>
 
           {live.block?.dynamic === 'sorteo' && <VivoSorteo eventId={evento.id} live={live} desfaseMs={desfaseMs} />}
+          {live.block?.dynamic === 'bingo' && (
+            <VivoBingo
+              eventId={evento.id}
+              live={live}
+              desfaseMs={desfaseMs}
+              setId={bloque?.config.bingo_set}
+              tipo={bloque?.config.bingo_tipo ?? 'express'}
+              onRepetir={pedirRepetir}
+            />
+          )}
 
           <div className="flex flex-col gap-2 rounded-carta bg-white p-3 shadow-md">
             {principal && !terminada && (
@@ -397,8 +408,8 @@ function accionPrincipal(live: Live, e: string): { etiqueta: string; accion: () 
     case 'cover':
       return { etiqueta: 'Empezar el primer bloque', accion: () => admin.next(e) }
     case 'block_intro':
-      // En el sorteo, el botón grande es «Sortear» (en su panel): la barra espaciadora no saltea el sorteo.
-      if (live.block?.dynamic === 'sorteo') return null
+      // En el sorteo y el bingo, el botón grande está en su panel: la barra espaciadora no los saltea.
+      if (live.block?.dynamic === 'sorteo' || live.block?.dynamic === 'bingo') return null
       return { etiqueta: `Abrir la primera ${sustantivo}`.replace('primera ítem', 'primer ítem'), accion: () => admin.next(e) }
     case 'item_open':
       return { etiqueta: 'Cerrar respuestas', accion: () => admin.closeItem(e) }
@@ -488,7 +499,7 @@ function NavBloque(props: {
           </p>
           <p className="text-xs text-profundo/60">
             {b.config.emoji ? `${b.config.emoji} ` : ''}
-            {b.dynamic === 'especial' || b.dynamic === 'sorteo'
+            {['especial', 'sorteo', 'bingo'].includes(b.dynamic)
               ? `${metaDe(b.dynamic).nombre} · «Siguiente» pasa al bloque que sigue`
               : `${metaDe(b.dynamic).nombre} · ×${b.multiplier} · ${b.config.timer_seconds ? `${b.config.timer_seconds} s` : 'sin tiempo'}`}
           </p>

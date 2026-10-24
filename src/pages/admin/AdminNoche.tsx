@@ -8,12 +8,13 @@ import { NOMBRE_TIPO, TIPOS_POR_DINAMICA } from '../../content/validarItem'
 import { metaDe } from '../../dynamics/registro'
 import { ArmarExtras } from '../../extras/ArmarExtras'
 import { ArmarSorteo } from '../../sorteo/ArmarSorteo'
+import { CamposBingo } from '../../bingo/CamposBingo'
 import { SubirImagen } from '../../admin/SubirImagen'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
 
-const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja', 'especial', 'sorteo'] as const
+const DINAMICAS = ['trivia', 'dos_verdades', 'aproximaciones', 'hipster', 'cine', 'imagen', 'oveja', 'especial', 'sorteo', 'bingo'] as const
 const mensajeDe = (e: unknown) => (e instanceof ErrorRpc ? e.message : 'Algo salió mal. Probá de nuevo.')
 
 /** /admin/noche/:id — datos de la noche, bloques e ítems de cada bloque. "nueva" crea una. */
@@ -277,9 +278,12 @@ function EditorBloque(props: {
   const [emoji, setEmoji] = useState(bloque?.config.emoji ?? '')
   const [subtitulo, setSubtitulo] = useState(bloque?.config.subtitulo ?? '')
   const [imagen, setImagen] = useState(bloque?.config.imagen ?? '')
+  const [bingoSet, setBingoSet] = useState(bloque?.config.bingo_set ?? '')
+  const [bingoTipo, setBingoTipo] = useState<'express' | 'full'>(bloque?.config.bingo_tipo ?? 'express')
   const especial = dinamica === 'especial'
   const sorteo = dinamica === 'sorteo'
-  const sinItems = especial || sorteo
+  const bingo = dinamica === 'bingo'
+  const sinItems = especial || sorteo || bingo
   const [ocupado, setOcupado] = useState(false)
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null)
   const [eligiendo, setEligiendo] = useState(false)
@@ -310,6 +314,8 @@ function EditorBloque(props: {
           emoji,
           subtitulo: especial ? subtitulo : '',
           imagen: especial ? imagen : '',
+          bingo_set: bingo ? bingoSet : null,
+          bingo_tipo: bingo ? bingoTipo : null,
           multiplier: Number(mult.replace(',', '.')),
           is_practice: practica,
           timer_seconds: tiempo ? Number(tiempo) : null,
@@ -402,6 +408,11 @@ function EditorBloque(props: {
               Momento especial (pausa, sorteo, encuesta…): se ve a pantalla completa con el título, el subtítulo y la imagen. No
               tiene preguntas: en Conducir, «Siguiente» pasa al bloque que sigue.
             </p>
+          </div>
+        )}
+        {bingo && (
+          <div className="md:col-span-6">
+            <CamposBingo set={bingoSet} tipo={bingoTipo} onSet={setBingoSet} onTipo={setBingoTipo} />
           </div>
         )}
         {sorteo && (

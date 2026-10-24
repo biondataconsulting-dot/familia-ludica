@@ -255,6 +255,16 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Penalización** = punto manual negativo (no hay tipo aparte): se suma en el ranking como siempre; la marca roja es la suma de los negativos vigentes.
 - **Ranking a 16:9 medido** con el logo de la esquina y la franja del desafío (peor caso): 1 columna ≤ 8 mesas (letra 2), 2 columnas ≤ 14 (2), 3 columnas ≤ 21 (1,6) y ≤ 30 (1,3). Con 2 o 3 columnas la grilla baja lo justo para no quedar debajo del logo (`.debajo-del-logo`). Con 10 mesas en una columna la última quedaba cortada.
 
+## Bingo musical (24/10)
+
+- **Cómo funciona el bingo de verdad**: se juega a línea y, sin cortar, a bingo; gana quien lo canta antes de la próxima bolilla; si dos completan con la misma, ganan los dos (lo resuelve el conductor). Que los cartones sean distintos **no** garantiza un solo ganador (simulación: ~10 % de empates en el bingo Full, ~16 % en el Express).
+- **Duración = cantidad de canciones en juego** (no el tamaño del cartón): simulación de 1.500 partidas. Express 40 canciones / 9 por cartón → bingo en ~30 bolillas; Full 90 / 15 → ~73. Con ~22 s por bolilla (15 s de estribillo + pausa): ~11 y ~27 min. La duración del fragmento ajusta el resto.
+- **Un solo set de 90** por ahora: el Express usa siempre las canciones 1–40 (se repiten si se juega seguido; aceptado). Nombres: Express (A) y Full (C); Clásico (B, 60 canciones) queda para después.
+- **El título no se muestra mientras suena** (la gente canta): lo controla la base (`get_bingo` no lo manda antes de que termine el fragmento), no la pantalla. El conductor sí lo ve enseguida (como la solución en Hitster).
+- **El estribillo arranca entero** aunque el aviso llegue 1–2 s tarde; solo si el proyector se recargó a mitad de la canción (> 4 s) sigue desde donde va.
+- **Cartones**: Express en A5 apaisado (5 columnas: ~4 cm por casillero), Full en A4 apaisado (en A5 el título quedaría en 8 pt). Papel 180–200 g, plastificado brillante, fibra de pizarra. 36 por tipo (30 mesas + repuesto).
+- **Prueba**: 41 casos en PGlite (validación de cartones, azar sin repetir, título oculto, verificación de líneas y bingo, permisos, reiniciar); generador probado con 120 cartones por tipo; en pantalla con un set de prueba armado con las canciones del catálogo (proyector: suena, corta a la duración, muestra el título; «Repetir»; celular; cartones a tamaño real sin desbordes).
+
 ## Pendientes de marca
 
 - **Resolución del logo**: el contenido real mide ~150 px; en el proyector a 1920 px se muestra a ~210 px (algo ampliado). Conviene conseguir una versión vectorial o de alta resolución para reemplazar `logo.png`.

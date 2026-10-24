@@ -38,10 +38,21 @@ const SORTEO: MetaDinamica = {
   tipos: [],
 }
 
+/** Bingo musical: bolillas con canciones; cartones impresos (src/bingo/). */
+const BINGO: MetaDinamica = {
+  clave: 'bingo',
+  nombre: 'Bingo musical',
+  comoSeJuega: '',
+  instruccionCelular: 'Cantá, buscá la canción en tu cartón y marcala.',
+  sustantivo: 'canción',
+  tipos: [],
+}
+
 const METAS: Record<string, MetaDinamica> = {
   ...Object.fromEntries(Object.entries(JUGABLES).map(([k, d]) => [k, d.meta])),
   especial: ESPECIAL,
   sorteo: SORTEO,
+  bingo: BINGO,
 }
 
 export function dinamicaDe(clave: string | undefined): Dinamica | null {
