@@ -253,7 +253,7 @@ Decisiones no cubiertas por la especificación que no bloqueaban. Se tomó la op
 - **Nombres alternativos**: ya existían (`variantes_titulo`, `variantes_artista`, `variantes_respuesta`) y la mayoría del catálogo los tiene; lo que falló fue un ítem sin el título en inglés. Se agrandó el campo en el formulario (con ejemplo) y la guía pide siempre el título original y el de Argentina.
 - **Podio con botón** en vez de solo al terminar: la noche puede seguir con sorteo o un bloque especial de cierre después del podio.
 - **Penalización** = punto manual negativo (no hay tipo aparte): se suma en el ranking como siempre; la marca roja es la suma de los negativos vigentes.
-- **Ranking a 16:9 medido**: 1 columna ≤ 8 mesas (letra 2), 2 columnas ≤ 14 (2) y ≤ 20 (1,6), 3 columnas ≤ 30 (1,5). Con 10 mesas en una columna la última quedaba cortada.
+- **Ranking a 16:9 medido** con el logo de la esquina y la franja del desafío (peor caso): 1 columna ≤ 8 mesas (letra 2), 2 columnas ≤ 14 (2), 3 columnas ≤ 21 (1,6) y ≤ 30 (1,3). Con 2 o 3 columnas la grilla baja lo justo para no quedar debajo del logo (`.debajo-del-logo`). Con 10 mesas en una columna la última quedaba cortada.
 
 ## Pendientes de marca
 

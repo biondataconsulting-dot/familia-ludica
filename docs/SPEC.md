@@ -236,7 +236,7 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
   - **Podio en cualquier momento** (`live_state.show_podio`): el podio sin terminar la noche («¡El podio de la noche!»); excluye al ranking y se saca al abrir una pregunta. «Terminar la noche» queda como cierre: historial, sin mesas ni respuestas nuevas, celulares con el final.
   - **Misiones y desafíos** en una ventana sobre el panel (botón arriba; se cierra con ✕, Esc o tocando afuera).
   - **Penalizaciones**: el ranking (`get_live`) trae `penalizacion` (puntos manuales negativos vigentes); se marca en rojo en «Así va la noche», el panel y el celular de la mesa; el aviso del celular de un descuento va en rojo («⚠ Penalización»).
-  - «Así va la noche»: una columna hasta 8 mesas, dos hasta 20, tres hasta 30.
+  - «Así va la noche»: una columna hasta 8 mesas, dos hasta 14, tres hasta 30 (sin quedar debajo del logo ni de la franja del desafío).
 
 ### 8.4 Preparación `/admin`
 
