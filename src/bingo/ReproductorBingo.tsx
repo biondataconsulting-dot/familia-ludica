@@ -76,7 +76,7 @@ export function ReproductorBingo({ codigo, bolillaId, senalRepetir }: { codigo: 
     const pasado = entera || transcurrido < 4 ? 0 : transcurrido
     if (pasado >= m.duracion) return
     const p = await obtener()
-    marcar(`suena ${m.number} (${m.youtube_id} desde ${Math.round(m.inicio + pasado)} s)`)
+    marcar(`suena (${m.youtube_id} desde ${Math.round(m.inicio + pasado)} s)`)
     fin.current = m.inicio + m.duracion
     p.unMute()
     p.setVolume(0)

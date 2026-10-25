@@ -9,11 +9,12 @@ import { bingoAdmin, type CancionSet, type Verificacion } from './rpc'
 
 const mensajeDe = (e: unknown) => (e instanceof ErrorRpc ? e.message : 'Algo salió mal. Probá de nuevo.')
 
-type Bolilla = { number: number; position: number; created_at: string }
+type Bolilla = { number: number; position: number; created_at: string; revelada_at: string | null }
 
 /**
  * /admin/vivo/:id — el bingo en juego: «Sacar bolilla» (la elige la base), «Repetir», qué está sonando
- * (el conductor ve el título enseguida), lo que salió y «Verificar cartón» (con «Dar puntos» opcional).
+ * (el conductor ve número y título enseguida; el público, al terminar el fragmento o con «Revelar ya»), lo
+ * que salió y «Verificar cartón» (con «Dar puntos» opcional).
  */
 type Props = {
   eventId: string
@@ -44,7 +45,7 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
   const blockId = live.block?.id
   const leer = useCallback(async () => {
     if (!blockId) return
-    const { data } = await supabase.from('bingo_draws').select('number, position, created_at').eq('block_id', blockId).order('position')
+    const { data } = await supabase.from('bingo_draws').select('number, position, created_at, revelada_at').eq('block_id', blockId).order('position')
     if (data) setBolillas(data as Bolilla[])
   }, [blockId])
   useEffect(() => {
@@ -55,6 +56,8 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
   const duracion = ultima ? (canciones.get(ultima.number)?.duracion ?? 15) : 0
   const restante = ultima ? duracion - (ahora + desfaseMs - Date.parse(ultima.created_at)) / 1000 : 0
   const sonando = restante > 0
+  // Oculta para el público: sonando y sin «Revelar ya». Revelada, ya se puede sacar la siguiente.
+  const oculta = sonando && !ultima?.revelada_at
   useEffect(() => {
     if (!sonando) return
     const id = window.setInterval(() => setAhora(Date.now()), 250)
@@ -78,6 +81,16 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
     }
   }
 
+  const revelar = async () => {
+    setFalla(null)
+    try {
+      await bingoAdmin.revelar(eventId)
+      await leer()
+    } catch (e) {
+      setFalla(mensajeDe(e))
+    }
+  }
+
   const actual = ultima ? canciones.get(ultima.number) : undefined
 
   return (
@@ -90,11 +103,11 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
       </h2>
       {!setId && <p className="font-semibold text-naranja">Este bloque no tiene set de canciones. Elegilo en Armar.</p>}
       <button
-        disabled={ocupado || sonando || !enJuego || terminado || !setId}
+        disabled={ocupado || oculta || !enJuego || terminado || !setId}
         onClick={() => void sacar()}
         className="min-h-toque w-full rounded-xl bg-naranja px-4 font-titulo text-xl font-semibold text-white shadow-sm disabled:opacity-50"
       >
-        {sonando ? `Sonando… ${Math.ceil(restante)} s` : terminado ? 'Salieron todas las canciones' : '🎱 Sacar bolilla'}
+        {oculta ? `Sonando… ${Math.ceil(restante)} s` : terminado ? 'Salieron todas las canciones' : '🎱 Sacar bolilla'}
       </button>
       {!enJuego && <p className="text-sm text-profundo/70">Para jugar, presentá el bloque del bingo.</p>}
       {actual && ultima && (
@@ -103,11 +116,16 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
             {ultima.number}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-extrabold uppercase tracking-wide text-naranja">{sonando ? 'Sonando (solo lo ves vos)' : 'Última'}</p>
+            <p className="text-xs font-extrabold uppercase tracking-wide text-naranja">{oculta ? 'Sonando (solo lo ves vos)' : sonando ? 'Sonando · revelada' : 'Última'}</p>
             <p className="truncate font-bold">
               {actual.titulo} <span className="font-semibold text-profundo/60">· {actual.artista}</span>
             </p>
           </div>
+          {oculta && (
+            <button onClick={() => void revelar()} className="min-h-toque rounded-xl bg-azul px-3 font-semibold text-white">
+              👁 Revelar ya
+            </button>
+          )}
           <button onClick={onRepetir} className="min-h-toque rounded-xl border-2 border-profundo/15 px-3 font-semibold hover:bg-crema">
             ▶ Repetir
           </button>

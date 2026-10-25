@@ -3,7 +3,7 @@ import type { Live } from '../lib/tipos'
 import { FORMATO } from './formato'
 import { useBingo } from './useBingo'
 
-/** Celular durante el bingo: qué está sonando (sin el título) y la lista de las que salieron. */
+/** Celular durante el bingo: si está sonando una (sin número ni título) y la lista de las reveladas. */
 export function BingoCelular({ live }: { live: Live }) {
   const bingo = useBingo(live.event.code, live)
   const desfase = useMemo(() => (bingo ? Date.parse(bingo.server_now) - Date.now() : 0), [bingo])
@@ -26,7 +26,7 @@ export function BingoCelular({ live }: { live: Live }) {
   }
   const f = FORMATO[bingo.tipo]
   const ultima = bingo.bolillas.at(-1)
-  const sonando = ultima ? !ultima.titulo && ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000 : false
+  const sonando = ultima ? !ultima.revelada && ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000 : false
   const salieron = bingo.bolillas.filter((b) => b.titulo).reverse()
 
   return (
@@ -39,8 +39,8 @@ export function BingoCelular({ live }: { live: Live }) {
       </div>
       {sonando && ultima && (
         <div className="rounded-carta bg-naranja px-4 py-3 text-center text-white shadow-md">
-          <p className="font-titulo text-4xl font-bold">{ultima.number}</p>
-          <p className="font-semibold">Sonando… ¡a cantar!</p>
+          <p className="font-titulo text-4xl font-bold">?</p>
+          <p className="font-semibold">Sonando… ¿qué canción es?</p>
         </div>
       )}
       {salieron.length === 0 && !sonando && <p className="text-center text-profundo/70">Cuando salga la primera canción, aparece acá.</p>}

@@ -6,9 +6,10 @@ import type { BingoPublico } from './rpc'
 import { useBingo } from './useBingo'
 
 /**
- * Proyector, bloque «Bingo musical». La bolilla grande con su número mientras suena el estribillo (sin el
- * título: la gente canta); al terminar, el título y el artista. A la derecha, el tablero con todos los
- * números (los que salieron, marcados) y las últimas canciones con nombre.
+ * Proyector, bloque «Bingo musical». Mientras suena el estribillo, una bolilla «?» (ni número ni título: el
+ * número está en el cartón y la gente tiene que reconocer la canción); al revelarse (fin del fragmento o
+ * «Revelar ya»), el número, el título y el artista. A la derecha, el tablero con los números revelados y las
+ * últimas canciones con nombre.
  */
 export function BingoProyector({ live, conSonido, senalRepetir }: { live: Live; conSonido: boolean; senalRepetir: number }) {
   const bingo = useBingo(live.event.code, live)
@@ -16,7 +17,7 @@ export function BingoProyector({ live, conSonido, senalRepetir }: { live: Live; 
   return (
     <>
       {conSonido && (
-        <ReproductorBingo codigo={live.event.code} bolillaId={ultima ? `${ultima.number}|${ultima.at}` : null} senalRepetir={senalRepetir} />
+        <ReproductorBingo codigo={live.event.code} bolillaId={ultima ? `${ultima.position}|${ultima.at}` : null} senalRepetir={senalRepetir} />
       )}
       {bingo ? <Tablero live={live} bingo={bingo} /> : <Encabezado live={live} grande />}
     </>
@@ -46,8 +47,9 @@ function Tablero({ live, bingo }: { live: Live; bingo: BingoPublico }) {
   }, [])
 
   const ultima = bingo.bolillas.at(-1)
-  const sonando = ultima ? !ultima.titulo && ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000 : false
+  const sonando = ultima ? ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000 : false
   const salieron = new Set(bingo.bolillas.map((b) => b.number))
+  const ultimoNumero = ultima?.number ?? null
   // Las últimas con nombre (en el Full, con el tablero de 90, entran 3).
   const conNombre = bingo.bolillas.filter((b) => b.titulo).slice(bingo.tipo === 'express' ? -4 : -3).reverse()
   const f = FORMATO[bingo.tipo]
@@ -67,21 +69,23 @@ function Tablero({ live, bingo }: { live: Live; bingo: BingoPublico }) {
           ) : (
             <>
               <div
-                key={ultima.number}
-                className="motion-safe:animate-aparecer flex h-[22cqw] w-[22cqw] items-center justify-center rounded-full bg-white font-titulo text-[11cqw] font-bold text-profundo shadow-2xl ring-[1.2cqw] ring-naranja"
+                key={`${ultima.position}-${ultima.revelada}`}
+                className={`motion-safe:animate-aparecer flex h-[22cqw] w-[22cqw] items-center justify-center rounded-full font-titulo text-[11cqw] font-bold shadow-2xl ring-[1.2cqw] ring-naranja ${
+                  ultima.revelada ? 'bg-white text-profundo' : 'bg-naranja text-white'
+                }`}
               >
-                {ultima.number}
+                {ultima.revelada ? ultima.number : '?'}
               </div>
-              {sonando ? (
-                <>
-                  <Ecualizador />
-                  <p className="font-titulo text-[3cqw] font-bold">¡A cantar! ¿Qué canción es?</p>
-                </>
-              ) : (
+              {ultima.revelada ? (
                 <div className="motion-safe:animate-aparecer">
                   <p className="font-titulo text-[3.6cqw] font-bold leading-tight">{ultima.titulo}</p>
                   <p className="text-[2.2cqw] font-semibold text-white/85">{ultima.artista}</p>
                 </div>
+              ) : (
+                <>
+                  {sonando && <Ecualizador />}
+                  <p className="font-titulo text-[3cqw] font-bold">¡A cantar! ¿Qué canción es?</p>
+                </>
               )}
             </>
           )}
@@ -94,7 +98,7 @@ function Tablero({ live, bingo }: { live: Live; bingo: BingoPublico }) {
         </p>
         <div className="grid gap-[0.45cqw]" style={{ gridTemplateColumns: `repeat(${columnas}, 1fr)` }}>
           {Array.from({ length: bingo.pool }, (_, i) => i + 1).map((n) => {
-            const es = n === ultima?.number
+            const es = n === ultimoNumero
             const salio = salieron.has(n)
             return (
               <span
