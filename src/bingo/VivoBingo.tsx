@@ -111,24 +111,28 @@ export function VivoBingo({ eventId, live, desfaseMs, setId, tipo, onRepetir }: 
       </button>
       {!enJuego && <p className="text-sm text-profundo/70">Para jugar, presentá el bloque del bingo.</p>}
       {actual && ultima && (
-        <div className="flex items-center gap-3 rounded-xl border-2 border-dashed border-naranja bg-naranja/5 px-3 py-2">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-naranja font-titulo text-xl font-bold text-white">
-            {ultima.number}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-extrabold uppercase tracking-wide text-naranja">{oculta ? 'Sonando (solo lo ves vos)' : sonando ? 'Sonando · revelada' : 'Última'}</p>
-            <p className="truncate font-bold">
-              {actual.titulo} <span className="font-semibold text-profundo/60">· {actual.artista}</span>
-            </p>
+        // La canción arriba, con todo el ancho (el panel es angosto); los botones, en su propia fila.
+        <div className="flex flex-col gap-2 rounded-xl border-2 border-dashed border-naranja bg-naranja/5 px-3 py-2">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-naranja font-titulo text-xl font-bold text-white">
+              {ultima.number}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-naranja">{oculta ? 'Sonando (solo lo ves vos)' : sonando ? 'Sonando · revelada' : 'Última'}</p>
+              <p className="font-bold leading-tight">{actual.titulo}</p>
+              <p className="text-sm font-semibold text-profundo/60">{actual.artista}</p>
+            </div>
           </div>
-          {oculta && (
-            <button onClick={() => void revelar()} className="min-h-toque rounded-xl bg-azul px-3 font-semibold text-white">
-              👁 Revelar ya
+          <div className="flex gap-2">
+            {oculta && (
+              <button onClick={() => void revelar()} className="min-h-toque flex-1 rounded-xl bg-azul px-3 font-semibold text-white">
+                👁 Revelar ya
+              </button>
+            )}
+            <button onClick={onRepetir} className="min-h-toque flex-1 rounded-xl border-2 border-profundo/15 px-3 font-semibold hover:bg-crema">
+              ▶ Repetir
             </button>
-          )}
-          <button onClick={onRepetir} className="min-h-toque rounded-xl border-2 border-profundo/15 px-3 font-semibold hover:bg-crema">
-            ▶ Repetir
-          </button>
+          </div>
         </div>
       )}
       {falla && <p className="rounded-xl bg-naranja/15 px-4 py-2 text-sm font-semibold">{falla}</p>}
