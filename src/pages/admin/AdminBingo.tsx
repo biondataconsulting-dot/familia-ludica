@@ -129,6 +129,7 @@ function UnSet({ setId }: { setId: string }) {
           })}
           <input value={filtro} onChange={(e) => setFiltro(e.target.value)} placeholder="Buscar en el set…" className={`${CAMPO} ml-auto max-w-xs`} />
         </div>
+        {datos.canciones.length > 0 && <DuracionTodas setId={setId} canciones={datos.canciones} onCambio={recargar} />}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="text-xs uppercase tracking-wide text-profundo/50">
@@ -272,6 +273,38 @@ function Cartones({ setId, datos, onCambio }: { setId: string; datos: Datos; onC
         </div>
       )}
     </Tarjeta>
+  )
+}
+
+/** La misma duración para todas las canciones del set, de una vez (el inicio de cada una no se toca). */
+function DuracionTodas({ setId, canciones, onCambio }: { setId: string; canciones: CancionSet[]; onCambio: () => void }) {
+  const distintas = [...new Set(canciones.map((c) => c.duracion))]
+  const [dura, setDura] = useState(String(distintas.length === 1 ? distintas[0] : 15))
+  const [msj, setMsj] = useState<{ ok: boolean; texto: string } | null>(null)
+
+  const aplicar = async (e: FormEvent) => {
+    e.preventDefault()
+    const n = Number(dura)
+    if (!window.confirm(`¿Poner ${n} segundos a las ${canciones.length} canciones del set?`)) return
+    setMsj(null)
+    try {
+      const k = await bingoAdmin.duracionTodas(setId, n)
+      setMsj({ ok: true, texto: `Listo: ${k} canciones con ${n} s.` })
+      onCambio()
+    } catch (err) {
+      setMsj({ ok: false, texto: mensajeDe(err) })
+    }
+  }
+
+  return (
+    <form onSubmit={aplicar} className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-crema px-3 py-2 text-sm">
+      <span className="font-semibold">Duración para todas:</span>
+      <input value={dura} onChange={(e) => setDura(e.target.value.replace(/\D/g, '').slice(0, 3))} inputMode="numeric" required className="w-16 rounded-lg border-2 border-profundo/15 px-2 py-1" />
+      <span>segundos</span>
+      <button className="rounded-lg bg-naranja px-3 py-1 font-semibold text-white">Aplicar a todas</button>
+      <span className="text-profundo/60">{distintas.length === 1 ? `Ahora todas duran ${distintas[0]} s.` : 'Ahora hay duraciones distintas.'}</span>
+      {msj && <span className={`font-bold ${msj.ok ? 'text-green-700' : 'text-naranja'}`}>{msj.texto}</span>}
+    </form>
   )
 }
 

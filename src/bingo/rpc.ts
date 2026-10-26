@@ -87,6 +87,7 @@ export const bingoAdmin = {
   borrarSet: (id: string) => llamar('admin_bingo_set_borrar', { p_set_id: id }),
   cancion: (p: { set_id: string; number: number; catalog_item_id: string; inicio: number; duracion: number; titulo_carton: string }) =>
     llamar('admin_bingo_cancion', { p }),
+  duracionTodas: (setId: string, duracion: number) => llamar<number>('admin_bingo_duracion_todas', { p_set_id: setId, p_duracion: duracion }),
   quitarCancion: (setId: string, n: number) => llamar('admin_bingo_cancion_quitar', { p_set_id: setId, p_number: n }),
   cartones: (setId: string, tipo: TipoBingo, cartones: Carton[]) =>
     llamar<number>('admin_bingo_cartones', { p_set_id: setId, p_tipo: tipo, p_cartones: cartones }),

@@ -290,7 +290,7 @@ Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos).
 
 ### 8.7 Bingo musical (bloque `bingo`)
 
-Un **set** fijo de hasta 90 canciones numeradas (`/admin/bingo`): cada número apunta a una canción del catálogo (tipo `pista_audio`) con **su propio inicio de estribillo y su duración** (no los de Hitster: acá el estribillo sí delata el título, y es lo buscado) y, opcional, un título corto para el cartón.
+Un **set** fijo de hasta 90 canciones numeradas (`/admin/bingo`): cada número apunta a una canción del catálogo (tipo `pista_audio`) con **su propio inicio de estribillo y su duración** (no los de Hitster: acá el estribillo sí delata el título, y es lo buscado) y, opcional, un título corto para el cartón. «Duración para todas» pone la misma duración a todo el set de una vez (el inicio de cada una no cambia).
 
 - **Dos tipos**, cada uno con su juego de cartones impresos y plastificados (se reutilizan):
   - **Express** (cartones **A**): canciones 1 a 40; cartón 3 × 5 con 9 (3 por fila; columnas de 8 números); A5 apaisado; ~11–15 min.
