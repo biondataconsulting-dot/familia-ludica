@@ -17,14 +17,19 @@ function marcar(evento: string) {
  * Proyector: el estribillo de la última bolilla, con un player de YouTube propio e invisible. Arranca con
  * entrada suave y se corta al cumplir la duración. Si el proyector se recarga a mitad de la canción, sigue
  * desde donde va; si ya terminó, no suena. «Repetir» (señal del conductor) la vuelve a pasar entera.
+ * «Dejar sonando» (extendida) saca el corte: sigue hasta que el conductor la corta («Cortar»: salida suave).
  */
-export function ReproductorBingo({ codigo, bolillaId, senalRepetir }: { codigo: string; bolillaId: string | null; senalRepetir: number }) {
+type Props = { codigo: string; bolillaId: string | null; senalRepetir: number; extendida: boolean; cortada: boolean }
+
+export function ReproductorBingo({ codigo, bolillaId, senalRepetir, extendida, cortada }: Props) {
   const contenedor = useRef<HTMLDivElement>(null)
   const player = useRef<ReproductorYT | null>(null)
   const listo = useRef<Promise<ReproductorYT> | null>(null)
   const fin = useRef<number | null>(null)
   const rampa = useRef<number | undefined>(undefined)
   const repetirInicial = useRef(senalRepetir)
+  // La canción se cortó sola al cumplir la duración (si después la extienden, sigue desde ahí).
+  const cortoPorDuracion = useRef(false)
 
   const obtener = () => {
     if (!listo.current) {
@@ -74,10 +79,12 @@ export function ReproductorBingo({ codigo, bolillaId, senalRepetir }: { codigo: 
     // solo si el proyector se recargó a mitad de la canción, sigue desde donde va.
     const transcurrido = (Date.now() - Date.parse(m.at)) / 1000
     const pasado = entera || transcurrido < 4 ? 0 : transcurrido
-    if (pasado >= m.duracion) return
+    if (m.cortada && !entera) return
+    if (pasado >= m.duracion && !m.extendida) return
     const p = await obtener()
     marcar(`suena (${m.youtube_id} desde ${Math.round(m.inicio + pasado)} s)`)
-    fin.current = m.inicio + m.duracion
+    fin.current = m.extendida ? null : m.inicio + m.duracion
+    cortoPorDuracion.current = false
     p.unMute()
     p.setVolume(0)
     p.loadVideoById({ videoId: m.youtube_id, startSeconds: m.inicio + pasado })
@@ -96,12 +103,36 @@ export function ReproductorBingo({ codigo, bolillaId, senalRepetir }: { codigo: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [senalRepetir])
 
+  // «Dejar sonando»: sin corte; si ya se había cortado por duración, sigue desde ahí.
+  useEffect(() => {
+    if (!extendida || cortada) return
+    fin.current = null
+    const p = player.current
+    if (p && cortoPorDuracion.current) {
+      cortoPorDuracion.current = false
+      marcar('sigue sonando')
+      p.playVideo()
+      volumen(p, 0, VOLUMEN, ENTRADA_MS)
+    }
+  }, [extendida, cortada, bolillaId])
+
+  // «Cortar» del conductor: salida suave.
+  useEffect(() => {
+    if (!cortada) return
+    fin.current = null
+    const p = player.current
+    if (!p || p.getPlayerState() !== ESTADO_YT.REPRODUCIENDO) return
+    marcar('cortada por el conductor')
+    volumen(p, VOLUMEN, 0, SALIDA_MS, () => p.pauseVideo())
+  }, [cortada, bolillaId])
+
   // Corte al cumplir la duración.
   useEffect(() => {
     const id = window.setInterval(() => {
       const p = player.current
       if (!p || fin.current == null || p.getPlayerState() !== ESTADO_YT.REPRODUCIENDO || p.getCurrentTime() < fin.current) return
       fin.current = null
+      cortoPorDuracion.current = true
       marcar('corte por duración')
       volumen(p, VOLUMEN, 0, SALIDA_MS, () => p.pauseVideo())
     }, 250)

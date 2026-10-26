@@ -26,9 +26,9 @@ export type BingoPublico = {
   server_now: string
   tipo: TipoBingo
   pool: number
-  bolillas: { number: number | null; position: number; at: string; duracion: number; revelada: boolean; titulo?: string; artista?: string }[]
+  bolillas: { number: number | null; position: number; at: string; duracion: number; revelada: boolean; extendida: boolean; cortada: boolean; titulo?: string; artista?: string }[]
 }
-export type MediaBingo = { id: string; at: string; youtube_id: string; inicio: number; duracion: number }
+export type MediaBingo = { id: string; at: string; youtube_id: string; inicio: number; duracion: number; extendida: boolean; cortada: boolean }
 export type Verificacion = {
   numero: number
   tipo: TipoBingo
@@ -92,6 +92,8 @@ export const bingoAdmin = {
     llamar<number>('admin_bingo_cartones', { p_set_id: setId, p_tipo: tipo, p_cartones: cartones }),
   borrarCartones: (setId: string, tipo: TipoBingo) => llamar('admin_bingo_cartones_borrar', { p_set_id: setId, p_tipo: tipo }),
   revelar: (eventId: string) => llamar('admin_bingo_revelar', { p_event_id: eventId }),
+  extender: (eventId: string) => llamar('admin_bingo_extender', { p_event_id: eventId }),
+  cortar: (eventId: string) => llamar('admin_bingo_cortar', { p_event_id: eventId }),
   sacar: (eventId: string) => llamar<{ number: number; position: number }>('admin_bingo_sacar', { p_event_id: eventId }),
   verificar: (eventId: string, numero: number) => llamar<Verificacion>('admin_bingo_verificar', { p_event_id: eventId, p_numero: numero }),
 }

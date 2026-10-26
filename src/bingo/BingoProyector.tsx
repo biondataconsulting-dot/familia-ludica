@@ -17,7 +17,13 @@ export function BingoProyector({ live, conSonido, senalRepetir }: { live: Live; 
   return (
     <>
       {conSonido && (
-        <ReproductorBingo codigo={live.event.code} bolillaId={ultima ? `${ultima.position}|${ultima.at}` : null} senalRepetir={senalRepetir} />
+        <ReproductorBingo
+          codigo={live.event.code}
+          bolillaId={ultima ? `${ultima.position}|${ultima.at}` : null}
+          senalRepetir={senalRepetir}
+          extendida={ultima?.extendida ?? false}
+          cortada={ultima?.cortada ?? false}
+        />
       )}
       {bingo ? <Tablero live={live} bingo={bingo} /> : <Encabezado live={live} grande />}
     </>
@@ -47,7 +53,9 @@ function Tablero({ live, bingo }: { live: Live; bingo: BingoPublico }) {
   }, [])
 
   const ultima = bingo.bolillas.at(-1)
-  const sonando = ultima ? ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000 : false
+  const sonando = ultima
+    ? !ultima.cortada && (ultima.extendida || ahora + desfase < Date.parse(ultima.at) + ultima.duracion * 1000)
+    : false
   const salieron = new Set(bingo.bolillas.map((b) => b.number))
   const ultimoNumero = ultima?.number ?? null
   // Las últimas con nombre (en el Full, con el tablero de 90, entran 3).
@@ -77,7 +85,8 @@ function Tablero({ live, bingo }: { live: Live; bingo: BingoPublico }) {
                 {ultima.revelada ? ultima.number : '?'}
               </div>
               {ultima.revelada ? (
-                <div className="motion-safe:animate-aparecer">
+                <div className="motion-safe:animate-aparecer flex flex-col items-center gap-[0.8cqw]">
+                  {sonando && <Ecualizador />}
                   <p className="font-titulo text-[3.6cqw] font-bold leading-tight">{ultima.titulo}</p>
                   <p className="text-[2.2cqw] font-semibold text-white/85">{ultima.artista}</p>
                 </div>
