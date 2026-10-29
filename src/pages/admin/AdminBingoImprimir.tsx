@@ -39,7 +39,7 @@ export default function AdminBingoImprimir() {
       <div className="mb-4 flex flex-wrap items-center gap-3 rounded-carta bg-white p-4 shadow-md print:hidden">
         <p className="min-w-0 flex-1 text-sm">
           <b>
-            {cartones.length} cartones {f.nombre}
+            {cartones.length} {cartones.length === 1 ? 'cartón' : 'cartones'} {f.nombre}
             {soloCambiados && ' para reimprimir'}
           </b>{' '}
           del set «{datos.set.name}», uno por hoja {tipo === 'express' ? 'A5' : 'A4'} apaisada. En la ventana de impresión: tamaño{' '}
