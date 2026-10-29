@@ -322,14 +322,21 @@ function Cartones({ setId, datos, onCambio }: { setId: string; datos: Datos; onC
                   </p>
                   <p className="mb-2 text-profundo/70">
                     {pend.numeros.length === 1 ? 'Cambió la canción' : 'Cambiaron las canciones'} {pend.numeros.join(', ')} después de
-                    imprimir. Los números del cartón no cambian: reimprimí solo esos y reemplazalos.
+                    imprimir. Los números del cartón no cambian: reimprimí solo esos, o todos los cartones si preferís un juego
+                    parejo. Otra opción es generar cartones nuevos (con otros números) e imprimirlos de cero.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <a href={`/admin/bingo/${setId}/imprimir/${t}?solo=cambiados`} target="_blank" rel="noopener">
                       <BotonPrincipal type="button">Imprimir solo esos ↗</BotonPrincipal>
                     </a>
+                    <a href={`/admin/bingo/${setId}/imprimir/${t}`} target="_blank" rel="noopener">
+                      <BotonSecundario type="button">Imprimir todos ↗</BotonSecundario>
+                    </a>
                     <BotonSecundario disabled={ocupado} onClick={() => void reimpresos(t)}>
                       Ya los reimprimí
+                    </BotonSecundario>
+                    <BotonSecundario disabled={ocupado} onClick={() => void generar(t)}>
+                      Generar nuevos
                     </BotonSecundario>
                   </div>
                 </div>

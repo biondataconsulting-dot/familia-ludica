@@ -48,7 +48,7 @@ export default function AdminBingoImprimir() {
         <button onClick={() => window.print()} className="min-h-toque rounded-xl bg-naranja px-4 font-titulo font-semibold text-white">
           Imprimir
         </button>
-        {soloCambiados && cartones.length > 0 && (
+        {cambiados.size > 0 && cartones.length > 0 && (
           <button
             disabled={listo}
             onClick={() =>
