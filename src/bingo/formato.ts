@@ -84,3 +84,24 @@ export function generarCartones(tipo: TipoBingo, cantidad: number, azar: () => n
   }
   return cartones
 }
+
+/**
+ * Cartones de un tipo que hay que reimprimir: los que tienen algún número cuya canción (o título) cambió después
+ * de generarlos o de la última reimpresión. Los números del cartón no cambian, solo lo que lleva impreso.
+ */
+export function paraReimprimir(
+  tipo: TipoBingo,
+  canciones: { number: number; carton_cambiado_at: string | null }[],
+  cartones: { numero: number; tipo: TipoBingo; filas: Carton; created_at: string }[],
+  reimpreso: string | undefined,
+): { numeros: number[]; cartones: number[] } {
+  const propios = cartones.filter((c) => c.tipo === tipo)
+  if (propios.length === 0) return { numeros: [], cartones: [] }
+  const desde = Math.max(...propios.map((c) => Date.parse(c.created_at)), reimpreso ? Date.parse(reimpreso) : 0)
+  const numeros = canciones
+    .filter((c) => c.number <= FORMATO[tipo].pool && c.carton_cambiado_at && Date.parse(c.carton_cambiado_at) > desde)
+    .map((c) => c.number)
+    .sort((a, b) => a - b)
+  const cambiados = new Set(numeros)
+  return { numeros, cartones: propios.filter((c) => c.filas.flat().some((n) => cambiados.has(n))).map((c) => c.numero) }
+}

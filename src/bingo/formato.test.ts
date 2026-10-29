@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { codigoCarton, columna, FORMATO, generarCartones, rango, type TipoBingo } from './formato'
+import { codigoCarton, columna, FORMATO, generarCartones, paraReimprimir, rango, type TipoBingo } from './formato'
 
 describe('cartones de bingo', () => {
   for (const tipo of ['express', 'full'] as TipoBingo[]) {
@@ -42,5 +42,29 @@ describe('cartones de bingo', () => {
   it('código del cartón', () => {
     expect(codigoCarton('express', 7)).toBe('A-007')
     expect(codigoCarton('full', 36)).toBe('C-036')
+  })
+})
+
+describe('cartones para reimprimir', () => {
+  const cartones = [
+    { numero: 1, tipo: 'express' as const, filas: [[1, 9, 17], [2, 25, 33], [10, 18, 26]], created_at: '2026-11-01T10:00:00Z' },
+    { numero: 2, tipo: 'express' as const, filas: [[3, 11, 19], [4, 27, 35], [12, 20, 28]], created_at: '2026-11-01T10:00:00Z' },
+    { numero: 1, tipo: 'full' as const, filas: [[1, 10, 20, 30, 40], [12, 50, 60, 70, 80], [2, 21, 31, 41, 51]], created_at: '2026-11-01T10:00:00Z' },
+  ]
+  const cancion = (number: number, at: string | null) => ({ number, carton_cambiado_at: at })
+
+  it('solo los cartones que tienen un número cambiado después de imprimir', () => {
+    const r = paraReimprimir('express', [cancion(9, '2026-11-02T10:00:00Z'), cancion(3, '2026-10-30T10:00:00Z'), cancion(4, null)], cartones, undefined)
+    expect(r).toEqual({ numeros: [9], cartones: [1] })
+  })
+  it('un número fuera del tipo no cuenta (60 no está en Express)', () => {
+    expect(paraReimprimir('express', [cancion(60, '2026-11-02T10:00:00Z')], cartones, undefined).numeros).toEqual([])
+    expect(paraReimprimir('full', [cancion(60, '2026-11-02T10:00:00Z')], cartones, undefined)).toEqual({ numeros: [60], cartones: [1] })
+  })
+  it('«Ya los reimprimí» los deja al día', () => {
+    expect(paraReimprimir('express', [cancion(9, '2026-11-02T10:00:00Z')], cartones, '2026-11-03T10:00:00Z').cartones).toEqual([])
+  })
+  it('sin cartones de ese tipo, nada', () => {
+    expect(paraReimprimir('full', [cancion(9, '2026-11-02T10:00:00Z')], cartones.slice(0, 2), undefined)).toEqual({ numeros: [], cartones: [] })
   })
 })

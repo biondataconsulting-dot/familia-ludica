@@ -10,13 +10,16 @@ export type CancionSet = {
   inicio: number
   duracion: number
   titulo_carton: string | null
+  /** Cuándo cambió lo que el cartón tiene impreso (canción, título corto o título/artista del catálogo). */
+  carton_cambiado_at: string | null
   /** Del catálogo (solo lo lee el conductor). */
   titulo: string
   artista: string
   youtube_id: string
 }
-export type SetBingo = { id: string; name: string; created_at: string }
-export type CartonGuardado = { numero: number; tipo: TipoBingo; filas: Carton }
+/** `impresos`: cuándo se reimprimió cada tipo por última vez («Ya los reimprimí»). */
+export type SetBingo = { id: string; name: string; created_at: string; impresos: Partial<Record<TipoBingo, string>> }
+export type CartonGuardado = { numero: number; tipo: TipoBingo; filas: Carton; created_at: string }
 
 /**
  * Lo que ven proyector y celulares. Número, título y artista recién cuando se revela la bolilla (terminó el
@@ -56,19 +59,19 @@ type FilaCancion = Omit<CancionSet, 'titulo' | 'artista' | 'youtube_id'> & {
 
 export const bingoAdmin = {
   sets: async (): Promise<SetBingo[]> => {
-    const { data, error } = await supabase.from('bingo_sets').select('id, name, created_at').order('created_at')
+    const { data, error } = await supabase.from('bingo_sets').select('id, name, created_at, impresos').order('created_at')
     if (error) throw new ErrorRpc('No se pudieron leer los sets de bingo.')
     return data as SetBingo[]
   },
   set: async (id: string): Promise<{ set: SetBingo; canciones: CancionSet[]; cartones: CartonGuardado[] }> => {
     const [s, c, k] = await Promise.all([
-      supabase.from('bingo_sets').select('id, name, created_at').eq('id', id).maybeSingle(),
+      supabase.from('bingo_sets').select('id, name, created_at, impresos').eq('id', id).maybeSingle(),
       supabase
         .from('bingo_songs')
-        .select('number, catalog_item_id, inicio, duracion, titulo_carton, catalog_items(content, catalog_solutions(solution))')
+        .select('number, catalog_item_id, inicio, duracion, titulo_carton, carton_cambiado_at, catalog_items(content, catalog_solutions(solution))')
         .eq('set_id', id)
         .order('number'),
-      supabase.from('bingo_cards').select('numero, tipo, filas').eq('set_id', id).order('tipo').order('numero'),
+      supabase.from('bingo_cards').select('numero, tipo, filas, created_at').eq('set_id', id).order('tipo').order('numero'),
     ])
     if (s.error || c.error || k.error) throw new ErrorRpc('No se pudo leer el set. Revisá la conexión.')
     if (!s.data) throw new ErrorRpc('No encontramos ese set.', 'P0002')
@@ -85,6 +88,9 @@ export const bingoAdmin = {
   },
   guardarSet: (p: { id?: string; name: string }) => llamar<string>('admin_bingo_set', { p }),
   borrarSet: (id: string) => llamar('admin_bingo_set_borrar', { p_set_id: id }),
+  /** Copia con las mismas canciones y sin cartones (sirve también para un set ya jugado). */
+  duplicarSet: (id: string, nombre?: string) => llamar<string>('admin_bingo_set_duplicar', { p_set_id: id, p_name: nombre ?? null }),
+  reimpresos: (setId: string, tipo: TipoBingo) => llamar('admin_bingo_reimpresos', { p_set_id: setId, p_tipo: tipo }),
   cancion: (p: { set_id: string; number: number; catalog_item_id: string; inicio: number; duracion: number; titulo_carton: string }) =>
     llamar('admin_bingo_cancion', { p }),
   duracionTodas: (setId: string, duracion: number) => llamar<number>('admin_bingo_duracion_todas', { p_set_id: setId, p_duracion: duracion }),

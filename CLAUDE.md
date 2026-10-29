@@ -48,7 +48,7 @@ Si algo cambia, actualizar **este archivo y docs/SPEC.md**.
 ## Panel del conductor (rutas)
 
 - `/admin` noches (crear, armar, duplicar, conducir) · `/admin/noche/:id` datos, bloques e ítems, borrar noche (confirma con el código) · `/admin/vivo/:id` conducir
-- `/admin/bingo` sets del bingo musical (canciones, cartones, imprimir)
+- `/admin/bingo` sets del bingo musical (canciones, cartones, imprimir, duplicar, borrar; reimprimir solo los cartones con canciones cambiadas)
 - `/admin/catalogo` lista con filtros · `/admin/catalogo/:id` (o `nuevo?tipo=…`) formulario con vista previa · `/admin/importar` JSON/CSV
 - Validación de ítems: `src/content/validarItem.ts` = `private.error_item` (mismos mensajes; casos en `casos-items.ts`).
 

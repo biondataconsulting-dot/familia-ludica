@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { BotonPrincipal, BotonSecundario, CAMPO, Etiqueta, Mensaje, Tarjeta } from '../../admin/ui'
 import { useCatalogo } from '../../admin/useCatalogo'
-import { FORMATO, generarCartones, type TipoBingo } from '../../bingo/formato'
+import { FORMATO, generarCartones, paraReimprimir, type TipoBingo } from '../../bingo/formato'
 import { bingoAdmin, type CancionSet, type CartonGuardado, type SetBingo } from '../../bingo/rpc'
 import { ErrorRpc } from '../../lib/rpc'
 
@@ -21,9 +21,29 @@ function Sets() {
   const [nombre, setNombre] = useState('')
   const navegar = useNavigate()
 
-  useEffect(() => {
+  const recargar = useCallback(() => {
     bingoAdmin.sets().then(setSets, (e) => setError(mensajeDe(e)))
   }, [])
+  useEffect(recargar, [recargar])
+
+  const duplicar = async (s: SetBingo) => {
+    setError(null)
+    try {
+      navegar(`/admin/bingo/${await bingoAdmin.duplicarSet(s.id)}`)
+    } catch (err) {
+      setError(mensajeDe(err))
+    }
+  }
+  const borrar = async (s: SetBingo) => {
+    if (!window.confirm(`¿Borrar el set «${s.name}» con sus canciones y cartones? No se puede deshacer.`)) return
+    setError(null)
+    try {
+      await bingoAdmin.borrarSet(s.id)
+      recargar()
+    } catch (err) {
+      setError(mensajeDe(err))
+    }
+  }
 
   const crear = async (e: FormEvent) => {
     e.preventDefault()
@@ -41,16 +61,24 @@ function Sets() {
         <p className="mb-3 text-sm text-profundo/70">
           Un set son hasta 90 canciones numeradas, cada una con el momento del estribillo. Con el set se generan los cartones
           (Express: canciones 1 a 40, ~15 min · Full: 1 a 90, ~30 min) y en una noche se agrega un bloque «Bingo musical».
+          «Duplicar» copia las canciones a un set nuevo (sin cartones), también de un set ya jugado, para armar otra edición sin
+          tocar el original.
         </p>
         {error && <Mensaje>{error}</Mensaje>}
         {sets?.length === 0 && <p className="text-sm text-profundo/60">Todavía no hay sets.</p>}
         <ul className="mb-4 flex flex-col gap-2">
           {sets?.map((s) => (
-            <li key={s.id}>
-              <Link to={`/admin/bingo/${s.id}`} className="flex rounded-xl border-2 border-profundo/10 px-4 py-3 font-semibold hover:bg-crema">
+            <li key={s.id} className="flex items-center gap-2 rounded-xl border-2 border-profundo/10 pr-2 hover:bg-crema">
+              <Link to={`/admin/bingo/${s.id}`} className="flex min-w-0 flex-1 px-4 py-3 font-semibold">
                 {s.name}
                 <span className="ml-auto text-azul">Abrir →</span>
               </Link>
+              <BotonSecundario type="button" onClick={() => void duplicar(s)} title="Copia con las mismas canciones, sin cartones">
+                Duplicar
+              </BotonSecundario>
+              <button type="button" onClick={() => void borrar(s)} className="px-2 font-semibold text-naranja" aria-label={`Borrar el set ${s.name}`}>
+                Borrar
+              </button>
             </li>
           ))}
         </ul>
@@ -100,8 +128,9 @@ function UnSet({ setId }: { setId: string }) {
   const porNumero = new Map(datos.canciones.map((c) => [c.number, c]))
   const usos = new Map<string, number>()
   for (const c of datos.canciones) usos.set(c.catalog_item_id, (usos.get(c.catalog_item_id) ?? 0) + 1)
-  // Un número impreso en cartones tiene la canción fija.
+  // Números que están en cartones generados: su canción se puede cambiar, pero hay que reimprimir esos cartones.
   const impresoHasta = Math.max(0, ...datos.cartones.map((c) => FORMATO[c.tipo].pool))
+  const reimprimir = new Set(TIPOS.flatMap((t) => paraReimprimir(t, datos.canciones, datos.cartones, datos.set.impresos[t]).numeros))
   const f = filtro.trim().toLowerCase()
 
   return (
@@ -115,7 +144,8 @@ function UnSet({ setId }: { setId: string }) {
         <p className="mb-2 text-sm text-profundo/70">
           Elegí la canción de cada número (del catálogo, tipo Hitster musical), el segundo donde empieza el estribillo y cuánto
           suena. «▶» abre YouTube justo en ese segundo. El «título para el cartón» es opcional (para títulos largos).
-          {impresoHasta > 0 && ` Los números del 1 al ${impresoHasta} ya están en cartones: su canción no se cambia (el inicio y la duración sí).`}
+          {impresoHasta > 0 &&
+            ` Los números del 1 al ${impresoHasta} ya están en cartones: si cambiás su canción o su título, reimprimí los cartones que la tienen (los números no cambian).`}
         </p>
         <div className="mb-3 flex flex-wrap gap-3 text-sm font-semibold">
           {TIPOS.map((t) => {
@@ -156,7 +186,8 @@ function UnSet({ setId }: { setId: string }) {
                     numero={n}
                     actual={porNumero.get(n)}
                     opciones={canciones}
-                    fija={n <= impresoHasta && porNumero.has(n)}
+                    impresa={n <= impresoHasta && porNumero.has(n)}
+                    reimprimir={reimprimir.has(n)}
                     repetida={(usos.get(porNumero.get(n)?.catalog_item_id ?? '') ?? 0) > 1}
                     onCambio={recargar}
                   />
@@ -189,6 +220,13 @@ function NombreSet({ set, onCambio }: { set: SetBingo; onCambio: () => void }) {
         <BotonSecundario
           type="button"
           className="ml-auto"
+          title="Copia con las mismas canciones, sin cartones"
+          onClick={() => bingoAdmin.duplicarSet(set.id).then((id) => navegar(`/admin/bingo/${id}`), (err) => setFalla(mensajeDe(err)))}
+        >
+          Duplicar set
+        </BotonSecundario>
+        <BotonSecundario
+          type="button"
           onClick={() => {
             if (window.confirm(`¿Borrar el set «${set.name}» con sus canciones y cartones?`)) {
               bingoAdmin.borrarSet(set.id).then(() => navegar('/admin/bingo'), (err) => setFalla(mensajeDe(err)))
@@ -230,12 +268,26 @@ function Cartones({ setId, datos, onCambio }: { setId: string; datos: Datos; onC
     }
   }
 
+  const reimpresos = async (tipo: TipoBingo) => {
+    setOcupado(true)
+    setMsj(null)
+    try {
+      await bingoAdmin.reimpresos(setId, tipo)
+      onCambio()
+    } catch (e) {
+      setMsj({ ok: false, texto: mensajeDe(e) })
+    } finally {
+      setOcupado(false)
+    }
+  }
+
   return (
     <Tarjeta titulo="Cartones">
       <div className="grid gap-3 md:grid-cols-2">
         {TIPOS.map((t) => {
           const f = FORMATO[t]
           const hay = datos.cartones.filter((c) => c.tipo === t).length
+          const pend = paraReimprimir(t, datos.canciones, datos.cartones, datos.set.impresos[t])
           return (
             <div key={t} className="rounded-xl border-2 border-profundo/10 p-3">
               <p className="font-bold">
@@ -263,6 +315,25 @@ function Cartones({ setId, datos, onCambio }: { setId: string; datos: Datos; onC
                   </a>
                 )}
               </div>
+              {pend.cartones.length > 0 && (
+                <div className="mt-3 rounded-xl bg-naranja/10 p-3 text-sm">
+                  <p className="font-bold">
+                    🖨 Para reimprimir: {pend.cartones.length} {pend.cartones.length === 1 ? 'cartón' : 'cartones'}
+                  </p>
+                  <p className="mb-2 text-profundo/70">
+                    {pend.numeros.length === 1 ? 'Cambió la canción' : 'Cambiaron las canciones'} {pend.numeros.join(', ')} después de
+                    imprimir. Los números del cartón no cambian: reimprimí solo esos y reemplazalos.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <a href={`/admin/bingo/${setId}/imprimir/${t}?solo=cambiados`} target="_blank" rel="noopener">
+                      <BotonPrincipal type="button">Imprimir solo esos ↗</BotonPrincipal>
+                    </a>
+                    <BotonSecundario disabled={ocupado} onClick={() => void reimpresos(t)}>
+                      Ya los reimprimí
+                    </BotonSecundario>
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}
@@ -313,12 +384,14 @@ type PropsFila = {
   numero: number
   actual: CancionSet | undefined
   opciones: { id: string; texto: string }[]
-  fija: boolean
+  /** Está en cartones generados: cambiar la canción o el título obliga a reimprimirlos. */
+  impresa: boolean
+  reimprimir: boolean
   repetida: boolean
   onCambio: () => void
 }
 
-function FilaCancion({ setId, numero, actual, opciones, fija, repetida, onCambio }: PropsFila) {
+function FilaCancion({ setId, numero, actual, opciones, impresa, reimprimir, repetida, onCambio }: PropsFila) {
   const [item, setItem] = useState(actual?.catalog_item_id ?? '')
   const [inicio, setInicio] = useState(String(actual?.inicio ?? 0))
   const [dura, setDura] = useState(String(actual?.duracion ?? 15))
@@ -331,6 +404,15 @@ function FilaCancion({ setId, numero, actual, opciones, fija, repetida, onCambio
     corto !== (actual?.titulo_carton ?? '')
 
   const guardar = async () => {
+    const cambiaCarton = item !== actual?.catalog_item_id || corto !== (actual?.titulo_carton ?? '')
+    if (
+      impresa &&
+      cambiaCarton &&
+      !window.confirm(
+        `El número ${numero} está en cartones impresos. Si cambiás la canción o su título, vas a tener que reimprimir los cartones que lo tienen (los números no cambian). ¿Seguir?`,
+      )
+    )
+      return
     setEstado(null)
     try {
       await bingoAdmin.cancion({ set_id: setId, number: numero, catalog_item_id: item, inicio: Number(inicio || 0), duracion: Number(dura || 15), titulo_carton: corto })
@@ -344,7 +426,7 @@ function FilaCancion({ setId, numero, actual, opciones, fija, repetida, onCambio
     <tr className={`border-t border-profundo/10 align-top ${repetida ? 'bg-naranja/10' : ''}`}>
       <td className="py-1.5 font-titulo text-base font-bold">{numero}</td>
       <td className="py-1.5 pr-2">
-        <select value={item} onChange={(e) => setItem(e.target.value)} disabled={fija} className="w-full rounded-lg border-2 border-profundo/15 px-2 py-1 disabled:bg-crema">
+        <select value={item} onChange={(e) => setItem(e.target.value)} className="w-full rounded-lg border-2 border-profundo/15 px-2 py-1">
           <option value="">— elegir canción —</option>
           {opciones.map((o) => (
             <option key={o.id} value={o.id}>
@@ -353,7 +435,11 @@ function FilaCancion({ setId, numero, actual, opciones, fija, repetida, onCambio
           ))}
         </select>
         {repetida && <p className="text-xs font-bold text-naranja">Esta canción está en otro número del set.</p>}
-        {fija && <p className="text-xs text-profundo/50">🔒 En cartones impresos</p>}
+        {reimprimir ? (
+          <p className="text-xs font-bold text-naranja">🖨 Cambió después de imprimir: reimprimí sus cartones</p>
+        ) : (
+          impresa && <p className="text-xs text-profundo/50">🖨 En cartones impresos</p>
+        )}
         {estado && <p className={`text-xs font-bold ${estado.ok ? 'text-green-700' : 'text-naranja'}`}>{estado.texto}</p>}
       </td>
       <td className="py-1.5 pr-2">
@@ -382,7 +468,7 @@ function FilaCancion({ setId, numero, actual, opciones, fija, repetida, onCambio
             Guardar
           </button>
         )}
-        {!cambio && actual && !fija && (
+        {!cambio && actual && !impresa && (
           <button
             onClick={() => bingoAdmin.quitarCancion(setId, numero).then(onCambio, (e) => setEstado({ ok: false, texto: mensajeDe(e) }))}
             className="px-1 text-naranja"
