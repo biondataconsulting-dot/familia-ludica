@@ -186,7 +186,7 @@ function UnSet({ setId }: { setId: string }) {
                     numero={n}
                     actual={porNumero.get(n)}
                     opciones={canciones}
-                    impresa={n <= impresoHasta && porNumero.has(n)}
+                    impresa={n <= impresoHasta}
                     reimprimir={reimprimir.has(n)}
                     repetida={(usos.get(porNumero.get(n)?.catalog_item_id ?? '') ?? 0) > 1}
                     onCambio={recargar}
@@ -442,7 +442,9 @@ function FilaCancion({ setId, numero, actual, opciones, impresa, reimprimir, rep
           ))}
         </select>
         {repetida && <p className="text-xs font-bold text-naranja">Esta canción está en otro número del set.</p>}
-        {reimprimir ? (
+        {impresa && !actual ? (
+          <p className="text-xs font-bold text-naranja">⚠ Está en cartones impresos: elegí una canción para poder jugar</p>
+        ) : reimprimir ? (
           <p className="text-xs font-bold text-naranja">🖨 Cambió después de imprimir: reimprimí sus cartones</p>
         ) : (
           impresa && <p className="text-xs text-profundo/50">🖨 En cartones impresos</p>
@@ -475,9 +477,18 @@ function FilaCancion({ setId, numero, actual, opciones, impresa, reimprimir, rep
             Guardar
           </button>
         )}
-        {!cambio && actual && !impresa && (
+        {!cambio && actual && (
           <button
-            onClick={() => bingoAdmin.quitarCancion(setId, numero).then(onCambio, (e) => setEstado({ ok: false, texto: mensajeDe(e) }))}
+            onClick={() => {
+              if (
+                impresa &&
+                !window.confirm(
+                  `El número ${numero} está en cartones impresos. Si sacás la canción, ese bingo no se puede jugar hasta que elijas otra (y después hay que reimprimir esos cartones). ¿Sacarla?`,
+                )
+              )
+                return
+              bingoAdmin.quitarCancion(setId, numero).then(onCambio, (e) => setEstado({ ok: false, texto: mensajeDe(e) }))
+            }}
             className="px-1 text-naranja"
             aria-label={`Sacar la canción del número ${numero}`}
           >
