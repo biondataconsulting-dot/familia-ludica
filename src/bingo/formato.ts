@@ -1,6 +1,6 @@
 /**
  * Formato de los cartones del bingo musical (igual que private.bingo_* en la base, que los vuelve a validar).
- * · express: canciones 1–40, 3 filas × 5 columnas, 3 por fila (9 en total); columnas de 8 números.
+ * · express: canciones 1–40, 3 filas × 5 columnas, 4 por fila (12 en total); columnas de 8 números.
  * · full: canciones 1–90, 3 filas × 9 columnas, 5 por fila (15 en total); columnas por decena (1–9 … 80–90).
  * Cada columna tiene de 1 a 3 números, de menor a mayor de arriba hacia abajo (como un cartón de verdad).
  */
@@ -10,7 +10,7 @@ export type TipoBingo = 'express' | 'full'
 export type Carton = number[][]
 
 export const FORMATO: Record<TipoBingo, { nombre: string; letra: string; pool: number; columnas: number; porFila: number; minutos: string }> = {
-  express: { nombre: 'Express', letra: 'A', pool: 40, columnas: 5, porFila: 3, minutos: '~15 min' },
+  express: { nombre: 'Express', letra: 'A', pool: 40, columnas: 5, porFila: 4, minutos: '~15–20 min' },
   full: { nombre: 'Full', letra: 'C', pool: 90, columnas: 9, porFila: 5, minutos: '~30 min' },
 }
 

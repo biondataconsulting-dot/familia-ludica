@@ -60,7 +60,7 @@ function Sets() {
       <Tarjeta titulo="🎵 Bingo musical · sets de canciones">
         <p className="mb-3 text-sm text-profundo/70">
           Un set son hasta 90 canciones numeradas, cada una con el momento del estribillo. Con el set se generan los cartones
-          (Express: canciones 1 a 40, ~15 min · Full: 1 a 90, ~30 min) y en una noche se agrega un bloque «Bingo musical».
+          (Express: canciones 1 a 40, ~15–20 min · Full: 1 a 90, ~30 min) y en una noche se agrega un bloque «Bingo musical».
           «Duplicar» copia las canciones a un set nuevo (sin cartones), también de un set ya jugado, para armar otra edición sin
           tocar el original.
         </p>
