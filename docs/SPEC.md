@@ -292,7 +292,7 @@ Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos).
 
 Un **set** fijo de hasta 90 canciones numeradas (`/admin/bingo`): cada número apunta a una canción del catálogo (tipo `pista_audio`) con **su propio inicio de estribillo y su duración** (no los de Hitster: acá el estribillo sí delata el título, y es lo buscado) y, opcional, un título corto para el cartón. «Duración para todas» pone la misma duración a todo el set de una vez (el inicio de cada una no cambia).
 
-- **Dos tipos**, cada uno con su juego de cartones impresos y plastificados (se reutilizan):
+- **Dos tipos**, cada uno con sus cartones impresos **descartables** (se generan e imprimen para cada noche, así cada evento puede usar su propio set):
   - **Express** (cartones **A**): canciones 1 a 40; cartón 3 × 5 con 12 (4 por fila; columnas de 8 números); ~15–20 min (con canciones de 20–30 s y 25 cartones: línea a los ~14 temas, bingo a los ~31).
   - **Full** (cartones **C**): canciones 1 a 90; cartón 3 × 9 con 15 (5 por fila; columnas por decena, 1–9 … 80–90); ~27–30 min.
   - (La letra B queda para un tipo intermedio, si hace falta.)

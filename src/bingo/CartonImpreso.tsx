@@ -13,7 +13,8 @@ type Props = {
 }
 
 /**
- * Un cartón para imprimir y plastificar: Express en A5 apaisado (3 × 5), Full en A4 apaisado (3 × 9).
+ * Un cartón para imprimir (descartable): Express diseñado en A5 apaisado (3 × 5), Full en A4 apaisado (3 × 9);
+ * la página de impresión los pone de a dos por hoja A4.
  * Cada número va en la columna de su rango, como en un cartón de bingo de verdad; las celdas vacías llevan
  * una trama suave. Medidas en mm (se imprime a tamaño real).
  */
