@@ -89,7 +89,7 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
               Premio {momento.numero} de {sorteo.premios.length}
             </p>
             {/* Misma letra que la etiqueta «Premio N de M» (Nunito Sans), más liviana que Fredoka para nombres largos. */}
-            <h2 className="text-[3.6cqw] font-bold leading-tight">{momento.premio.nombre}</h2>
+            <h2 className="font-texto text-[3.6cqw] font-bold leading-tight">{momento.premio.nombre}</h2>
             {momento.premio.imagen && (
               <img
                 src={momento.premio.imagen}
