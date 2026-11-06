@@ -109,6 +109,12 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
             Volvemos a sortear este premio.
           </p>
         )}
+        {momento.tipo === 'donante' && sorteo.ultimo && (
+          <p className="rounded-[1cqw] bg-white/15 px-[1.5cqw] py-[1cqw] text-[2.3cqw] font-semibold leading-snug">
+            {sorteo.ultimo.nombre} donó este premio. <br />
+            Se sortea nuevamente.
+          </p>
+        )}
       </div>
       {conRueda ? (
         <Rueda rueda={rueda} posicion={posicion} tachado={momento.tipo === 'ausente'} />
@@ -227,7 +233,7 @@ function useTic(posicion: number, momento: Momento, conSonido: boolean) {
     const antes = anterior.current
     anterior.current = { renglon, tipo: momento.tipo }
     if (!conSonido) return
-    if (antes.tipo === 'girando' && (momento.tipo === 'ganador' || momento.tipo === 'ausente')) return golpeMadera(true)
+    if (antes.tipo === 'girando' && (momento.tipo === 'ganador' || momento.tipo === 'ausente' || momento.tipo === 'donante')) return golpeMadera(true)
     if (momento.tipo !== 'girando' || renglon === antes.renglon) return
     // A toda velocidad, como mucho ~25 golpes por segundo (si no, es un zumbido).
     const ahora = performance.now()

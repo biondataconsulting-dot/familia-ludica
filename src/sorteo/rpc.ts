@@ -19,7 +19,7 @@ export type SorteoPublico = {
     participante_id: string
     nombre: string
     dato: string | null
-    estado: 'ganador' | 'ausente'
+    estado: 'ganador' | 'ausente' | 'donante'
     at: string
   } | null
 }
@@ -29,7 +29,7 @@ export type PremioAdmin = { id: string; position: number; nombre: string; imagen
 export type SorteoAdmin = {
   participantes: ParticipanteAdmin[]
   premios: PremioAdmin[]
-  sorteos: { id: string; prize_id: string; participant_id: string; estado: 'ganador' | 'ausente'; created_at: string }[]
+  sorteos: { id: string; prize_id: string; participant_id: string; estado: 'ganador' | 'ausente' | 'donante'; created_at: string }[]
 }
 
 async function llamar<T = null>(fn: string, args: Record<string, unknown>): Promise<T> {
@@ -64,4 +64,5 @@ export const sorteoAdmin = {
   premioMover: (id: string, delta: -1 | 1) => llamar('admin_sorteo_premio_mover', { p_prize_id: id, p_delta: delta }),
   sortear: (eventId: string) => llamar<{ draw_id: string; premio: string }>('admin_sorteo_sortear', { p_event_id: eventId }),
   ausente: (drawId: string) => llamar('admin_sorteo_ausente', { p_draw_id: drawId }),
+  donante: (drawId: string) => llamar('admin_sorteo_donante', { p_draw_id: drawId }),
 }

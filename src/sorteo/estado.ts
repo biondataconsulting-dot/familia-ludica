@@ -5,14 +5,14 @@ const LISTA_FINAL_S = 15
 
 export type Momento =
   | { tipo: 'espera'; premio: SorteoPublico['premios'][number] | null; numero: number }
-  | { tipo: 'girando' | 'ganador' | 'ausente'; premio: SorteoPublico['premios'][number] | null; numero: number; t: number }
+  | { tipo: 'girando' | 'ganador' | 'ausente' | 'donante'; premio: SorteoPublico['premios'][number] | null; numero: number; t: number }
   | { tipo: 'fin' }
 
 /**
  * Qué mostrar del sorteo a `t` segundos (hora del servidor) del último que salió.
  * espera → nadie salió todavía para el premio que viene · girando → la ruleta está girando ·
  * ganador → se ve quién ganó (hasta que se sortee el siguiente) · ausente → no estaba, se vuelve a
- * sortear el mismo premio · fin → todos los premios tienen ganador (un rato después del último).
+ * sortear el mismo premio · donante → salió quien donó el premio, se vuelve a sortear (y sigue en la ruleta) · fin → todos los premios tienen ganador (un rato después del último).
  */
 export function momentoDe(s: SorteoPublico, ahoraServidorMs: number): Momento {
   const u = s.ultimo
@@ -22,7 +22,7 @@ export function momentoDe(s: SorteoPublico, ahoraServidorMs: number): Momento {
     const i = s.premios.findIndex((p) => p.id === u.premio_id)
     const premio = s.premios[i] ?? null
     if (t < s.giro_segundos) return { tipo: 'girando', premio, numero: i + 1, t: Math.max(0, t) }
-    if (u.estado === 'ausente') return { tipo: 'ausente', premio, numero: i + 1, t }
+    if (u.estado === 'ausente' || u.estado === 'donante') return { tipo: u.estado, premio, numero: i + 1, t }
     if (pendiente < 0 && s.premios.length > 0 && t >= s.giro_segundos + LISTA_FINAL_S) return { tipo: 'fin' }
     return { tipo: 'ganador', premio, numero: i + 1, t }
   }

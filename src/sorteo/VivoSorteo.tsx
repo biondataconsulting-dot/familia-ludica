@@ -33,8 +33,10 @@ export function VivoSorteo({ eventId, live, desfaseMs }: { eventId: string; live
   const enBloque = live.phase === 'block_intro' && live.block?.dynamic === 'sorteo'
   const ganadores = new Map(datos.sorteos.filter((s) => s.estado === 'ganador').map((s) => [s.prize_id, s.participant_id]))
   const yaGanaron = new Set(ganadores.values())
-  const quedan = datos.participantes.filter((p) => !p.ausente && !yaGanaron.has(p.id)).length
   const proximo = datos.premios.find((p) => !ganadores.has(p.id))
+  // El donante del premio que se sortea no está en la ruleta para ese premio.
+  const donantes = new Set(datos.sorteos.filter((s) => s.estado === 'donante' && s.prize_id === proximo?.id).map((s) => s.participant_id))
+  const quedan = datos.participantes.filter((p) => !p.ausente && !yaGanaron.has(p.id) && !donantes.has(p.id)).length
   const numero = proximo ? datos.premios.indexOf(proximo) + 1 : 0
   const persona = (id: string | undefined) => datos.participantes.find((p) => p.id === id)
   const salio = ultimo && !girando ? persona(ultimo.participant_id) : undefined
@@ -98,7 +100,21 @@ export function VivoSorteo({ eventId, live, desfaseMs }: { eventId: string; live
               >
                 No está → se vuelve a sortear
               </button>
+              <button
+                disabled={ocupado}
+                onClick={() =>
+                  window.confirm(`¿${salio.nombre} donó este premio? El premio se vuelve a sortear y sigue participando por los demás.`) &&
+                  void ejecutar(() => sorteoAdmin.donante(ultimo.id))
+                }
+                className="ml-2 mt-2 min-h-toque rounded-xl border-2 border-profundo/15 px-3 text-sm font-semibold hover:bg-white disabled:opacity-40"
+              >
+                Lo donó → se vuelve a sortear
+              </button>
             </>
+          ) : ultimo.estado === 'donante' ? (
+            <p className="text-sm font-semibold">
+              {salio.nombre} donó «{premioDe(ultimo.prize_id)?.nombre}»: se vuelve a sortear (sigue participando por los demás).
+            </p>
           ) : (
             <p className="text-sm font-semibold">
               {salio.nombre} no estaba: el premio «{premioDe(ultimo.prize_id)?.nombre}» se vuelve a sortear.

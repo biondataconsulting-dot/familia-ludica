@@ -25,6 +25,8 @@ export function SorteoCelular({ live }: { live: Live }) {
       return <Centro emoji="🎡" titulo="Girando la ruleta…" texto={m.premio ? `Premio: ${m.premio.nombre}` : ''} />
     case 'ausente':
       return <Centro emoji="🙈" titulo={`${u?.nombre} no está`} texto="Se vuelve a sortear el premio. ¡Miren el proyector!" />
+    case 'donante':
+      return <Centro emoji="🎁" titulo={`${u?.nombre} donó este premio`} texto="Se sortea nuevamente. ¡Miren el proyector!" />
     case 'ganador':
       return (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
