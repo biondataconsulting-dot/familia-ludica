@@ -1,6 +1,7 @@
 import { metaDe } from '../dynamics/registro'
 import type { Live } from '../lib/tipos'
 import { SelloPractica } from './BarraSuperior'
+import { estiloImagenEspecial } from './imagenEspecial'
 
 /** Fase block_intro: nombre de la dinámica, cómo se juega y cuántos ítems tiene. */
 export function IntroBloque({ live }: { live: Live }) {
@@ -54,7 +55,8 @@ function MomentoEspecial({ live }: { live: Live }) {
           src={block.imagen}
           alt=""
           draggable={false}
-          className="h-[24cqw] w-auto max-w-[70cqw] rounded-[1.5cqw] bg-white object-contain p-[0.6cqw] shadow-2xl"
+          style={estiloImagenEspecial(block.imagen_escala)}
+          className="min-h-0 w-auto shrink rounded-[1.5cqw] bg-white object-contain p-[0.6cqw] shadow-2xl"
         />
       )}
     </div>

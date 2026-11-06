@@ -88,7 +88,8 @@ function Sorteo({ live, sorteo, conSonido }: { live: Live; sorteo: SorteoPublico
             <p className="rounded-full bg-naranja px-[1.6cqw] py-[0.4cqw] text-[1.8cqw] font-bold uppercase tracking-[0.15em]">
               Premio {momento.numero} de {sorteo.premios.length}
             </p>
-            <h2 className="font-titulo text-[4.5cqw] font-bold leading-tight">{momento.premio.nombre}</h2>
+            {/* Misma letra que la etiqueta «Premio N de M» (Nunito Sans), más liviana que Fredoka para nombres largos. */}
+            <h2 className="text-[3.6cqw] font-bold leading-tight">{momento.premio.nombre}</h2>
             {momento.premio.imagen && (
               <img
                 src={momento.premio.imagen}
@@ -180,16 +181,36 @@ function Tambor({ rueda, posicion, tachado }: { rueda: Persona[]; posicion: numb
 }
 
 function Ganadores({ live, sorteo }: { live: Live; sorteo: SorteoPublico }) {
+  // Columnas de a 8 premios (hasta 4). Si las filas no entran en el alto disponible (~38cqw), todo se achica.
+  const columnas = Math.min(4, Math.max(1, Math.ceil(sorteo.premios.length / 8)))
+  const filas = Math.ceil(sorteo.premios.length / columnas)
+  const t = Math.min(1 / columnas ** 0.35, (38 / filas - 0.8) / 4.6)
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-[2cqw] px-[8cqw] pt-[3cqw]">
+    <div className="flex h-full flex-col items-center justify-center gap-[2cqw] px-[5cqw] pt-[3cqw]">
       <Titulo live={live} chico />
       <p className="font-titulo text-[3cqw] font-semibold">¡Felicitaciones a los ganadores!</p>
-      <ol className="flex w-full max-w-[70cqw] flex-col gap-[0.8cqw]">
+      {/* Hasta 8 premios en una columna; con más, en varias columnas y con letra más chica. */}
+      <ol
+        className="grid w-full gap-x-[1.2cqw] gap-y-[0.8cqw]"
+        style={{ gridTemplateColumns: `repeat(${columnas}, minmax(0, 1fr))`, maxWidth: columnas === 1 ? '70cqw' : '90cqw' }}
+      >
         {sorteo.premios.map((p) => (
-          <li key={p.id} className="flex items-center gap-[1.5cqw] rounded-[1cqw] bg-white px-[2cqw] py-[0.9cqw] text-profundo shadow-lg">
-            <span className="min-w-0 flex-1 truncate text-[2.2cqw] font-semibold text-profundo/70">{p.nombre}</span>
-            <span className="truncate font-titulo text-[2.8cqw] font-bold">{p.ganador?.nombre}</span>
-            {p.ganador?.dato && <span className="shrink-0 text-[1.8cqw] font-bold text-profundo/55">{p.ganador.dato}</span>}
+          <li
+            key={p.id}
+            className="flex items-center gap-[1.5cqw] rounded-[1cqw] bg-white text-profundo shadow-lg"
+            style={{ height: `${4.6 * t}cqw`, padding: `0 ${2 * t}cqw` }}
+          >
+            <span className="min-w-0 flex-1 truncate font-semibold text-profundo/70" style={{ fontSize: `${2.2 * t}cqw` }}>
+              {p.nombre}
+            </span>
+            <span className="truncate font-titulo font-bold" style={{ fontSize: `${2.8 * t}cqw` }}>
+              {p.ganador?.nombre}
+            </span>
+            {p.ganador?.dato && (
+              <span className="shrink-0 font-bold text-profundo/55" style={{ fontSize: `${1.8 * t}cqw` }}>
+                {p.ganador.dato}
+              </span>
+            )}
           </li>
         ))}
       </ol>

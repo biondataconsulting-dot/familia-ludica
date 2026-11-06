@@ -51,11 +51,9 @@ function Premios(props: { eventId: string; premios: PremioAdmin[]; sorteos: Sort
     <div>
       <div className="mb-2 flex items-center gap-2">
         <h3 className="font-bold">Premios · {premios.length}</h3>
-        {premios.length < 10 && (
-          <BotonSecundario className="ml-auto" disabled={ocupado} onClick={() => setEditando('nuevo')}>
-            + Premio
-          </BotonSecundario>
-        )}
+        <BotonSecundario className="ml-auto" disabled={ocupado} onClick={() => setEditando('nuevo')}>
+          + Premio
+        </BotonSecundario>
       </div>
       {premios.length === 0 && <p className="text-sm text-profundo/60">Todavía no hay premios. Se sortean en el orden de la lista.</p>}
       <ol className="flex flex-col gap-1">

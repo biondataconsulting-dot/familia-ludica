@@ -256,7 +256,7 @@ Pensado para notebook (tres columnas); en celular puede apilarse.
 
 ### 8.4.2 Agregados del 22/10
 
-- Bloque especial (`especial`): título, subtítulo, imagen; sin ítems; "Siguiente" pasa al bloque que sigue.
+- Bloque especial (`especial`): título, subtítulo, imagen (con tamaño de 50 % a 250 %, `config.imagen_escala`; si no entra, se achica sola); sin ítems; "Siguiente" pasa al bloque que sigue.
 - Emoji decorativo por bloque (`config.emoji`).
 - Música y sonidos: ítems `sonido` en el catálogo; 3 botones en Conducir; suenan en el proyector; abrir una canción o escena los apaga.
 - Aproximaciones por puesto: 1° 1.000, 2° 700, 3° 500, 4° 300, 5°+ 100 (empatadas comparten puesto).
@@ -278,11 +278,11 @@ Juegos fuera de la pantalla, **opcionales por noche** (casillas en Armar → `ev
 Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos). Con eso aparece en Armar la tarjeta «Sorteo».
 
 - **Participantes**: nombre + dato (lote, número de entrada o DNI), cargados antes o durante la noche: a mano, pegando celdas de Excel (columna A nombre, B dato) o subiendo un CSV. Los repetidos (mismo nombre y dato, sin importar mayúsculas) se saltean y se avisan. Hasta 2.000 por carga.
-- **Premios**: hasta 10, se sortean de a uno en el orden de la lista (con imagen opcional). Nadie gana dos veces.
+- **Premios**: sin límite, se sortean de a uno en el orden de la lista (con imagen opcional). Nadie gana dos veces.
 - **El azar lo pone la base** (`admin_sorteo_sortear`: `order by random()` entre los que no ganaron ni están ausentes); nadie puede influir. El proyector solo anima la ruleta hasta caer en el que eligió la base.
 - **Ruleta** (proyector, presentación del bloque): hasta 30 participantes cargados, **rueda de la fortuna** de circo (una porción por persona, el nombre a lo largo del radio, flecha arriba que rebota en los clavitos, al menos 3 vueltas por tirada); con más de 30, tambor de madera vertical con los nombres (se decide por el total cargado, no cambia en medio del sorteo). En los dos casos, que gira despacio mientras espera; al sortear gira 9 s (`private.sorteo_giro_segundos()`), frena cada vez más lento y cae en el ganador (sincronizado con la hora del servidor, misma tirada en cualquier pantalla). Sonido: un "clac" de madera por cada nombre que pasa (Web Audio, sin archivos; solo con «Comenzar la noche» tocado). Después: el ganador grande con papelitos. Con movimiento reducido no gira: muestra el resultado al terminar el tiempo.
 - **No está**: el conductor lo marca (solo el último que salió); sale de la ruleta y el mismo premio se vuelve a sortear. Mientras gira no se puede volver a sortear.
-- Con todos los premios sorteados, 15 s después del último el proyector muestra la lista de ganadores.
+- Con todos los premios sorteados, 15 s después del último el proyector muestra la lista de ganadores (hasta 8 en una columna; con más, en varias columnas que entran en la pantalla).
 - **Celulares**: "Se sortea: premio", "Girando la ruleta…", "¡Ganó! nombre · dato", y la lista final (sin la ruleta).
 - **Conducir**: botón grande «Sortear «premio»» (la barra espaciadora no lo toca, para no saltear el sorteo), cuenta regresiva mientras gira, el nombre recién cuando la ruleta frena, «No está», ganadores y «+ Sumar participantes». «Siguiente» pasa al bloque que sigue.
 - Base: `raffle_participants`, `raffle_prizes`, `raffle_draws` (estado ganador|ausente); `get_sorteo(code)` público (premios con ganador, la ruleta, el último); `admin_sorteo_*`. Reiniciar borra participantes y sorteos (los premios quedan); duplicar copia los premios.

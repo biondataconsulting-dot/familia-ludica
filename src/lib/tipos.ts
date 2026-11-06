@@ -25,10 +25,11 @@ export type BloqueActual = {
   total_blocks: number
   total_items: number
   timer_seconds: number | null
-  /** Emoji decorativo del bloque (opcional) y, en el bloque especial, subtítulo e imagen. */
+  /** Emoji decorativo del bloque (opcional) y, en el bloque especial, subtítulo, imagen y su escala en % (null = 100). */
   emoji?: string | null
   subtitulo?: string | null
   imagen?: string | null
+  imagen_escala?: number | null
 }
 
 export type ItemActual = {

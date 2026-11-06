@@ -20,8 +20,8 @@ export type BloqueAdmin = {
   title: string
   multiplier: number
   is_practice: boolean
-  /** Tiempo sugerido; emoji decorativo; subtítulo e imagen del bloque especial. */
-  config: { timer_seconds?: number; emoji?: string; subtitulo?: string; imagen?: string; bingo_set?: string; bingo_tipo?: 'express' | 'full' }
+  /** Tiempo sugerido; emoji decorativo; subtítulo, imagen y escala de la imagen (%) del bloque especial. */
+  config: { timer_seconds?: number; emoji?: string; subtitulo?: string; imagen?: string; imagen_escala?: number; bingo_set?: string; bingo_tipo?: 'express' | 'full' }
   items: ItemAdmin[]
 }
 

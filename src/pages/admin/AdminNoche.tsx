@@ -10,6 +10,7 @@ import { ArmarExtras } from '../../extras/ArmarExtras'
 import { ArmarSorteo } from '../../sorteo/ArmarSorteo'
 import { CamposBingo } from '../../bingo/CamposBingo'
 import { SubirImagen } from '../../admin/SubirImagen'
+import { estiloImagenEspecial } from '../../projector/imagenEspecial'
 import { ErrorRpc } from '../../lib/rpc'
 import { admin } from '../../lib/rpcAdmin'
 import type { EventoPublico } from '../../lib/tipos'
@@ -278,6 +279,7 @@ function EditorBloque(props: {
   const [emoji, setEmoji] = useState(bloque?.config.emoji ?? '')
   const [subtitulo, setSubtitulo] = useState(bloque?.config.subtitulo ?? '')
   const [imagen, setImagen] = useState(bloque?.config.imagen ?? '')
+  const [escala, setEscala] = useState(bloque?.config.imagen_escala ?? 100)
   const [bingoSet, setBingoSet] = useState(bloque?.config.bingo_set ?? '')
   const [bingoTipo, setBingoTipo] = useState<'express' | 'full'>(bloque?.config.bingo_tipo ?? 'express')
   const especial = dinamica === 'especial'
@@ -314,6 +316,7 @@ function EditorBloque(props: {
           emoji,
           subtitulo: especial ? subtitulo : '',
           imagen: especial ? imagen : '',
+          imagen_escala: especial ? escala : 100,
           bingo_set: bingo ? bingoSet : null,
           bingo_tipo: bingo ? bingoTipo : null,
           multiplier: Number(mult.replace(',', '.')),
@@ -404,6 +407,18 @@ function EditorBloque(props: {
         {especial && (
           <div className="md:col-span-6">
             <SubirImagen url={imagen} onCambio={setImagen} />
+            {imagen && (
+              <div className="mt-3 flex flex-wrap items-center gap-4">
+                <Etiqueta texto={`Tamaño de la imagen: ${escala} %`} ayuda="(100 % = normal)">
+                  <input type="range" min={50} max={250} step={10} value={escala} onChange={(e) => setEscala(Number(e.target.value))} className="w-64 accent-naranja" />
+                </Etiqueta>
+                {/* Vista previa: el escenario del proyector en chico (16:9), con el título de referencia. */}
+                <div className="flex aspect-video w-72 flex-col items-center justify-center gap-[2cqw] overflow-hidden rounded-lg bg-azul px-[8cqw] text-center text-white [container-type:inline-size]">
+                  <p className="font-titulo text-[6.5cqw] font-bold leading-none">{titulo || 'Título'}</p>
+                  <img src={imagen} alt="" style={estiloImagenEspecial(escala)} className="min-h-0 w-auto shrink rounded-[1.5cqw] bg-white object-contain p-[0.6cqw]" />
+                </div>
+              </div>
+            )}
             <p className="mt-1 text-sm text-profundo/70">
               Momento especial (pausa, sorteo, encuesta…): se ve a pantalla completa con el título, el subtítulo y la imagen. No
               tiene preguntas: en Conducir, «Siguiente» pasa al bloque que sigue.
