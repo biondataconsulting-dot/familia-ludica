@@ -412,10 +412,14 @@ function EditorBloque(props: {
                 <Etiqueta texto={`Tamaño de la imagen: ${escala} %`} ayuda="(100 % = normal)">
                   <input type="range" min={50} max={250} step={10} value={escala} onChange={(e) => setEscala(Number(e.target.value))} className="w-64 accent-naranja" />
                 </Etiqueta>
-                {/* Vista previa: el escenario del proyector en chico (16:9), con el título de referencia. */}
-                <div className="flex aspect-video w-72 flex-col items-center justify-center gap-[2cqw] overflow-hidden rounded-lg bg-azul px-[8cqw] text-center text-white [container-type:inline-size]">
-                  <p className="font-titulo text-[6.5cqw] font-bold leading-none">{titulo || 'Título'}</p>
-                  <img src={imagen} alt="" style={estiloImagenEspecial(escala)} className="min-h-0 w-auto shrink rounded-[1.5cqw] bg-white object-contain p-[0.6cqw]" />
+                {/* Vista previa: el escenario del proyector en chico (16:9), con el título y el subtítulo. El contenedor va
+                    afuera: los cqw del relleno de adentro se miden contra él, como en el proyector. */}
+                <div className="aspect-video w-96 overflow-hidden rounded-lg bg-azul [container-type:inline-size]">
+                  <div className="flex h-full flex-col items-center justify-center gap-[2cqw] px-[8cqw] text-center text-white">
+                    <p className="font-titulo text-[6.5cqw] font-bold leading-none">{titulo || 'Título'}</p>
+                    {subtitulo && <p className="max-w-[70cqw] text-[2.8cqw] font-semibold leading-snug text-white/90">{subtitulo}</p>}
+                    <img src={imagen} alt="" style={estiloImagenEspecial(escala)} className="min-h-0 w-auto shrink rounded-[1.5cqw] bg-white object-contain p-[0.6cqw]" />
+                  </div>
                 </div>
               </div>
             )}
