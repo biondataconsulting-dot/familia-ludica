@@ -286,7 +286,7 @@ Se activa agregando el bloque **Sorteo** a la noche (no tiene ítems ni puntos).
 - Con todos los premios sorteados, 15 s después del último el proyector muestra la lista de ganadores (hasta 8 en una columna; con más, en varias columnas que entran en la pantalla).
 - **Celulares**: "Se sortea: premio", "Girando la ruleta…", "¡Ganó! nombre · dato", y la lista final (sin la ruleta).
 - **Conducir**: botón grande «Sortear «premio»» (la barra espaciadora no lo toca, para no saltear el sorteo), cuenta regresiva mientras gira, el nombre recién cuando la ruleta frena, «No está», «Lo donó», ganadores y «+ Sumar participantes». «Siguiente» pasa al bloque que sigue.
-- Base: `raffle_participants`, `raffle_prizes`, `raffle_draws` (estado ganador|ausente|donante); `get_sorteo(code)` público (premios con ganador, la ruleta, el último); `admin_sorteo_*`. Reiniciar borra participantes y sorteos (los premios quedan); duplicar copia los premios.
+- Base: `raffle_participants`, `raffle_prizes`, `raffle_draws` (estado ganador|ausente|donante); `get_sorteo(code)` público (premios con ganador, la ruleta, el último); `admin_sorteo_*`. Reiniciar borra los sorteos hechos y vuelve a poner en la ruleta a los ausentes (participantes y premios quedan); duplicar copia los premios.
 - Frontend aislado en `src/sorteo/` (`useSorteo` relee con cada relectura de `useLive`, solo durante el bloque del sorteo).
 
 ### 8.7 Bingo musical (bloque `bingo`)

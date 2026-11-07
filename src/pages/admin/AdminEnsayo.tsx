@@ -151,7 +151,8 @@ function Reinicio({ eventId, codigo, estado }: { eventId: string; codigo: string
       <form onSubmit={reiniciar} className="flex flex-col gap-3">
         <p className="text-sm text-profundo/70">
           Borra <strong>todas las mesas, respuestas y puntos</strong> de esta noche y la vuelve a la portada. Los bloques y los ítems
-          quedan como están. Los celulares que estaban jugando vuelven a la pantalla de registro.
+          quedan como están. El sorteo vuelve a empezar sin ganadores: la lista de participantes y los premios quedan. Los
+          celulares que estaban jugando vuelven a la pantalla de registro.
           {estado === 'terminado' && (
             <strong className="block text-red-700">
               Ojo: esta noche ya se jugó. Se pierde su historial (podio y puntos). Si querés guardarlo, mejor duplicala desde Noches.
